@@ -1,0 +1,47 @@
+{
+
+"about this file" :
+    [
+    "Note: this 'about this file' entry may be deleted. Do not change this file",
+    "itself for any reason if you have this project under its version control,",
+    "instead save a copy with a name and location as described below",
+    "",
+    "To use this file, change all the right-hand string values below to the paths",
+    "of the named folders and files, then save this file as either",
+    "'local_resources.json' in the project's root folder (it will be ignored by",
+    "the VCS), or as '.local_resources.json' in your home folder.",
+    "",
+    "Alternatively, save this file anywhere as whatever you want, and create a",
+    "file ('./local_resources.json' or '~/.local_resources.json') with a single",
+    "entry:",
+    "  {'redirect' : '[path to actual local resources directory json file]'}",
+    "(but with double quotes, as required by json)",
+    "",
+    "All paths must be absolute on the machine in question. You will note that",
+    "each top-level entry is a dictionary entry pointing to an array. Currently,",
+    "only the last entry of the array is used, but provision is made to list",
+    "multiple version of a 3rd party libary, for future or other use.",
+    "",
+    "The 'version' field should be the official repo's tag used, or the changeset",
+    "used, as useable by the VCS it's kept in (git, mercurial, etc.)",
+    "",
+    "Unless otherwise noted , the fields below are the minimum needed to compile",
+    "this project. Files are indicated by (F), and directories by (D)"
+    ],
+
+"boost" :
+    [
+        {
+        "version"     : "[value currently unused. Line may be deleted.]",
+        "include"     : "[(D) include directory]"
+        }
+    ],
+
+"doctest" :
+    [
+        {
+        "include" : "[(D) include directory]"
+        }
+    ]
+
+}
