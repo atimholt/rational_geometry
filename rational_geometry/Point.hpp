@@ -16,7 +16,7 @@
 //│ ▼1 │ Includes
 //└────┴──────────
 
-#include <doctest.h>
+#include "doctest/doctest.h"
 
 #include <array>
 #include <cstdarg>

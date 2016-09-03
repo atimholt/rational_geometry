@@ -8,8 +8,5 @@
 #include "Point.hpp"
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-/// \todo  Add doctest.h to the project so it will compile without hassle. While
-///        doctest can compile without overhead, the compiler still needs the
-///        header so it knows }what} to throw out.
-#include <doctest.h>
+#include "doctest/doctest.h"
 
