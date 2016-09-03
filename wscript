@@ -15,8 +15,13 @@ def options(opt):
     opt.load('compiler_cxx')
 
 def configure(conf):
-    conf.load('compiler_cxx waf_unit_test')
+    # TODO figure out how to use waf_unit_test correctly. That is, get it to
+    #      display the output from doctest.
+    # conf.load('compiler_cxx waf_unit_test')
+    conf.load('compiler_cxx')
 
+    # TODO check for compiler in use, rather than OS.
+    # TODO evaluate usefulness of these arguments
     if platform.system() == 'Windows':
         conf.env.CXXFLAGS = ['/nologo', '/EHsc', '/MD']
 
@@ -48,7 +53,7 @@ def build(bld):
     my_includes = [ resources['doctest'][-1]['include'] ]
 
     my_source = [
-            'src/test.cpp']
+            'rational_geometry/test.cpp']
 
     bld.program(
             source   = my_source,
