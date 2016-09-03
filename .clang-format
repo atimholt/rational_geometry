@@ -54,7 +54,7 @@ AlwaysBreakAfterDefinitionReturnType: None
 IndentWrappedFunctionNames: false
 AlwaysBreakTemplateDeclarations: true
 BreakConstructorInitializersBeforeComma: true
-ConstructorInitializerAllOnOneLineOrOnePerLine: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
 
 AllowShortIfStatementsOnASingleLine: true
 AllowShortLoopsOnASingleLine: false
