@@ -69,6 +69,32 @@ using Point3D = Point<RatT, 3>;
 template <typename RatT>
 using Point2D = Point<RatT, 2>;
 
+//│ ▼1 │ Test Conveniences
+//└────┴───────────────────
+
+#ifndef DOCTEST_CONFIG_DISABLE
+namespace point {
+namespace test_helpers {
+
+typedef Point<int, 3> IPoint3D;
+typedef Point<int, 2> IPoint2D;
+
+/// \todo  Consider opening use of these to library users.
+const IPoint3D origin3{{0, 0, 0}};
+
+const IPoint3D i3{{1, 0, 0}};
+const IPoint3D j3{{0, 1, 0}};
+const IPoint3D k3{{0, 0, 1}};
+
+const IPoint2D origin2{{0, 0}};
+
+const IPoint2D i2{{1, 0}};
+const IPoint2D j2{{0, 1}};
+
+} // namespace test_helpers
+} // namespace point
+#endif
+
 //│ ▼1 │ Class Template Definitions
 //└─┬──┴─┬──────────────────────────
 //  │ ▼2 │ Constructors
@@ -86,7 +112,7 @@ Point<RatT, kDimension>::Point(std::array<RatT, kDimension> values)
 }
 TEST_CASE("Testing Point<>::Point(std::array<>)")
 {
-  typedef Point3D<int> IPoint3D;
+  using namespace point::test_helpers;
 
   IPoint3D val_a{{1, 2, 3}};
 
@@ -106,7 +132,7 @@ Point<RatT, kDimension>::Point(
 TEST_CASE(
     "Testing Point<RatT, kDimension>::Point(Point<RatT, kDimension - 1>, RatT)")
 {
-  typedef Point3D<int> IPoint3D;
+  using namespace point::test_helpers;
 
   IPoint3D val_in{{1, 2, 3}};
 
@@ -173,7 +199,7 @@ bool operator==(const Point<RatT_l, kDimension>& l_op,
 }
 TEST_CASE("Testing Point<> == Point<>")
 {
-  typedef Point3D<int> IPoint3D;
+  using namespace point::test_helpers;
 
   IPoint3D arbitrary_a{{1, 5, 24}};
   IPoint3D arbitrary_b{{1, 5, 24}};
@@ -196,17 +222,15 @@ auto operator+(const Point<RatT_l, kDimension>& l_op,
 }
 TEST_CASE("Testing Point<> + Point<>")
 {
-  typedef Point<int, 3> IPoint3D;
+  using namespace point::test_helpers;
 
-  IPoint3D origin{{0, 0, 0}};
-
-  IPoint3D a{origin};
+  IPoint3D a{origin3};
   IPoint3D b{{1, 2, 3}};
   IPoint3D c{{10, 20, 30}};
   IPoint3D d{{4, 5, 6}};
 
   for (const auto& val : {a, b, c, d}) {
-    CHECK(val == val + origin);
+    CHECK(val == val + origin3);
   }
 
   IPoint3D a_b{{1, 2, 3}};
@@ -235,7 +259,7 @@ auto operator*(const Point<RatT_l, kDimension>& l_op, const RatT_r& r_op)
 }
 TEST_CASE("Testing Point<> * RatT")
 {
-  typedef Point3D<int> IPoint3D;
+  using namespace point::test_helpers;
 
   IPoint3D a{{3, 5, 7}};
   static const int factor{2};
@@ -252,7 +276,7 @@ auto operator*(RatT_l l_op, const Point<RatT_r, kDimension>& r_op)
 }
 TEST_CASE("Testing RatT * Point<>")
 {
-  typedef Point3D<int> IPoint3D;
+  using namespace point::test_helpers;
 
   static const int factor{2};
   IPoint3D a{{3, 5, 7}};
@@ -279,10 +303,10 @@ auto dot(const Point<RatT_l, kDimension>& l_op,
 }
 TEST_CASE("Testing dot(Point<>, Point<>)")
 {
-  typedef Point<int, 2> IPoint2D;
+  using namespace point::test_helpers;
 
-  IPoint2D i{{1, 0}};
-  IPoint2D j{{0, 1}};
+  IPoint2D i{i2};
+  IPoint2D j{j2};
 
   auto i_j = dot(i, j);
   CHECK(0 == i_j);
@@ -315,11 +339,11 @@ auto cross(const Point<RatT_l, 3>& l_op, const Point<RatT_r, 3>& r_op)
 }
 TEST_CASE("Testing cross(Point<>, Point<>, bool right_handed = true)")
 {
-  typedef Point<int, 3> IPoint3D;
+  using namespace point::test_helpers;
 
-  static const IPoint3D i{{1, 0, 0}};
-  static const IPoint3D j{{0, 1, 0}};
-  static const IPoint3D k{{0, 0, 1}};
+  static const IPoint3D i{i3};
+  static const IPoint3D j{j3};
+  static const IPoint3D k{k3};
 
   CHECK(i == cross(j, k));
   CHECK(j == cross(k, i));
