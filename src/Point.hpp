@@ -295,9 +295,7 @@ TEST_CASE("Testing dot(Point<>, Point<>)")
 }
 
 template <typename RatT_l, typename RatT_r>
-auto cross(const Point<RatT_l, 3>& l_op,
-    const Point<RatT_r, 3>& r_op,
-    bool right_handed = true)
+auto cross(const Point<RatT_l, 3>& l_op, const Point<RatT_r, 3>& r_op)
 {
   using std::declval;
   // clang-format off
@@ -312,10 +310,6 @@ auto cross(const Point<RatT_l, 3>& l_op,
   ret.values_[0] = l[1] * r[2] - l[2] * r[1];
   ret.values_[1] = l[2] * r[0] - l[0] * r[2];
   ret.values_[2] = l[0] * r[1] - l[1] * r[0];
-
-  if (!right_handed) {
-    ret = ret * -1;
-  }
 
   return ret;
 }
@@ -335,11 +329,6 @@ TEST_CASE("Testing cross(Point<>, Point<>, bool right_handed = true)")
   CHECK(-1 * i == cross(k, j));
   CHECK(-1 * j == cross(i, k));
   CHECK(-1 * k == cross(j, i));
-
-  // left-handed
-  CHECK(-1 * i == cross(j, k, false));
-  CHECK(-1 * j == cross(k, i, false));
-  CHECK(-1 * k == cross(i, j, false));
 }
 
 //┌────┬───────────────────
