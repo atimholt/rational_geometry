@@ -12,13 +12,13 @@ top = '.'
 out = 'bin'
 
 def options(opt):
-    opt.load('compiler_cxx')
+    opt.load('compiler_cxx waf_unit_test')
 
 def configure(conf):
     # TODO figure out how to use waf_unit_test correctly. That is, get it to
     #      display the output from doctest.
-    # conf.load('compiler_cxx waf_unit_test')
-    conf.load('compiler_cxx')
+    conf.load('compiler_cxx waf_unit_test')
+    # conf.load('compiler_cxx')
 
     # TODO check for compiler in use, rather than OS.
     # TODO evaluate usefulness of these arguments
@@ -28,8 +28,13 @@ def configure(conf):
 def build(bld):
     bld.program(
             source   = 'rational_geometry/test.cpp',
-            features = 'cxx cxxprogram',
+            features = 'cxx cxxprogram test',
             target   = 'rational_geometry_test')
+
+    bld.options.all_tests = True
+
+    from waflib.Tools import waf_unit_test
+    bld.add_post_fun(waf_unit_test.summary)
 
 # vim:set et ts=4 sts=4 sw=4 ft=python:
 
