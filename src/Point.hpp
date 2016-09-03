@@ -261,6 +261,87 @@ TEST_CASE("Testing RatT * Point<>")
   CHECK(expected == factor * a);
 }
 
+template <typename RatT_l, typename RatT_r, std::size_t kDimension>
+auto dot(const Point<RatT_l, kDimension>& l_op,
+    const Point<RatT_r, kDimension>& r_op)
+{
+  using std::declval;
+  // clang-format off
+  decltype(declval<RatT_l>() * declval<RatT_r>()
+           +
+           declval<RatT_l>() * declval<RatT_r>()) sum{0};
+  // clang-format on
+  for (std::size_t i = 0; i < kDimension; ++i) {
+    sum += l_op.values_[i] * r_op.values_[i];
+  }
+
+  return sum;
+}
+TEST_CASE("Testing dot(Point<>, Point<>)")
+{
+  typedef Point<int, 2> IPoint2D;
+
+  IPoint2D i{{1, 0}};
+  IPoint2D j{{0, 1}};
+
+  auto i_j = dot(i, j);
+  CHECK(0 == i_j);
+
+  auto orthogonal = dot(3 * i + 4 * j, -4 * i + 3 * j);
+  CHECK(0 == orthogonal);
+
+  auto something_different = dot(3 * i, 2 * i);
+  CHECK(6 == something_different);
+}
+
+template <typename RatT_l, typename RatT_r>
+auto cross(const Point<RatT_l, 3>& l_op,
+    const Point<RatT_r, 3>& r_op,
+    bool right_handed = true)
+{
+  using std::declval;
+  // clang-format off
+  Point<decltype(declval<RatT_l>() * declval<RatT_r>()
+                 -
+                 declval<RatT_l>() * declval<RatT_r>()), 3> ret{};
+  // clang-format on
+
+  const auto& l = l_op.values_;
+  const auto& r = r_op.values_;
+
+  ret.values_[0] = l[1] * r[2] - l[2] * r[1];
+  ret.values_[1] = l[2] * r[0] - l[0] * r[2];
+  ret.values_[2] = l[0] * r[1] - l[1] * r[0];
+
+  if (!right_handed) {
+    ret = ret * -1;
+  }
+
+  return ret;
+}
+TEST_CASE("Testing cross(Point<>, Point<>, bool right_handed = true)")
+{
+  typedef Point<int, 3> IPoint3D;
+
+  static const IPoint3D i{{1, 0, 0}};
+  static const IPoint3D j{{0, 1, 0}};
+  static const IPoint3D k{{0, 0, 1}};
+
+  CHECK(i == cross(j, k));
+  CHECK(j == cross(k, i));
+  CHECK(k == cross(i, j));
+
+  // Non-commutative
+  CHECK(-1 * i == cross(k, j));
+  CHECK(-1 * j == cross(i, k));
+  CHECK(-1 * k == cross(j, i));
+
+  // left-handed
+  CHECK(-1 * i == cross(j, k, false));
+  CHECK(-1 * j == cross(k, i, false));
+  CHECK(-1 * k == cross(i, j, false));
+}
+
 //┌────┬───────────────────
 //│ ▲1 │ Related Operators
 
