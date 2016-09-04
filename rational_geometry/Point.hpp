@@ -6,12 +6,31 @@
 //│ ▼1 │ Preprocesser Flag Stuff
 //└────┴─────────────────────────
 
-#if !defined RATIONAL_GEOMETRY_THIS_IS_THE_TEST_BINARY                         \
-    && !defined DOCTEST_CONFIG_DISABLE
+// Allows the library user to use doctest in their own project without having
+// to worry about include order.
+//
+// Basically, state of flag DOCTEST_CONFIG_DISABLE as this file is entered is
+// noted so it can be ignored in the body of this file, then restored to its
+// original state at the end of this file.
+//
+/// \todo  put this preprocessor code fragment and its cleanup counterpart each
+///        in their own include files.
 
-#define DOCTEST_CONFIG_DISABLE
-
+// clang-format off
+#ifdef DOCTEST_CONFIG_DISABLE
+#  define RATIONAL_GEOMETRY_DOCTEST_DISABLED
 #endif
+
+#ifdef RATIONAL_GEOMETRY_THIS_IS_THE_TEST_BINARY
+#  ifdef DOCTEST_CONFIG_DISABLE
+#    undef DOCTEST_CONFIG_DISABLE
+#  endif
+#else
+#  ifndef DOCTEST_CONFIG_DISABLE
+#    define DOCTEST_CONFIG_DISABLE
+#  endif
+#endif
+// clang-format on
 
 //│ ▼1 │ Includes
 //└────┴──────────
@@ -380,8 +399,28 @@ TEST_CASE("Testing cross(Point<>, Point<>, bool right_handed = true)")
   CHECK(-1 * k == cross(j, i));
 }
 
-//┌────┬───────────────────
-//│ ▲1 │ Related Operators
+//│ ▼1 │  Preprocessor Cleanup
+//└────┴──────────────────────
+
+// Restore state of DOCTEST_CONFIG_DISABLE flag to state at entry into file and
+// undef the flag that keeps track of that state.
+// This is so users of the library can also use doctest. :)
+
+// clang-format off
+#ifdef RATIONAL_GEOMETRY_DOCTEST_DISABLED
+#  undef RATIONAL_GEOMETRY_DOCTEST_DISABLED
+#  ifndef DOCTEST_CONFIG_DISABLE
+#    define DOCTEST_CONFIG_DISABLE
+#  endif
+#else
+#  ifdef DOCTEST_CONFIG_DISABLE
+#    undef DOCTEST_CONFIG_DISABLE
+#  endif
+#endif
+// clang-format on
+
+//┌────┬──────────────────────
+//│ ▲1 │  Preprocessor Cleanup
 
 } // namespace rational_geometry
 
