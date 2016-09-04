@@ -5,8 +5,8 @@
 #define RATIONAL_GEOMETRY_THIS_IS_THE_TEST_BINARY
 
 // To test templates, they must be in a translation unit *somewhere*.
-#include "Point.hpp"
+#include "../src/rational_geometry/Point.hpp"
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "doctest/doctest.h"
+#include "doctest.h"
 

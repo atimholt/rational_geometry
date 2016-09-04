@@ -27,7 +27,7 @@ def configure(conf):
 
 def build(bld):
     bld.program(
-            source   = 'rational_geometry/test.cpp',
+            source   = 'test_specific_src/test.cpp',
             features = 'cxx cxxprogram test',
             target   = 'rational_geometry_test')
 

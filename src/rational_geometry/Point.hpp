@@ -35,7 +35,7 @@
 //│ ▼1 │ Includes
 //└────┴──────────
 
-#include "doctest/doctest.h"
+#include "../../test_specific_src/doctest.h"
 
 #include <array>
 #include <cstdarg>
@@ -405,6 +405,8 @@ TEST_CASE("Testing cross(Point<>, Point<>, bool right_handed = true)")
 // Restore state of DOCTEST_CONFIG_DISABLE flag to state at entry into file and
 // undef the flag that keeps track of that state.
 // This is so users of the library can also use doctest. :)
+//
+// On reflection, this can't possibly work correctly. Oh well.
 
 // clang-format off
 #ifdef RATIONAL_GEOMETRY_DOCTEST_DISABLED
