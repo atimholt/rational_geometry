@@ -47,9 +47,7 @@ TEST_CASE("Testing Point.hpp")
       CHECK(val_a.values_.size() == 3);
     }
 
-    SUBCASE(
-        "Testing Point<RatT, kDimension>::Point(Point<RatT, kDimension - 1>, "
-        "RatT)")
+    SUBCASE("Testing Point<>::Point(Point<RatT, kDimension - 1>, RatT)")
     {
       IPoint3D val_in{1, 2, 3};
 
@@ -179,5 +177,5 @@ TEST_CASE("Testing Point.hpp")
 
 } // namespace rational_geometry
 
-// vim:set fdm=marker fmr=▼,▲ cms=\ //%s et ts=2 sw=2 sts=2:
+// vim:set et ts=2 sw=2 sts=2:
 
