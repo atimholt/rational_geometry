@@ -4,8 +4,6 @@
 /// A Point class and its related functions. The class is templatized so that
 /// any rational type may be used for the point coordinates.
 ///
-/// \todo  Implement more comparison operators (<, >, <=, etc.)
-///
 /// This code is under the MIT license, please see LICENSE.txt for more
 /// information
 
@@ -135,6 +133,8 @@ Point<RatT, kDimension + 1> Point<RatT, kDimension>::as_vector()
 
 // Related Operators
 //-------------------
+//   Comparison Operators
+//  ----------------------
 
 /// Test equality of two points.
 ///
@@ -149,6 +149,49 @@ bool operator==(const Point<RatT_l, kDimension>& l_op,
 {
   return l_op.values_ == r_op.values_;
 }
+
+template <typename RatT_l, typename RatT_r, std::size_t kDimension>
+bool operator!=(const Point<RatT_l, kDimension>& l_op,
+    const Point<RatT_r, kDimension>& r_op)
+{
+  return l_op.values_ != r_op.values_;
+}
+
+/// Test whether a point is less than another.
+///
+/// This is not just useful for the stl, it is also a reliable way of
+/// determining what order a group of colinear points is in.
+///
+template <typename RatT_l, typename RatT_r, std::size_t kDimension>
+bool operator<(const Point<RatT_l, kDimension>& l_op,
+    const Point<RatT_r, kDimension>& r_op)
+{
+  return l_op.values_ < r_op.values_;
+}
+
+template <typename RatT_l, typename RatT_r, std::size_t kDimension>
+bool operator<=(const Point<RatT_l, kDimension>& l_op,
+    const Point<RatT_r, kDimension>& r_op)
+{
+  return l_op.values_ <= r_op.values_;
+}
+
+template <typename RatT_l, typename RatT_r, std::size_t kDimension>
+bool operator>(const Point<RatT_l, kDimension>& l_op,
+    const Point<RatT_r, kDimension>& r_op)
+{
+  return l_op.values_ > r_op.values_;
+}
+
+template <typename RatT_l, typename RatT_r, std::size_t kDimension>
+bool operator>=(const Point<RatT_l, kDimension>& l_op,
+    const Point<RatT_r, kDimension>& r_op)
+{
+  return l_op.values_ >= r_op.values_;
+}
+
+//   Other Operators
+//  -----------------
 
 /// Add two vectors
 ///
@@ -188,6 +231,8 @@ auto operator*(RatT_l l_op, const Point<RatT_r, kDimension>& r_op)
   return r_op * l_op;
 }
 
+// Related Functions
+//-------------------
 
 /// Find the dot product (<i>scalar</i> product) between two vectors.
 ///
@@ -244,7 +289,7 @@ auto cross(const Point<RatT_l, 3>& l_op, const Point<RatT_r, 3>& r_op)
 }
 
 //-------------------
-// Related Operators
+// Related Functions
 
 } // namespace rational_geometry
 

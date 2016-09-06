@@ -91,13 +91,30 @@ TEST_CASE("Testing Point.hpp")
     }
   }
 
-  SUBCASE("Testing Point<> == Point<>")
+  SUBCASE("Testing Point<> [comparator operator] Point<>")
   {
-    IPoint3D arbitrary_a{1, 5, 24};
-    IPoint3D arbitrary_b{1, 5, 24};
+    IPoint3D all_ones{1, 1, 1};
 
-    // To see if it even compiles, I guess.
-    CHECK(arbitrary_a == arbitrary_b);
+    IPoint3D another_all_ones{1, 1, 1};
+    CHECK(all_ones == another_all_ones);
+    CHECK(all_ones <= another_all_ones);
+    CHECK(all_ones >= another_all_ones);
+
+    IPoint3D unequal_value{1, 0, 1};
+    CHECK(all_ones != unequal_value);
+
+    IPoint3D larger_z{1, 1, 2};
+    IPoint3D larger_y{1, 2, 0};
+    IPoint3D larger_x{2, 0, 0};
+    CHECK(all_ones < larger_z);
+    CHECK(all_ones <= larger_z);
+    CHECK(all_ones < larger_y);
+    CHECK(all_ones < larger_x);
+
+    CHECK(larger_z > all_ones);
+    CHECK(larger_z >= all_ones);
+    CHECK(larger_y > all_ones);
+    CHECK(larger_x > all_ones);
   }
 
   SUBCASE("Testing Point<> + Point<>")
