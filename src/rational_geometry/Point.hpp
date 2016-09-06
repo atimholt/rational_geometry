@@ -46,8 +46,8 @@ class Point
   Point(const Point<RatT, kDimension - 1>& smaller_point, RatT last);
 
   // ACCESSORS
-  Point<RatT, kDimension + 1> as_point();
-  Point<RatT, kDimension + 1> as_vector();
+  Point<RatT, kDimension + 1> as_point() const;
+  Point<RatT, kDimension + 1> as_vector() const;
 
   Point<RatT, kDimension - 1> as_simpler() const;
 };
@@ -116,7 +116,7 @@ Point<RatT, kDimension>::Point(
 /// location, and not just scale/rotate/skew it.
 ///
 template <typename RatT, size_t kDimension>
-Point<RatT, kDimension + 1> Point<RatT, kDimension>::as_point()
+Point<RatT, kDimension + 1> Point<RatT, kDimension>::as_point() const
 {
   return {*this, 1};
 }
@@ -128,7 +128,7 @@ Point<RatT, kDimension + 1> Point<RatT, kDimension>::as_point()
 /// to be a location, but actually just represents a direction and magnitude.
 ///
 template <typename RatT, size_t kDimension>
-Point<RatT, kDimension + 1> Point<RatT, kDimension>::as_vector()
+Point<RatT, kDimension + 1> Point<RatT, kDimension>::as_vector() const
 {
   return {*this, 0};
 }
