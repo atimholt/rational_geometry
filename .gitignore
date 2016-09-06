@@ -2,4 +2,4 @@ bin/
 doxys_docs/
 
 .lock-waf*
-tags
+tags*
