@@ -48,6 +48,8 @@ class Point
   // ACCESSORS
   Point<RatT, kDimension + 1> as_point();
   Point<RatT, kDimension + 1> as_vector();
+
+  Point<RatT, kDimension - 1> as_simpler() const;
 };
 
 // Convenience typedefs
@@ -129,6 +131,25 @@ template <typename RatT, size_t kDimension>
 Point<RatT, kDimension + 1> Point<RatT, kDimension>::as_vector()
 {
   return {*this, 0};
+}
+
+
+/// Converts a higher-dimensional point back to its real value.
+///
+/// This is meant to convert back to the real type in use from a value
+/// originally obtained through the as_point() or as_vector() methods.
+///
+/// \return  The Point without its last element.
+///
+template <typename RatT, size_t kDimension>
+Point<RatT, kDimension - 1> Point<RatT, kDimension>::as_simpler() const
+{
+  Point<RatT, kDimension - 1> ret;
+
+  using namespace std;
+  copy(cbegin(values_), cend(values_) - 1, begin(ret.values_));
+
+  return ret;
 }
 
 // Related Operators

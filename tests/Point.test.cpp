@@ -89,6 +89,19 @@ TEST_CASE("Testing Point.hpp")
       std::string expected_value{typeid(Point<int, 4>).name()};
       CHECK(expected_value == typeid(val_b).name());
     }
+
+    SUBCASE("Testing Point<>::as_simpler()")
+    {
+      IPoint3D val_a{1, 2, 3};
+      IPoint2D expected{1, 2};
+
+      CHECK(expected == val_a.as_simpler());
+
+      // They can't even == compare if they're not the same type, but who
+      // <i>knows</i> what the future could bring?
+      std::string expected_type{typeid(Point<int, 2>).name()};
+      CHECK(expected_type == typeid(expected).name());
+    }
   }
 
   SUBCASE("Testing Point<> [comparator operator] Point<>")
