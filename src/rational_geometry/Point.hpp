@@ -1,4 +1,13 @@
-// Point.hpp
+/// \file     Point.hpp
+/// \author   Tim Holt
+///
+/// A Point class and its related functions. The class is templatized so that
+/// any rational type may be used for the point coordinates.
+///
+/// \todo  Implement more comparison operators (<, >, <=, etc.)
+///
+/// This code is under the MIT license, please see LICENSE.txt for more
+/// information
 
 #ifndef _RATIONAL_GEOMETRY_POINT_HPP_INCLUDED_
 #define _RATIONAL_GEOMETRY_POINT_HPP_INCLUDED_
@@ -7,9 +16,8 @@
 //----------
 
 #include <array>
-#include <cstdarg>
-#include <cstddef>
 #include <initializer_list>
+#include <utility>
 
 //----------
 // Includes
@@ -19,13 +27,13 @@ namespace rational_geometry {
 // Class Template Declaration
 //----------------------------
 
-/** A geometric point in n-space with rational number coordinates.
- *
- * This class template should actually work with any type that has infinite
- * precision, or with any type in uses where the type is not used outside of
- * its full accuracy. One suggestion might be to throw an exception on a
- * inaccurate operation from your RatT type.
- */
+/// A geometric point in n-space with rational number coordinates.
+///
+/// This class template should actually work with any type that has infinite
+/// precision, or with any type in uses where the type is not used outside of
+/// its full accuracy. One suggestion might be to throw an exception on a
+/// inaccurate operation from your RatT type.
+///
 template <typename RatT, std::size_t kDimension = 3>
 class Point
 {
@@ -58,11 +66,15 @@ using Point2D = Point<RatT, 2>;
 //   Constructors
 //  --------------
 
+/// Creates a Point with kDimension dimensions, with all values at 0.
+///
 template <typename RatT, size_t kDimension>
 Point<RatT, kDimension>::Point() : values_{}
 {
 }
 
+/// Creates a Point with kDimension dimensions, fills with the initializel_list
+///
 template <typename RatT, size_t kDimension>
 Point<RatT, kDimension>::Point(const std::initializer_list<RatT>& values)
     : values_{} // 0 initialize
@@ -79,6 +91,9 @@ Point<RatT, kDimension>::Point(const std::array<RatT, kDimension>& values)
 {
 }
 
+/// \brief  Utility constructor for representing a point's equivalent in a
+///         higher dimension.
+///
 template <typename RatT, size_t kDimension>
 Point<RatT, kDimension>::Point(
     const Point<RatT, kDimension - 1>& smaller_point, RatT last)
@@ -93,12 +108,25 @@ Point<RatT, kDimension>::Point(
 //   Accessors
 //  -----------
 
+/// \brief  Get a version of the point as a point that can be translated by a
+///         translation matrix.
+///
+/// For when the vector (Point) actually conceptually represents a location in
+/// space, so that a matrix of 1 higher dimension can be used to translate its
+/// location, and not just scale/rotate/skew it.
+///
 template <typename RatT, size_t kDimension>
 Point<RatT, kDimension + 1> Point<RatT, kDimension>::as_point()
 {
   return {*this, 1};
 }
 
+/// \brief  Get a version of the point as a point that can<i>not</i> be
+///         translated by a translation matrix.
+///
+/// For when the vector (Point) represents a vector that <i>isn't</i> pretending
+/// to be a location, but actually just represents a direction and magnitude.
+///
 template <typename RatT, size_t kDimension>
 Point<RatT, kDimension + 1> Point<RatT, kDimension>::as_vector()
 {
@@ -108,6 +136,13 @@ Point<RatT, kDimension + 1> Point<RatT, kDimension>::as_vector()
 // Related Operators
 //-------------------
 
+/// Test equality of two points.
+///
+/// They must actually be exactly equal in all fields. This is one of the
+/// advantages of using rational numbers for our math: with your typical
+/// floating-point geometric libraries, you usually have to test
+/// <i>approximate</i> equality due to rounding errors.
+///
 template <typename RatT_l, typename RatT_r, std::size_t kDimension>
 bool operator==(const Point<RatT_l, kDimension>& l_op,
     const Point<RatT_r, kDimension>& r_op)
@@ -115,6 +150,8 @@ bool operator==(const Point<RatT_l, kDimension>& l_op,
   return l_op.values_ == r_op.values_;
 }
 
+/// Add two vectors
+///
 template <typename RatT_l, typename RatT_r, std::size_t kDimension>
 auto operator+(const Point<RatT_l, kDimension>& l_op,
     const Point<RatT_r, kDimension>& r_op)
@@ -128,6 +165,8 @@ auto operator+(const Point<RatT_l, kDimension>& l_op,
   return ret;
 }
 
+/// Scale a vector by a scalar.
+///
 template <typename RatT_l, typename RatT_r, std::size_t kDimension>
 auto operator*(const Point<RatT_l, kDimension>& l_op, const RatT_r& r_op)
 {
@@ -140,6 +179,8 @@ auto operator*(const Point<RatT_l, kDimension>& l_op, const RatT_r& r_op)
   return ret;
 }
 
+/// Scale a vector by a scalar.
+///
 template <typename RatT_l, typename RatT_r, std::size_t kDimension>
 auto operator*(RatT_l l_op, const Point<RatT_r, kDimension>& r_op)
 {
@@ -147,6 +188,14 @@ auto operator*(RatT_l l_op, const Point<RatT_r, kDimension>& r_op)
   return r_op * l_op;
 }
 
+
+/// Find the dot product (<i>scalar</i> product) between two vectors.
+///
+/// \return  a value equivalent to the magnitude of the two vectors multiplied
+///          together, multiplied by the cosine of the angle between them.
+///
+/// \sa  https://en.wikipedia.org/wiki/Dot_product
+///
 template <typename RatT_l, typename RatT_r, std::size_t kDimension>
 auto dot(const Point<RatT_l, kDimension>& l_op,
     const Point<RatT_r, kDimension>& r_op)
@@ -164,6 +213,16 @@ auto dot(const Point<RatT_l, kDimension>& l_op,
   return sum;
 }
 
+/// Find the cross product (<i>vector</i> product) between two vectors.
+///
+/// \return  a vector which (when not magnitude 0) is perpendicular to both
+///          inputs and equal to their magnitudes multiplied together,
+///          multiplied by the sine of the angle between them. Of the two
+///          possible directions (when not magnitude 0), the actual value is
+///          given by the right-hand rule.
+///
+/// \sa  https://en.wikipedia.org/wiki/Cross_product
+///
 template <typename RatT_l, typename RatT_r>
 auto cross(const Point<RatT_l, 3>& l_op, const Point<RatT_r, 3>& r_op)
 {
