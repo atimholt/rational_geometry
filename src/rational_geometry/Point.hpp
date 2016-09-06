@@ -147,47 +147,57 @@ template <typename RatT_l, typename RatT_r, std::size_t kDimension>
 bool operator==(const Point<RatT_l, kDimension>& l_op,
     const Point<RatT_r, kDimension>& r_op)
 {
-  return l_op.values_ == r_op.values_;
+  // note: std::array comparison with its built-in operator= requires the types
+  // contained to be the same. It's fine with me if they're different if they
+  // really do compare equal. Hence this over-complex reimplimentation.
+  using namespace std;
+  return equal(cbegin(l_op.values_), cend(l_op.values_), cbegin(r_op.values_));
 }
 
+/// Test for inequality
+///
 template <typename RatT_l, typename RatT_r, std::size_t kDimension>
 bool operator!=(const Point<RatT_l, kDimension>& l_op,
     const Point<RatT_r, kDimension>& r_op)
 {
-  return l_op.values_ != r_op.values_;
+  return !(l_op == r_op);
 }
 
-/// Test whether a point is less than another.
+/// Test whether a point is less than another, lexicographically.
 ///
 /// This is not just useful for the stl, it is also a reliable way of
-/// determining what order a group of colinear points is in.
+/// determining what order a group of colinear points is in. That specifically.
+/// Don't use it for any other kind of point comparison.
 ///
 template <typename RatT_l, typename RatT_r, std::size_t kDimension>
 bool operator<(const Point<RatT_l, kDimension>& l_op,
     const Point<RatT_r, kDimension>& r_op)
 {
-  return l_op.values_ < r_op.values_;
+  // see note in operator==. Find it by searching "over-complex".
+  using namespace std;
+  return lexicographical_compare(cbegin(l_op.values_), cend(l_op.values_),
+      cbegin(r_op.values_), cend(r_op.values_));
 }
 
 template <typename RatT_l, typename RatT_r, std::size_t kDimension>
 bool operator<=(const Point<RatT_l, kDimension>& l_op,
     const Point<RatT_r, kDimension>& r_op)
 {
-  return l_op.values_ <= r_op.values_;
+  return !(r_op < l_op);
 }
 
 template <typename RatT_l, typename RatT_r, std::size_t kDimension>
 bool operator>(const Point<RatT_l, kDimension>& l_op,
     const Point<RatT_r, kDimension>& r_op)
 {
-  return l_op.values_ > r_op.values_;
+  return r_op < l_op;
 }
 
 template <typename RatT_l, typename RatT_r, std::size_t kDimension>
 bool operator>=(const Point<RatT_l, kDimension>& l_op,
     const Point<RatT_r, kDimension>& r_op)
 {
-  return l_op.values_ >= r_op.values_;
+  return !(l_op < r_op);
 }
 
 //   Other Operators

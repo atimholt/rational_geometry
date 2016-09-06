@@ -94,27 +94,72 @@ TEST_CASE("Testing Point.hpp")
   SUBCASE("Testing Point<> [comparator operator] Point<>")
   {
     IPoint3D all_ones{1, 1, 1};
-
     IPoint3D another_all_ones{1, 1, 1};
-    CHECK(all_ones == another_all_ones);
-    CHECK(all_ones <= another_all_ones);
-    CHECK(all_ones >= another_all_ones);
 
     IPoint3D unequal_value{1, 0, 1};
-    CHECK(all_ones != unequal_value);
 
     IPoint3D larger_z{1, 1, 2};
     IPoint3D larger_y{1, 2, 0};
     IPoint3D larger_x{2, 0, 0};
-    CHECK(all_ones < larger_z);
-    CHECK(all_ones <= larger_z);
-    CHECK(all_ones < larger_y);
-    CHECK(all_ones < larger_x);
 
-    CHECK(larger_z > all_ones);
-    CHECK(larger_z >= all_ones);
-    CHECK(larger_y > all_ones);
-    CHECK(larger_x > all_ones);
+    SUBCASE("Basic checks")
+    {
+      CHECK(all_ones == another_all_ones);
+      CHECK(all_ones <= another_all_ones);
+      CHECK(all_ones >= another_all_ones);
+
+      CHECK(all_ones != unequal_value);
+
+      CHECK(all_ones < larger_z);
+      CHECK(all_ones <= larger_z);
+      CHECK(all_ones < larger_y);
+      CHECK(all_ones < larger_x);
+
+      CHECK(larger_z > all_ones);
+      CHECK(larger_z >= all_ones);
+      CHECK(larger_y > all_ones);
+      CHECK(larger_x > all_ones);
+    }
+
+    SUBCASE("Logical inverse")
+    {
+      CHECK_FALSE(all_ones == unequal_value);
+      CHECK_FALSE(larger_z <= all_ones);
+      CHECK_FALSE(all_ones >= larger_z);
+
+      CHECK_FALSE(all_ones != another_all_ones);
+
+      CHECK_FALSE(all_ones > larger_z);
+      CHECK_FALSE(all_ones >= larger_z);
+      CHECK_FALSE(all_ones > larger_y);
+      CHECK_FALSE(all_ones > larger_x);
+
+      CHECK_FALSE(larger_z < all_ones);
+      CHECK_FALSE(larger_z <= all_ones);
+      CHECK_FALSE(larger_y < all_ones);
+      CHECK_FALSE(larger_x < all_ones);
+    }
+
+    SUBCASE("Different types")
+    {
+      Point<char, 3> c_all_ones{1, 1, 1};
+
+      CHECK(c_all_ones == another_all_ones);
+      CHECK(c_all_ones <= another_all_ones);
+      CHECK(c_all_ones >= another_all_ones);
+
+      CHECK(c_all_ones != unequal_value);
+
+      CHECK(c_all_ones < larger_z);
+      CHECK(c_all_ones <= larger_z);
+      CHECK(c_all_ones < larger_y);
+      CHECK(c_all_ones < larger_x);
+
+      CHECK(larger_z > c_all_ones);
+      CHECK(larger_z >= c_all_ones);
+      CHECK(larger_y > c_all_ones);
+      CHECK(larger_x > c_all_ones);
+    }
   }
 
   SUBCASE("Testing Point<> + Point<>")
