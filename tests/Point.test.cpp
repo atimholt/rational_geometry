@@ -47,17 +47,6 @@ TEST_CASE("Testing Point.hpp")
       CHECK(val_a.values_.size() == 3);
     }
 
-    SUBCASE("Testing Point<>::Point(Point<RatT, kDimension - 1>, RatT)")
-    {
-      IPoint3D val_in{1, 2, 3};
-
-      for (const auto& arbitrary_val : {-10, -1, 0, 1, 3, 50, 10'000}) {
-        Point<int, 4> val_out{val_in, arbitrary_val};
-
-        CHECK(val_out.values_[3] == arbitrary_val);
-      }
-    }
-
     SUBCASE("Testing Point<>::as_point()")
     {
       static const size_t dimension        = 3;

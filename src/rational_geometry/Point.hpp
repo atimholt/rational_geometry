@@ -35,6 +35,10 @@ namespace rational_geometry {
 template <typename RatT, std::size_t kDimension = 3>
 class Point
 {
+ protected:
+  // CONSTRUCTORS
+  Point(const Point<RatT, kDimension - 1>& smaller_point, RatT last);
+
  public:
   // INTERNAL STATE
   std::array<RatT, kDimension> values_;
@@ -43,13 +47,16 @@ class Point
   Point();
   Point(const std::initializer_list<RatT>& values);
   Point(const std::array<RatT, kDimension>& values);
-  Point(const Point<RatT, kDimension - 1>& smaller_point, RatT last);
 
   // ACCESSORS
   Point<RatT, kDimension + 1> as_point() const;
   Point<RatT, kDimension + 1> as_vector() const;
 
   Point<RatT, kDimension - 1> as_simpler() const;
+
+  // FRIENDS
+  friend Point<RatT, kDimension - 1>;
+  friend Point<RatT, kDimension + 1>;
 };
 
 // Convenience typedefs
@@ -65,6 +72,8 @@ using Point2D = Point<RatT, 2>;
 //----------------------------
 //   Constructors
 //  --------------
+//     Public
+//    --------
 
 /// Creates a Point with kDimension dimensions, with all values at 0.
 ///
@@ -90,6 +99,9 @@ Point<RatT, kDimension>::Point(const std::array<RatT, kDimension>& values)
     : values_{values}
 {
 }
+
+//     Protected
+//    -----------
 
 /// \brief  Utility constructor for representing a point's equivalent in a
 ///         higher dimension.
