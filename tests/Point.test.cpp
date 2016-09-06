@@ -157,7 +157,7 @@ TEST_CASE("Testing Point.hpp")
     CHECK(6 == something_different);
   }
 
-  SUBCASE("Testing cross(Point<>, Point<>, bool right_handed = true)")
+  SUBCASE("Testing cross(Point<>, Point<>)")
   {
     static const IPoint3D i{i3};
     static const IPoint3D j{j3};
