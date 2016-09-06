@@ -4,6 +4,8 @@
 /// A Point class and its related functions. The class is templatized so that
 /// any rational type may be used for the point coordinates.
 ///
+/// \todo  Make as many functions constexpr as possible.
+///
 /// This code is under the MIT license, please see LICENSE.txt for more
 /// information
 
@@ -282,6 +284,10 @@ auto operator*(RatT_l l_op, const Point<RatT_r, kDimension>& r_op)
 /// \return  a value equivalent to the magnitude of the two vectors multiplied
 ///          together, multiplied by the cosine of the angle between them.
 ///
+/// \todo  Make it usable for any iterable container type of known size.
+///        That is, give it a decltype-defaulted template parameter for return
+///        type, and templatize away Point<>.
+///
 /// \sa  https://en.wikipedia.org/wiki/Dot_product
 ///
 template <typename RatT_l, typename RatT_r, std::size_t kDimension>
@@ -308,6 +314,10 @@ auto dot(const Point<RatT_l, kDimension>& l_op,
 ///          multiplied by the sine of the angle between them. Of the two
 ///          possible directions (when not magnitude 0), the actual value is
 ///          given by the right-hand rule.
+///
+/// \todo  Make it usable for any iterable container type of known size.
+///        That is, give it a decltype-defaulted template parameter for return
+///        type, and templatize away Point<>.
 ///
 /// \sa  https://en.wikipedia.org/wiki/Cross_product
 ///

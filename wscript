@@ -26,8 +26,10 @@ def configure(conf):
         conf.env.CXXFLAGS = ['/nologo', '/EHsc', '/MD']
 
 def build(bld):
-    my_source = ['tests/test.cpp', 'tests/Point.test.cpp']
-    
+    my_source = ['tests/test.cpp'
+            , 'tests/Point.test.cpp'
+            , 'tests/Matrix.test.cpp']
+
     bld.program(
             source   = my_source,
             features = 'cxx cxxprogram test',
