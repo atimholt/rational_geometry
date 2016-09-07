@@ -39,6 +39,21 @@ TEST_CASE("Testing Matrix.hpp")
       CHECK(c.values_.size() == 3);
       CHECK(c.values_[0].size() == 5);
     }
+
+    SUBCASE("Testing Matrix<>::Matrix(initializer_list<array<>>)")
+    {
+      // clang-format off
+      Matrix<int, 2, 3> a{
+          {11, 12},
+          {21, 22},
+          {31, 32}};
+      // clang-format on
+
+      CHECK(a.values_.size() == 2);
+      CHECK(a.values_[0].size() == 3);
+
+      CHECK(a.values_[0][1] == 21);
+    }
   }
 }
 

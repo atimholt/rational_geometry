@@ -58,7 +58,7 @@ class Matrix
 
   // CONSTRUCTORS
   Matrix();
-  Matrix(const std::initializer_list<std::array<RatT, kHeight>>& values);
+  Matrix(std::initializer_list<std::initializer_list<RatT>> values);
 
   // GETTERS
   /// \todo  implement
@@ -87,6 +87,21 @@ Matrix<RatT, kWidth, kHeight>::Matrix()
     for (int row = 0; row < kHeight; ++row) {
       values_[column][row] = (column == row) ? 1 : 0;
     }
+  }
+}
+
+template <typename RatT, size_t kWidth, size_t kHeight>
+Matrix<RatT, kWidth, kHeight>::Matrix(
+    std::initializer_list<std::initializer_list<RatT>> values)
+{
+  auto row_count = 0;
+  for (const auto& row : values) {
+    auto column_count = 0;
+    for (const auto& entry : row) {
+      values_[column_count][row_count] = entry;
+      ++column_count;
+    }
+    ++row_count;
   }
 }
 
