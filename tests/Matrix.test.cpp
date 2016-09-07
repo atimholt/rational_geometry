@@ -55,16 +55,16 @@ TEST_CASE("Testing Matrix.hpp")
       CHECK(a.values_[0][1] == 21);
     }
 
+    // clang-format off
+    Matrix<int, 2> a{
+        {1, 2},
+        {3, 4}};
+    // clang-format on
+
     SUBCASE("Getters")
     {
       SUBCASE("get_row(size_t) const")
       {
-        // clang-format off
-        Matrix<int, 2> a{
-            {1, 2},
-            {3, 4}};
-        // clang-format on
-
         Point<int, 2> row_0{1, 2};
         Point<int, 2> row_1{3, 4};
 
@@ -74,17 +74,42 @@ TEST_CASE("Testing Matrix.hpp")
 
       SUBCASE("get_column(size_t) const")
       {
-        // clang-format off
-        Matrix<int, 2> a{
-            {1, 2},
-            {3, 4}};
-        // clang-format on
-
         Point<int, 2> column_0{1, 3};
         Point<int, 2> column_1{2, 4};
 
         CHECK(a.get_column(0) == column_0);
         CHECK(a.get_column(1) == column_1);
+      }
+    }
+
+    SUBCASE("Setters")
+    {
+      SUBCASE("set_row(Point<>, int)")
+      {
+        Point<int, 2> new_row{5, 6};
+        a.set_row(0, new_row);
+
+        /// \todo:
+        // a.set_row(0, {5, 6});
+
+        CHECK(a.values_[0][0] == 5);
+        CHECK(a.values_[0][1] == 3);
+        CHECK(a.values_[1][0] == 6);
+        CHECK(a.values_[1][1] == 4);
+      }
+
+      SUBCASE("set_column(Point<>, int)")
+      {
+        Point<int, 2> new_column{5, 6};
+        a.set_column(0, new_column);
+
+        /// \todo:
+        // a.set_column(0, {5, 6});
+
+        CHECK(a.values_[0][0] == 5);
+        CHECK(a.values_[0][1] == 6);
+        CHECK(a.values_[1][0] == 2);
+        CHECK(a.values_[1][1] == 4);
       }
     }
   }

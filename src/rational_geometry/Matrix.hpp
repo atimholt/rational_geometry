@@ -10,6 +10,8 @@
 ///
 /// \todo  Implement operators and relevant functions.
 ///
+/// \todo  change code style to put return type on its own line in definitions.
+///
 /// This code is under the MIT license, please see LICENSE.txt for more
 /// information
 
@@ -65,8 +67,8 @@ class Matrix
   Point<RatT, kWidth> get_column(size_t which) const;
 
   // SETTERS
-  Matrix& set_row(const Point<RatT, kHeight>& values);
-  Matrix& set_column(const Point<RatT, kWidth>& values);
+  Matrix& set_row(size_t which, const Point<RatT, kHeight>& values);
+  Matrix& set_column(size_t which, const Point<RatT, kWidth>& values);
 };
 
 // Class Template Definitions
@@ -130,20 +132,24 @@ Point<RatT, kWidth> Matrix<RatT, kWidth, kHeight>::get_column(
 //   Setters
 //  ---------
 
+/// \todo  Implement bounds checking.
+///
 template <typename RatT, size_t kWidth, size_t kHeight>
 Matrix<RatT, kWidth, kHeight>& Matrix<RatT, kWidth, kHeight>::set_row(
-    const Point<RatT, kHeight>& values)
+    size_t which, const Point<RatT, kHeight>& values)
 {
   for (int i = 0; i < kHeight; ++i) {
-    values_[i][which] = values[i];
+    values_[i][which] = values.values_[i];
   }
 
   return *this;
 }
 
+/// \todo  Implement bounds checking.
+///
 template <typename RatT, size_t kWidth, size_t kHeight>
 Matrix<RatT, kWidth, kHeight>& Matrix<RatT, kWidth, kHeight>::set_column(
-    const Point<RatT, kWidth>& values)
+    size_t which, const Point<RatT, kWidth>& values)
 {
   using namespace std;
   copy(cbegin(values.values_), cend(values.values_), begin(values_[which]));
