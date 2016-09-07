@@ -25,6 +25,8 @@
 
 #include <array>
 #include <initializer_list>
+#include <ostream>
+#include <typeinfo>
 
 //----------
 // Includes
@@ -157,8 +159,84 @@ Matrix<RatT, kWidth, kHeight>& Matrix<RatT, kWidth, kHeight>::set_column(
   return *this;
 }
 
-//----------------------------
-// Class Template Definitions
+// Related Operators
+//-------------------
+
+template <typename RatT, size_t kWidth, size_t kHeight>
+bool operator==(const Matrix<RatT, kWidth, kHeight>& l_op,
+    const Matrix<RatT, kWidth, kHeight>& r_op)
+{
+  using namespace std;
+
+  auto l_column = cbegin(l_op.values_);
+  auto r_column = cbegin(r_op.values_);
+
+  for (; l_column != cend(l_op.values_); ++l_column, ++r_column) {
+    if (!equal(cbegin(*l_column), cend(*l_column), cbegin(*r_column))) {
+      return false;
+    }
+  }
+  return true;
+}
+
+template <typename RatT, size_t kWidth, size_t kHeight>
+bool operator!=(const Matrix<RatT, kWidth, kHeight>& l_op,
+    const Matrix<RatT, kWidth, kHeight>& r_op)
+{
+  return !(l_op == r_op);
+}
+
+/// Determine if the left Matrix is lexicographically lesser.
+///
+/// This serves no practical purpose other than use in the stl.
+///
+template <typename RatT, size_t kWidth, size_t kHeight>
+bool operator<(const Matrix<RatT, kWidth, kHeight>& l_op,
+    const Matrix<RatT, kWidth, kHeight>& r_op)
+{
+  using namespace std;
+
+  auto l_column = cbegin(l_op.values_);
+  auto r_column = cbegin(r_op.values_);
+
+  for (; l_column != cend(l_op.values_); ++l_column, ++r_column) {
+    auto l_entry = cbegin(*l_column);
+    auto r_entry = cbegin(*r_column);
+
+    for (; l_entry != cend(*l_column); ++l_entry, ++r_entry) {
+      if (*l_entry < *r_entry) {
+        return true;
+      }
+      else if (*r_entry < *l_entry) {
+        return false;
+      }
+      // Continue to test, this entry is equal.
+    }
+  }
+  return false;
+}
+
+// Related Functions
+//-------------------
+
+template <typename RatT, size_t kWidth, size_t kHeight>
+std::ostream& operator<<(
+    std::ostream& the_stream, const Matrix<RatT, kWidth, kHeight>& the_matrix)
+{
+  the_stream << typeid(the_matrix).name();
+  the_stream << ":\n[\n";
+  for (const auto& column : the_matrix.values_) {
+    for (const auto& entry : column) {
+      the_stream << " " << entry << ", ";
+    }
+    the_stream << "\n";
+  }
+  the_stream << "]";
+  return the_stream;
+}
+
+//-------------------
+// Related Functions
 
 } // namespace rational_geometry
 
