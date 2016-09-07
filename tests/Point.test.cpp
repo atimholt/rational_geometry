@@ -26,9 +26,9 @@ TEST_CASE("Testing Point.hpp")
   const IPoint2D i2{1, 0};
   const IPoint2D j2{0, 1};
 
-  SUBCASE("Testing Point<> class")
+  SUBCASE("Point<> class")
   {
-    SUBCASE("Testing Point<>::Point(std::initializer_list)")
+    SUBCASE("Point<>::Point(std::initializer_list)")
     {
       IPoint3D val_a{1, 2, 3};
       CHECK(val_a.values_.size() == 3);
@@ -38,7 +38,7 @@ TEST_CASE("Testing Point.hpp")
       CHECK(val_b.values_[2] == 0);
     }
 
-    SUBCASE("Testing Point<>::Point(std::array<>)")
+    SUBCASE("Point<>::Point(std::array<>)")
     {
       std::array<int, 3> argument{1, 2, 3};
 
@@ -47,7 +47,7 @@ TEST_CASE("Testing Point.hpp")
       CHECK(val_a.values_.size() == 3);
     }
 
-    SUBCASE("Testing Point<>::as_point()")
+    SUBCASE("Point<>::as_point()")
     {
       static const size_t dimension        = 3;
       static const size_t result_dimension = dimension + 1;
@@ -63,7 +63,7 @@ TEST_CASE("Testing Point.hpp")
       CHECK(expected_value == typeid(val_b).name());
     }
 
-    SUBCASE("Testing Point<>::as_vector()")
+    SUBCASE("Point<>::as_vector()")
     {
       static const size_t dimension        = 3;
       static const size_t result_dimension = dimension + 1;
@@ -79,7 +79,7 @@ TEST_CASE("Testing Point.hpp")
       CHECK(expected_value == typeid(val_b).name());
     }
 
-    SUBCASE("Testing Point<>::as_simpler()")
+    SUBCASE("Point<>::as_simpler()")
     {
       IPoint3D val_a{1, 2, 3};
       IPoint2D expected{1, 2};
@@ -93,7 +93,7 @@ TEST_CASE("Testing Point.hpp")
     }
   }
 
-  SUBCASE("Testing Point<> [comparator operator] Point<>")
+  SUBCASE("Point<> [comparator operator] Point<>")
   {
     IPoint3D all_ones{1, 1, 1};
     IPoint3D another_all_ones{1, 1, 1};
@@ -164,7 +164,7 @@ TEST_CASE("Testing Point.hpp")
     }
   }
 
-  SUBCASE("Testing Point<> + Point<>")
+  SUBCASE("Point<> + Point<>")
   {
     IPoint3D a{origin3};
     IPoint3D b{1, 2, 3};
@@ -188,7 +188,7 @@ TEST_CASE("Testing Point.hpp")
     CHECK(b_d == b + d);
   }
 
-  SUBCASE("Testing Point<> * RatT")
+  SUBCASE("Point<> * RatT")
   {
     IPoint3D a{3, 5, 7};
     static const int factor{2};
@@ -197,7 +197,7 @@ TEST_CASE("Testing Point.hpp")
     CHECK(expected == a * factor);
   }
 
-  SUBCASE("Testing RatT * Point<>")
+  SUBCASE("RatT * Point<>")
   {
     static const int factor{2};
     IPoint3D a{3, 5, 7};
@@ -206,7 +206,7 @@ TEST_CASE("Testing Point.hpp")
     CHECK(expected == factor * a);
   }
 
-  SUBCASE("Testing dot(Point<>, Point<>)")
+  SUBCASE("dot(Point<>, Point<>)")
   {
     IPoint2D i{i2};
     IPoint2D j{j2};
@@ -221,7 +221,7 @@ TEST_CASE("Testing Point.hpp")
     CHECK(6 == something_different);
   }
 
-  SUBCASE("Testing cross(Point<>, Point<>)")
+  SUBCASE("cross(Point<>, Point<>)")
   {
     static const IPoint3D i{i3};
     static const IPoint3D j{j3};
