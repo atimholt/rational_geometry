@@ -17,6 +17,8 @@
 
 #include <array>
 #include <initializer_list>
+#include <ostream>
+#include <typeinfo>
 #include <utility>
 
 //----------
@@ -339,6 +341,19 @@ auto cross(const Point<RatT_l, 3>& l_op, const Point<RatT_r, 3>& r_op)
   ret.values_[2] = l[0] * r[1] - l[1] * r[0];
 
   return ret;
+}
+
+template <typename RatT, size_t kDimension>
+std::ostream& operator<<(
+    std::ostream& the_stream, const Point<RatT, kDimension> the_point)
+{
+  the_stream << typeid(the_point).name();
+  the_stream << ":(";
+  for (const auto& coordinate : the_point.values_) {
+    the_stream << coordinate << ", ";
+  }
+  the_stream << ")";
+  return the_stream;
 }
 
 //-------------------

@@ -11,9 +11,9 @@ namespace rational_geometry {
 
 TEST_CASE("Testing Matrix.hpp")
 {
-  SUBCASE("Testing Matrix<> class")
+  SUBCASE("Matrix<> class")
   {
-    SUBCASE("Testing Matrix<>::Matrix()")
+    SUBCASE("Matrix()")
     {
       Matrix<int> a{};
 
@@ -40,7 +40,7 @@ TEST_CASE("Testing Matrix.hpp")
       CHECK(c.values_[0].size() == 5);
     }
 
-    SUBCASE("Testing Matrix<>::Matrix(initializer_list<array<>>)")
+    SUBCASE("Matrix(initializer_list<array<>>)")
     {
       // clang-format off
       Matrix<int, 2, 3> a{
@@ -53,6 +53,39 @@ TEST_CASE("Testing Matrix.hpp")
       CHECK(a.values_[0].size() == 3);
 
       CHECK(a.values_[0][1] == 21);
+    }
+
+    SUBCASE("Getters")
+    {
+      SUBCASE("get_row(size_t) const")
+      {
+        // clang-format off
+        Matrix<int, 2> a{
+            {1, 2},
+            {3, 4}};
+        // clang-format on
+
+        Point<int, 2> row_0{1, 2};
+        Point<int, 2> row_1{3, 4};
+
+        CHECK(a.get_row(0) == row_0);
+        CHECK(a.get_row(1) == row_1);
+      }
+
+      SUBCASE("get_column(size_t) const")
+      {
+        // clang-format off
+        Matrix<int, 2> a{
+            {1, 2},
+            {3, 4}};
+        // clang-format on
+
+        Point<int, 2> column_0{1, 3};
+        Point<int, 2> column_1{2, 4};
+
+        CHECK(a.get_column(0) == column_0);
+        CHECK(a.get_column(1) == column_1);
+      }
     }
   }
 }

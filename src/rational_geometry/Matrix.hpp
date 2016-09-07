@@ -61,16 +61,12 @@ class Matrix
   Matrix(std::initializer_list<std::initializer_list<RatT>> values);
 
   // GETTERS
-  /// \todo  implement
   Point<RatT, kHeight> get_row(size_t which) const;
-  /// \todo  implement
   Point<RatT, kWidth> get_column(size_t which) const;
 
   // SETTERS
-  /// \todo  implement
-  Matrix& set_row(const Point<RatT, kHeight>& value);
-  /// \todo  implement
-  Matrix& set_column(const Point<RatT, kWidth>& value);
+  Matrix& set_row(const Point<RatT, kHeight>& values);
+  Matrix& set_column(const Point<RatT, kWidth>& values);
 };
 
 // Class Template Definitions
@@ -95,6 +91,7 @@ Matrix<RatT, kWidth, kHeight>::Matrix(
     std::initializer_list<std::initializer_list<RatT>> values)
 {
   auto row_count = 0;
+  // Can't use std::copy, the values are inverted from each-other.
   for (const auto& row : values) {
     auto column_count = 0;
     for (const auto& entry : row) {
@@ -103,6 +100,55 @@ Matrix<RatT, kWidth, kHeight>::Matrix(
     }
     ++row_count;
   }
+}
+
+//   Getters
+//  ---------
+
+template <typename RatT, size_t kWidth, size_t kHeight>
+Point<RatT, kHeight> Matrix<RatT, kWidth, kHeight>::get_row(size_t which) const
+{
+  Point<RatT, kHeight> ret;
+  for (int i = 0; i < kHeight; ++i) {
+    ret.values_[i] = values_[i][which];
+  }
+  return ret;
+}
+
+template <typename RatT, size_t kWidth, size_t kHeight>
+Point<RatT, kWidth> Matrix<RatT, kWidth, kHeight>::get_column(
+    size_t which) const
+{
+  Point<RatT, kWidth> ret;
+
+  using namespace std;
+  copy(cbegin(values_[which]), cend(values_[which]), begin(ret.values_));
+
+  return ret;
+}
+
+//   Setters
+//  ---------
+
+template <typename RatT, size_t kWidth, size_t kHeight>
+Matrix<RatT, kWidth, kHeight>& Matrix<RatT, kWidth, kHeight>::set_row(
+    const Point<RatT, kHeight>& values)
+{
+  for (int i = 0; i < kHeight; ++i) {
+    values_[i][which] = values[i];
+  }
+
+  return *this;
+}
+
+template <typename RatT, size_t kWidth, size_t kHeight>
+Matrix<RatT, kWidth, kHeight>& Matrix<RatT, kWidth, kHeight>::set_column(
+    const Point<RatT, kWidth>& values)
+{
+  using namespace std;
+  copy(cbegin(values.values_), cend(values.values_), begin(values_[which]));
+
+  return *this;
 }
 
 //----------------------------
