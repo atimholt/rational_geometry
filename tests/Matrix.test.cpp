@@ -61,6 +61,10 @@ TEST_CASE("Testing Matrix.hpp")
     IMat2 a{
         {1, 2},
         {3, 4}};
+
+    Matrix<int, 3, 2> rectangular{
+        {1,2,3},
+        {4,5,6}};
     // clang-format on
 
     SUBCASE("Getters")
@@ -72,6 +76,15 @@ TEST_CASE("Testing Matrix.hpp")
 
         CHECK(a.get_row(0) == row_0);
         CHECK(a.get_row(1) == row_1);
+
+        SUBCASE("rectangular")
+        {
+          Point<int, 3> row_0{1, 2, 3};
+          Point<int, 3> row_1{4, 5, 6};
+
+          CHECK(rectangular.get_row(0) == row_0);
+          CHECK(rectangular.get_row(1) == row_1);
+        }
       }
 
       SUBCASE("get_column(size_t) const")
@@ -81,6 +94,17 @@ TEST_CASE("Testing Matrix.hpp")
 
         CHECK(a.get_column(0) == column_0);
         CHECK(a.get_column(1) == column_1);
+
+        SUBCASE("rectangular")
+        {
+          Point<int, 2> column_0{1, 4};
+          Point<int, 2> column_1{2, 5};
+          Point<int, 2> column_2{3, 6};
+
+          CHECK(rectangular.get_column(0) == column_0);
+          CHECK(rectangular.get_column(1) == column_1);
+          CHECK(rectangular.get_column(2) == column_2);
+        }
       }
     }
 
@@ -195,6 +219,28 @@ TEST_CASE("Testing Matrix.hpp")
         CHECK_FALSE(arbitrary < lesser10);
         CHECK_FALSE(arbitrary < lesser11);
       }
+    }
+
+    SUBCASE("Matrix<> * Matrix<>")
+    {
+      // clang-format off
+      Matrix<int, 3, 2> lop_mat{
+          {1, 2, 3},
+          {4, 5, 6}};
+
+      Matrix<int, 2, 3> rop_mat{
+          { 7,  8},
+          { 9, 10},
+          {11, 12}};
+
+      Matrix<int, 2, 2> expected{
+          { 58,  64},
+          {139, 154}};
+      // clang-format on
+
+      auto answer = lop_mat * rop_mat;
+
+      CHECK(expected == answer);
     }
   }
 }

@@ -65,8 +65,8 @@ class Matrix
   Matrix(std::initializer_list<std::initializer_list<RatT>> values);
 
   // GETTERS
-  Point<RatT, kHeight> get_row(size_t which) const;
-  Point<RatT, kWidth> get_column(size_t which) const;
+  Point<RatT, kWidth> get_row(size_t which) const;
+  Point<RatT, kHeight> get_column(size_t which) const;
 
   // SETTERS
   Matrix& set_row(size_t which, const Point<RatT, kHeight>& values);
@@ -110,20 +110,20 @@ Matrix<RatT, kWidth, kHeight>::Matrix(
 //  ---------
 
 template <typename RatT, size_t kWidth, size_t kHeight>
-Point<RatT, kHeight> Matrix<RatT, kWidth, kHeight>::get_row(size_t which) const
+Point<RatT, kWidth> Matrix<RatT, kWidth, kHeight>::get_row(size_t which) const
 {
-  Point<RatT, kHeight> ret;
-  for (int i = 0; i < kHeight; ++i) {
+  Point<RatT, kWidth> ret;
+  for (int i = 0; i < kWidth; ++i) {
     ret.values_[i] = values_[i][which];
   }
   return ret;
 }
 
 template <typename RatT, size_t kWidth, size_t kHeight>
-Point<RatT, kWidth> Matrix<RatT, kWidth, kHeight>::get_column(
+Point<RatT, kHeight> Matrix<RatT, kWidth, kHeight>::get_column(
     size_t which) const
 {
-  Point<RatT, kWidth> ret;
+  Point<RatT, kHeight> ret;
 
   using namespace std;
   copy(cbegin(values_[which]), cend(values_[which]), begin(ret.values_));
@@ -161,7 +161,11 @@ Matrix<RatT, kWidth, kHeight>& Matrix<RatT, kWidth, kHeight>::set_column(
 
 // Related Operators
 //-------------------
+//   Comparison Operators
+//  ----------------------
 
+/// \todo  2 type template parameters
+///
 template <typename RatT, size_t kWidth, size_t kHeight>
 bool operator==(const Matrix<RatT, kWidth, kHeight>& l_op,
     const Matrix<RatT, kWidth, kHeight>& r_op)
@@ -179,6 +183,8 @@ bool operator==(const Matrix<RatT, kWidth, kHeight>& l_op,
   return true;
 }
 
+/// \todo  2 type template parameters
+///
 template <typename RatT, size_t kWidth, size_t kHeight>
 bool operator!=(const Matrix<RatT, kWidth, kHeight>& l_op,
     const Matrix<RatT, kWidth, kHeight>& r_op)
@@ -189,6 +195,8 @@ bool operator!=(const Matrix<RatT, kWidth, kHeight>& l_op,
 /// Determine if the left Matrix is lexicographically lesser.
 ///
 /// This serves no practical purpose other than use in the stl.
+///
+/// \todo  2 type template parameters
 ///
 template <typename RatT, size_t kWidth, size_t kHeight>
 bool operator<(const Matrix<RatT, kWidth, kHeight>& l_op,
@@ -214,6 +222,38 @@ bool operator<(const Matrix<RatT, kWidth, kHeight>& l_op,
     }
   }
   return false;
+}
+
+//   Other Operators
+//  -----------------
+
+template <typename RatT_l,
+    typename RatT_r,
+    size_t kl_Height,
+    size_t kCommon_Dimension,
+    size_t kr_Width>
+auto operator*(const Matrix<RatT_l, kCommon_Dimension, kl_Height>& l_op,
+    const Matrix<RatT_r, kr_Width, kCommon_Dimension>& r_op)
+{
+  using std::declval;
+  // clang-format off
+  typedef decltype(
+      dot(
+        declval<Point<RatT_l, kCommon_Dimension>>(),
+        declval<Point<RatT_r, kCommon_Dimension>>()
+      )) RetBaseT;
+  // clang-format on
+  Matrix<RetBaseT, kr_Width, kl_Height> ret;
+
+  // copying the values is slower than ideal, but we're just trying to get a
+  // working algorithm to begin with.
+  for (int i = 0; i < kr_Width; ++i) {
+    for (int j = 0; j < kl_Height; ++j) {
+      ret.values_[i][j] = dot(l_op.get_row(j), r_op.get_column(i));
+    }
+  }
+
+  return ret;
 }
 
 // Related Functions
