@@ -12,6 +12,8 @@
 ///
 /// \todo  change code style to put return type on its own line in definitions.
 ///
+/// \todo  Reverse order of row/column values.
+///
 /// This code is under the MIT license, please see LICENSE.txt for more
 /// information
 
