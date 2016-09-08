@@ -241,6 +241,21 @@ TEST_CASE("Testing Matrix.hpp")
       auto answer = lop_mat * rop_mat;
 
       CHECK(expected == answer);
+
+      SUBCASE("Different member types")
+      {
+        Matrix<char, 2> char_rot{
+            {0,1},
+            {1,0}};
+
+        auto result = char_rot * a;
+
+        std::string expected_type{typeid(Matrix<int, 2>).name()};
+        CHECK(expected_type == typeid(result).name());
+
+        expected_type = typeid(Matrix<char, 2>).name();
+        CHECK(expected_type != typeid(result).name());
+      }
     }
   }
 }
