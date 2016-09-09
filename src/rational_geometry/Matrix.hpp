@@ -12,8 +12,6 @@
 ///
 /// \todo  change code style to put return type on its own line in definitions.
 ///
-/// \todo  Reverse order of row/column values.
-///
 /// This code is under the MIT license, please see LICENSE.txt for more
 /// information
 
@@ -53,14 +51,14 @@ namespace rational_geometry {
 /// \todo  remove methods returning or taking Point<> once dot() and cross()
 ///        are more fully templatized.
 ///
-template <typename RatT, size_t kWidth = 4, size_t kHeight = kWidth>
+template <typename RatT, size_t kHeight = 4, size_t kWidth = kHeight>
 class Matrix
 {
  public:
   // INTERNAL STATE
 
-  /// Conceptually, this is an array of <i>columns</i>.
-  std::array<std::array<RatT, kHeight>, kWidth> values_;
+  /// Conceptually, this is an array of <i>rows</i>.
+  std::array<std::array<RatT, kWidth>, kHeight> values_;
 
   // CONSTRUCTORS
   Matrix();
@@ -71,8 +69,8 @@ class Matrix
   Point<RatT, kHeight> get_column(size_t which) const;
 
   // SETTERS
-  Matrix& set_row(size_t which, const Point<RatT, kHeight>& values);
-  Matrix& set_column(size_t which, const Point<RatT, kWidth>& values);
+  Matrix& set_row(size_t which, const Point<RatT, kWidth>& values);
+  Matrix& set_column(size_t which, const Point<RatT, kHeight>& values);
 };
 
 // Class Template Definitions
@@ -82,54 +80,51 @@ class Matrix
 
 /// Initialize a matrix to an identity matrix.
 ///
-template <typename RatT, size_t kWidth, size_t kHeight>
-Matrix<RatT, kWidth, kHeight>::Matrix()
+template <typename RatT, size_t kHeight, size_t kWidth>
+Matrix<RatT, kHeight, kWidth>::Matrix()
 {
-  for (int column = 0; column < kWidth; ++column) {
-    for (int row = 0; row < kHeight; ++row) {
-      values_[column][row] = (column == row) ? 1 : 0;
+  for (int row = 0; row < kHeight; ++row) {
+    for (int column = 0; column < kWidth; ++column) {
+      values_[row][column] = (row == column) ? 1 : 0;
     }
   }
 }
 
-template <typename RatT, size_t kWidth, size_t kHeight>
-Matrix<RatT, kWidth, kHeight>::Matrix(
+template <typename RatT, size_t kHeight, size_t kWidth>
+Matrix<RatT, kHeight, kWidth>::Matrix(
     std::initializer_list<std::initializer_list<RatT>> values)
 {
-  auto row_count = 0;
-  // Can't use std::copy, the values are inverted from each-other.
-  for (const auto& row : values) {
-    auto column_count = 0;
-    for (const auto& entry : row) {
-      values_[column_count][row_count] = entry;
-      ++column_count;
-    }
-    ++row_count;
+  using namespace std;
+
+  auto in_row = cbegin(values);
+  for (auto& row : values_) {
+    copy(cbegin(*in_row), cend(*in_row), begin(row));
+    ++in_row;
   }
 }
 
 //   Getters
 //  ---------
 
-template <typename RatT, size_t kWidth, size_t kHeight>
-Point<RatT, kWidth> Matrix<RatT, kWidth, kHeight>::get_row(size_t which) const
+template <typename RatT, size_t kHeight, size_t kWidth>
+Point<RatT, kWidth> Matrix<RatT, kHeight, kWidth>::get_row(size_t which) const
 {
   Point<RatT, kWidth> ret;
-  for (int i = 0; i < kWidth; ++i) {
-    ret.values_[i] = values_[i][which];
-  }
-  return ret;
-}
-
-template <typename RatT, size_t kWidth, size_t kHeight>
-Point<RatT, kHeight> Matrix<RatT, kWidth, kHeight>::get_column(
-    size_t which) const
-{
-  Point<RatT, kHeight> ret;
 
   using namespace std;
   copy(cbegin(values_[which]), cend(values_[which]), begin(ret.values_));
 
+  return ret;
+}
+
+template <typename RatT, size_t kHeight, size_t kWidth>
+Point<RatT, kHeight> Matrix<RatT, kHeight, kWidth>::get_column(
+    size_t which) const
+{
+  Point<RatT, kHeight> ret;
+  for (int i = 0; i < kHeight; ++i) {
+    ret.values_[i] = values_[i][which];
+  }
   return ret;
 }
 
@@ -138,8 +133,20 @@ Point<RatT, kHeight> Matrix<RatT, kWidth, kHeight>::get_column(
 
 /// \todo  Implement bounds checking.
 ///
-template <typename RatT, size_t kWidth, size_t kHeight>
-Matrix<RatT, kWidth, kHeight>& Matrix<RatT, kWidth, kHeight>::set_row(
+template <typename RatT, size_t kHeight, size_t kWidth>
+Matrix<RatT, kHeight, kWidth>& Matrix<RatT, kHeight, kWidth>::set_row(
+    size_t which, const Point<RatT, kWidth>& values)
+{
+  using namespace std;
+  copy(cbegin(values.values_), cend(values.values_), begin(values_[which]));
+
+  return *this;
+}
+
+/// \todo  Implement bounds checking.
+///
+template <typename RatT, size_t kHeight, size_t kWidth>
+Matrix<RatT, kHeight, kWidth>& Matrix<RatT, kHeight, kWidth>::set_column(
     size_t which, const Point<RatT, kHeight>& values)
 {
   for (int i = 0; i < kHeight; ++i) {
@@ -149,43 +156,31 @@ Matrix<RatT, kWidth, kHeight>& Matrix<RatT, kWidth, kHeight>::set_row(
   return *this;
 }
 
-/// \todo  Implement bounds checking.
-///
-template <typename RatT, size_t kWidth, size_t kHeight>
-Matrix<RatT, kWidth, kHeight>& Matrix<RatT, kWidth, kHeight>::set_column(
-    size_t which, const Point<RatT, kWidth>& values)
-{
-  using namespace std;
-  copy(cbegin(values.values_), cend(values.values_), begin(values_[which]));
-
-  return *this;
-}
-
 // Related Operators
 //-------------------
 //   Comparison Operators
 //  ----------------------
 
-template <typename RatT_l, typename RatT_r, size_t kWidth, size_t kHeight>
-bool operator==(const Matrix<RatT_l, kWidth, kHeight>& l_op,
-    const Matrix<RatT_r, kWidth, kHeight>& r_op)
+template <typename RatT_l, typename RatT_r, size_t kHeight, size_t kWidth>
+bool operator==(const Matrix<RatT_l, kHeight, kWidth>& l_op,
+    const Matrix<RatT_r, kHeight, kWidth>& r_op)
 {
   using namespace std;
 
-  auto l_column = cbegin(l_op.values_);
-  auto r_column = cbegin(r_op.values_);
+  auto l_row = cbegin(l_op.values_);
+  auto r_row = cbegin(r_op.values_);
 
-  for (; l_column != cend(l_op.values_); ++l_column, ++r_column) {
-    if (!equal(cbegin(*l_column), cend(*l_column), cbegin(*r_column))) {
+  for (; l_row != cend(l_op.values_); ++l_row, ++r_row) {
+    if (!equal(cbegin(*l_row), cend(*l_row), cbegin(*r_row))) {
       return false;
     }
   }
   return true;
 }
 
-template <typename RatT_l, typename RatT_r, size_t kWidth, size_t kHeight>
-bool operator!=(const Matrix<RatT_l, kWidth, kHeight>& l_op,
-    const Matrix<RatT_r, kWidth, kHeight>& r_op)
+template <typename RatT_l, typename RatT_r, size_t kHeight, size_t kWidth>
+bool operator!=(const Matrix<RatT_l, kHeight, kWidth>& l_op,
+    const Matrix<RatT_r, kHeight, kWidth>& r_op)
 {
   return !(l_op == r_op);
 }
@@ -194,20 +189,20 @@ bool operator!=(const Matrix<RatT_l, kWidth, kHeight>& l_op,
 ///
 /// This serves no practical purpose other than use in the stl.
 ///
-template <typename RatT_l, typename RatT_r, size_t kWidth, size_t kHeight>
-bool operator<(const Matrix<RatT_l, kWidth, kHeight>& l_op,
-    const Matrix<RatT_r, kWidth, kHeight>& r_op)
+template <typename RatT_l, typename RatT_r, size_t kHeight, size_t kWidth>
+bool operator<(const Matrix<RatT_l, kHeight, kWidth>& l_op,
+    const Matrix<RatT_r, kHeight, kWidth>& r_op)
 {
   using namespace std;
 
-  auto l_column = cbegin(l_op.values_);
-  auto r_column = cbegin(r_op.values_);
+  auto l_row = cbegin(l_op.values_);
+  auto r_row = cbegin(r_op.values_);
 
-  for (; l_column != cend(l_op.values_); ++l_column, ++r_column) {
-    auto l_entry = cbegin(*l_column);
-    auto r_entry = cbegin(*r_column);
+  for (; l_row != cend(l_op.values_); ++l_row, ++r_row) {
+    auto l_entry = cbegin(*l_row);
+    auto r_entry = cbegin(*r_row);
 
-    for (; l_entry != cend(*l_column); ++l_entry, ++r_entry) {
+    for (; l_entry != cend(*l_row); ++l_entry, ++r_entry) {
       if (*l_entry < *r_entry) {
         return true;
       }
@@ -228,8 +223,8 @@ template <typename RatT_l,
     size_t kl_Height,
     size_t kCommon_Dimension,
     size_t kr_Width>
-auto operator*(const Matrix<RatT_l, kCommon_Dimension, kl_Height>& l_op,
-    const Matrix<RatT_r, kr_Width, kCommon_Dimension>& r_op)
+auto operator*(const Matrix<RatT_l, kl_Height, kCommon_Dimension>& l_op,
+    const Matrix<RatT_r, kCommon_Dimension, kr_Width>& r_op)
 {
   using std::declval;
   // clang-format off
@@ -239,13 +234,13 @@ auto operator*(const Matrix<RatT_l, kCommon_Dimension, kl_Height>& l_op,
         declval<Point<RatT_r, kCommon_Dimension>>()
       )) RetBaseT;
   // clang-format on
-  Matrix<RetBaseT, kr_Width, kl_Height> ret;
+  Matrix<RetBaseT, kl_Height, kr_Width> ret;
 
   // copying the values is slower than ideal, but we're just trying to get a
   // working algorithm to begin with.
-  for (int i = 0; i < kr_Width; ++i) {
-    for (int j = 0; j < kl_Height; ++j) {
-      ret.values_[i][j] = dot(l_op.get_row(j), r_op.get_column(i));
+  for (int i = 0; i < kl_Height; ++i) {
+    for (int j = 0; j < kr_Width; ++j) {
+      ret.values_[i][j] = dot(l_op.get_row(i), r_op.get_column(j));
     }
   }
 
@@ -255,14 +250,14 @@ auto operator*(const Matrix<RatT_l, kCommon_Dimension, kl_Height>& l_op,
 // Related Functions
 //-------------------
 
-template <typename RatT, size_t kWidth, size_t kHeight>
+template <typename RatT, size_t kHeight, size_t kWidth>
 std::ostream& operator<<(
-    std::ostream& the_stream, const Matrix<RatT, kWidth, kHeight>& the_matrix)
+    std::ostream& the_stream, const Matrix<RatT, kHeight, kWidth>& the_matrix)
 {
   the_stream << typeid(the_matrix).name();
   the_stream << ":\n[\n";
-  for (const auto& column : the_matrix.values_) {
-    for (const auto& entry : column) {
+  for (const auto& row : the_matrix.values_) {
+    for (const auto& entry : row) {
       the_stream << " " << entry << ", ";
     }
     the_stream << "\n";

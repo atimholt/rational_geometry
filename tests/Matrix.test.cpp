@@ -15,46 +15,49 @@ TEST_CASE("Testing Matrix.hpp")
 
   SUBCASE("Matrix<> class")
   {
-    SUBCASE("Matrix()")
+    SUBCASE("Constructors")
     {
-      Matrix<int> a{};
+      SUBCASE("Matrix()")
+      {
+        Matrix<int> a{};
 
-      REQUIRE(a.values_.size() == 4);
-      REQUIRE(a.values_[0].size() == 4);
+        REQUIRE(a.values_.size() == 4);
+        REQUIRE(a.values_[0].size() == 4);
 
-      for (int i = 0; i < 4; ++i) {
-        for (int j = 0; j < 4; ++j) {
-          if (i == j) {
-            CHECK(a.values_[i][j] == 1);
-          }
-          else {
-            CHECK(a.values_[i][j] == 0);
+        for (int i = 0; i < 4; ++i) {
+          for (int j = 0; j < 4; ++j) {
+            if (i == j) {
+              CHECK(a.values_[i][j] == 1);
+            }
+            else {
+              CHECK(a.values_[i][j] == 0);
+            }
           }
         }
+
+        Matrix<int, 3> b{};
+        CHECK(b.values_.size() == 3);
+        CHECK(b.values_[0].size() == 3);
+
+        Matrix<int, 3, 5> c{};
+        CHECK(c.values_.size() == 3);
+        CHECK(c.values_[0].size() == 5);
       }
 
-      Matrix<int, 3> b{};
-      CHECK(b.values_.size() == 3);
-      CHECK(b.values_[0].size() == 3);
+      SUBCASE("Matrix(initializer_list<array<>>)")
+      {
+        // clang-format off
+        Matrix<int, 3, 2> a{
+            {11, 12},
+            {21, 22},
+            {31, 32}};
+        // clang-format on
 
-      Matrix<int, 3, 5> c{};
-      CHECK(c.values_.size() == 3);
-      CHECK(c.values_[0].size() == 5);
-    }
+        CHECK(a.values_.size() == 3);
+        CHECK(a.values_[0].size() == 2);
 
-    SUBCASE("Matrix(initializer_list<array<>>)")
-    {
-      // clang-format off
-      Matrix<int, 2, 3> a{
-          {11, 12},
-          {21, 22},
-          {31, 32}};
-      // clang-format on
-
-      CHECK(a.values_.size() == 2);
-      CHECK(a.values_[0].size() == 3);
-
-      CHECK(a.values_[0][1] == 21);
+        CHECK(a.values_[0][1] == 12);
+      }
     }
 
     // clang-format off
@@ -62,9 +65,14 @@ TEST_CASE("Testing Matrix.hpp")
         {1, 2},
         {3, 4}};
 
-    Matrix<int, 3, 2> rectangular{
+    Matrix<int, 2, 3> rectangular{
         {1,2,3},
         {4,5,6}};
+
+    Matrix<int, 3, 2> vert_rectangular{
+        {1,4},
+        {2,5},
+        {3,6}};
     // clang-format on
 
     SUBCASE("Getters")
@@ -119,9 +127,17 @@ TEST_CASE("Testing Matrix.hpp")
         // a.set_row(0, {5, 6});
 
         CHECK(a.values_[0][0] == 5);
-        CHECK(a.values_[0][1] == 3);
-        CHECK(a.values_[1][0] == 6);
+        CHECK(a.values_[0][1] == 6);
+        CHECK(a.values_[1][0] == 3);
         CHECK(a.values_[1][1] == 4);
+
+        SUBCASE("rectangular")
+        {
+          Point<int, 3> new_row{7, 8, 9};
+          rectangular.set_row(1, new_row);
+
+          CHECK(rectangular.values_[1][2] == 9);
+        }
       }
 
       SUBCASE("set_column(Point<>, int)")
@@ -133,9 +149,17 @@ TEST_CASE("Testing Matrix.hpp")
         // a.set_column(0, {5, 6});
 
         CHECK(a.values_[0][0] == 5);
-        CHECK(a.values_[0][1] == 6);
-        CHECK(a.values_[1][0] == 2);
+        CHECK(a.values_[0][1] == 2);
+        CHECK(a.values_[1][0] == 6);
         CHECK(a.values_[1][1] == 4);
+
+        SUBCASE("rectangular")
+        {
+          Point<int, 3> new_column{7, 8, 9};
+          vert_rectangular.set_column(1, new_column);
+
+          CHECK(vert_rectangular.values_[2][1] == 9);
+        }
       }
     }
   }
@@ -212,12 +236,12 @@ TEST_CASE("Testing Matrix.hpp")
           {4, 4}};
 
       IMat2 lesser01 {
-          {4, 4},
-          {3, 4}};
-
-      IMat2 lesser10 {
           {4, 3},
           {4, 4}};
+
+      IMat2 lesser10 {
+          {4, 4},
+          {3, 4}};
 
       IMat2 lesser11 {
           {4, 4},
@@ -260,11 +284,11 @@ TEST_CASE("Testing Matrix.hpp")
     SUBCASE("Matrix<> * Matrix<>")
     {
       // clang-format off
-      Matrix<int, 3, 2> lop_mat{
+      Matrix<int, 2, 3> lop_mat{
           {1, 2, 3},
           {4, 5, 6}};
 
-      Matrix<int, 2, 3> rop_mat{
+      Matrix<int, 3, 2> rop_mat{
           { 7,  8},
           { 9, 10},
           {11, 12}};
