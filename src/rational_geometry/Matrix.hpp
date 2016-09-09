@@ -8,7 +8,7 @@
 ///
 /// \todo  Make as many functions constexpr as possible.
 ///
-/// \todo  Implement operators and relevant functions.
+/// \todo  Implement relevant functions.
 ///
 /// \todo  change code style to put return type on its own line in definitions.
 ///
@@ -166,11 +166,9 @@ Matrix<RatT, kWidth, kHeight>& Matrix<RatT, kWidth, kHeight>::set_column(
 //   Comparison Operators
 //  ----------------------
 
-/// \todo  2 type template parameters
-///
-template <typename RatT, size_t kWidth, size_t kHeight>
-bool operator==(const Matrix<RatT, kWidth, kHeight>& l_op,
-    const Matrix<RatT, kWidth, kHeight>& r_op)
+template <typename RatT_l, typename RatT_r, size_t kWidth, size_t kHeight>
+bool operator==(const Matrix<RatT_l, kWidth, kHeight>& l_op,
+    const Matrix<RatT_r, kWidth, kHeight>& r_op)
 {
   using namespace std;
 
@@ -185,11 +183,9 @@ bool operator==(const Matrix<RatT, kWidth, kHeight>& l_op,
   return true;
 }
 
-/// \todo  2 type template parameters
-///
-template <typename RatT, size_t kWidth, size_t kHeight>
-bool operator!=(const Matrix<RatT, kWidth, kHeight>& l_op,
-    const Matrix<RatT, kWidth, kHeight>& r_op)
+template <typename RatT_l, typename RatT_r, size_t kWidth, size_t kHeight>
+bool operator!=(const Matrix<RatT_l, kWidth, kHeight>& l_op,
+    const Matrix<RatT_r, kWidth, kHeight>& r_op)
 {
   return !(l_op == r_op);
 }
@@ -198,11 +194,9 @@ bool operator!=(const Matrix<RatT, kWidth, kHeight>& l_op,
 ///
 /// This serves no practical purpose other than use in the stl.
 ///
-/// \todo  2 type template parameters
-///
-template <typename RatT, size_t kWidth, size_t kHeight>
-bool operator<(const Matrix<RatT, kWidth, kHeight>& l_op,
-    const Matrix<RatT, kWidth, kHeight>& r_op)
+template <typename RatT_l, typename RatT_r, size_t kWidth, size_t kHeight>
+bool operator<(const Matrix<RatT_l, kWidth, kHeight>& l_op,
+    const Matrix<RatT_r, kWidth, kHeight>& r_op)
 {
   using namespace std;
 

@@ -164,6 +164,18 @@ TEST_CASE("Testing Matrix.hpp")
       {
         CHECK_FALSE(a == not_a);
       }
+
+      SUBCASE("Different member types")
+      {
+        Matrix<char, 2> a_char{{1, 2}, {3, 4}};
+
+        CHECK(a == a_char);
+
+        SUBCASE("Logical inverse")
+        {
+          CHECK_FALSE(not_a == a_char);
+        }
+      }
     }
 
     SUBCASE("Matrix<> != Matrix<>")
@@ -173,6 +185,18 @@ TEST_CASE("Testing Matrix.hpp")
       SUBCASE("Logical inverse")
       {
         CHECK_FALSE(a != another_a);
+      }
+
+      SUBCASE("Different member types")
+      {
+        Matrix<char, 2> a_char{{1, 2}, {3, 4}};
+
+        CHECK(not_a != a_char);
+
+        SUBCASE("Logical inverse")
+        {
+          CHECK_FALSE(a != a_char);
+        }
       }
     }
 
@@ -219,6 +243,18 @@ TEST_CASE("Testing Matrix.hpp")
         CHECK_FALSE(arbitrary < lesser10);
         CHECK_FALSE(arbitrary < lesser11);
       }
+
+      SUBCASE("Different member types")
+      {
+        Matrix<char, 2> arbitrary_char{{4, 4}, {4, 4}};
+
+        CHECK(lesser00 < arbitrary_char);
+
+        SUBCASE("Logical inverse")
+        {
+          CHECK_FALSE(arbitrary_char < lesser00);
+        }
+      }
     }
 
     SUBCASE("Matrix<> * Matrix<>")
@@ -244,9 +280,11 @@ TEST_CASE("Testing Matrix.hpp")
 
       SUBCASE("Different member types")
       {
+        // clang-format off
         Matrix<char, 2> char_rot{
             {0,1},
             {1,0}};
+        // clang-format on
 
         auto result = char_rot * a;
 
