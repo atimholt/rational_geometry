@@ -22,74 +22,132 @@ TEST_CASE("Testing Point.hpp")
   const IPoint3D k3{0, 0, 1};
 
   const IPoint2D origin2{0, 0};
+  const IPoint2D arb_vals{1, 7};
 
   const IPoint2D i2{1, 0};
   const IPoint2D j2{0, 1};
 
   SUBCASE("Point<> class")
   {
-    SUBCASE("Point<>::Point(std::initializer_list)")
+    SUBCASE("constructors")
     {
-      IPoint3D val_a{1, 2, 3};
-      CHECK(val_a.values_.size() == 3);
+      SUBCASE("Point(std::initializer_list)")
+      {
+        IPoint3D val_a{1, 2, 3};
+        CHECK(val_a.values_.size() == 3);
 
-      IPoint3D val_b{2, 5};
-      CHECK(val_b.values_[1] == 5);
-      CHECK(val_b.values_[2] == 0);
+        IPoint3D val_b{2, 5};
+        CHECK(val_b.values_[1] == 5);
+        CHECK(val_b.values_[2] == 0);
+      }
+
+      SUBCASE("Point(std::array<>)")
+      {
+        std::array<int, 3> argument{1, 2, 3};
+
+        IPoint3D val_a{argument};
+
+        CHECK(val_a.values_.size() == 3);
+      }
     }
 
-    SUBCASE("Point<>::Point(std::array<>)")
+    SUBCASE("accessors")
     {
-      std::array<int, 3> argument{1, 2, 3};
+      SUBCASE("as_point()")
+      {
+        static const size_t dimension        = 3;
+        static const size_t result_dimension = dimension + 1;
 
-      IPoint3D val_a{argument};
+        Point<int, dimension> val_a{1, 2, 3};
 
-      CHECK(val_a.values_.size() == 3);
-    }
+        auto val_b = val_a.as_point();
 
-    SUBCASE("Point<>::as_point()")
-    {
-      static const size_t dimension        = 3;
-      static const size_t result_dimension = dimension + 1;
+        CHECK(val_b.values_.size() == result_dimension);
+        CHECK(val_b.values_[result_dimension - 1] == 1);
 
-      Point<int, dimension> val_a{1, 2, 3};
+        std::string expected_value{typeid(Point<int, 4>).name()};
+        CHECK(expected_value == typeid(val_b).name());
+      }
 
-      auto val_b = val_a.as_point();
+      SUBCASE("as_vector()")
+      {
+        static const size_t dimension        = 3;
+        static const size_t result_dimension = dimension + 1;
 
-      CHECK(val_b.values_.size() == result_dimension);
-      CHECK(val_b.values_[result_dimension - 1] == 1);
+        Point<int, dimension> val_a{1, 2, 3};
 
-      std::string expected_value{typeid(Point<int, 4>).name()};
-      CHECK(expected_value == typeid(val_b).name());
-    }
+        auto val_b = val_a.as_vector();
 
-    SUBCASE("Point<>::as_vector()")
-    {
-      static const size_t dimension        = 3;
-      static const size_t result_dimension = dimension + 1;
+        CHECK(val_b.values_.size() == result_dimension);
+        CHECK(val_b.values_[result_dimension - 1] == 0);
 
-      Point<int, dimension> val_a{1, 2, 3};
+        std::string expected_value{typeid(Point<int, 4>).name()};
+        CHECK(expected_value == typeid(val_b).name());
+      }
 
-      auto val_b = val_a.as_vector();
+      SUBCASE("as_simpler()")
+      {
+        IPoint3D val_a{1, 2, 3};
+        IPoint2D expected{1, 2};
 
-      CHECK(val_b.values_.size() == result_dimension);
-      CHECK(val_b.values_[result_dimension - 1] == 0);
+        CHECK(expected == val_a.as_simpler());
 
-      std::string expected_value{typeid(Point<int, 4>).name()};
-      CHECK(expected_value == typeid(val_b).name());
-    }
+        // They can't even == compare if they're not the same type, but who
+        // <i>knows</i> what the future could bring?
+        std::string expected_type{typeid(Point<int, 2>).name()};
+        CHECK(expected_type == typeid(expected).name());
+      }
 
-    SUBCASE("Point<>::as_simpler()")
-    {
-      IPoint3D val_a{1, 2, 3};
-      IPoint2D expected{1, 2};
 
-      CHECK(expected == val_a.as_simpler());
+      auto a = origin2;
+      const IPoint2D expected{1, 7};
 
-      // They can't even == compare if they're not the same type, but who
-      // <i>knows</i> what the future could bring?
-      std::string expected_type{typeid(Point<int, 2>).name()};
-      CHECK(expected_type == typeid(expected).name());
+      SUBCASE("Point[size_t]")
+      {
+        a[0] = 1;
+        a[1] = 7;
+
+        CHECK(expected == a);
+      }
+
+      SUBCASE("at(size_t)")
+      {
+        a.at(0) = 1;
+        a.at(1) = 7;
+
+        CHECK(expected == a);
+
+        CHECK_THROWS_AS(a.at(2), std::out_of_range);
+      }
+
+
+      SUBCASE("get an iterator")
+      {
+        using namespace std;
+
+        SUBCASE("begin()")
+        {
+          REQUIRE(a == origin2);
+
+          auto it = begin(a);
+          *(it++) = 1;
+          *it = 7;
+
+          CHECK(expected == a);
+        }
+
+        SUBCASE("end()")
+        {
+          REQUIRE(a == origin2);
+
+          auto it = end(a);
+          --it;
+          *(it--) = 7;
+          *it = 1;
+
+          CHECK(expected == a);
+        }
+      }
     }
   }
 

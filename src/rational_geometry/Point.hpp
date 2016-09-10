@@ -36,6 +36,8 @@ namespace rational_geometry {
 /// its full accuracy. One suggestion might be to throw an exception on a
 /// inaccurate operation from your RatT type.
 ///
+/// \todo  Get cbegin() & cend() to work
+///
 template <typename RatT, std::size_t kDimension = 3>
 class Point
 {
@@ -55,8 +57,13 @@ class Point
   // ACCESSORS
   Point<RatT, kDimension + 1> as_point() const;
   Point<RatT, kDimension + 1> as_vector() const;
-
   Point<RatT, kDimension - 1> as_simpler() const;
+
+  RatT& operator[](size_t index);
+  RatT& at(size_t index);
+
+  typename std::array<RatT, kDimension>::iterator begin();
+  typename std::array<RatT, kDimension>::iterator end();
 
   // FRIENDS
   friend Point<RatT, kDimension - 1>;
@@ -93,9 +100,9 @@ Point<RatT, kDimension>::Point(const std::initializer_list<RatT>& values)
     : values_{} // 0 initialize
 {
   using namespace std;
-  auto start = begin(values);
+  auto start = std::begin(values);
   auto stop  = start + min(values.size(), values_.size());
-  copy(start, stop, begin(values_));
+  copy(start, stop, std::begin(values_));
 }
 
 template <typename RatT, size_t kDimension>
@@ -114,11 +121,9 @@ template <typename RatT, size_t kDimension>
 Point<RatT, kDimension>::Point(
     const Point<RatT, kDimension - 1>& smaller_point, RatT last)
 {
-  using namespace std;
-
-  copy(
-      begin(smaller_point.values_), end(smaller_point.values_), begin(values_));
-  *rbegin(values_) = last;
+  std::copy(std::begin(smaller_point.values_), std::end(smaller_point.values_),
+      std::begin(values_));
+  *std::rbegin(values_) = last;
 }
 
 //   Accessors
@@ -149,7 +154,6 @@ Point<RatT, kDimension + 1> Point<RatT, kDimension>::as_vector() const
   return {*this, 0};
 }
 
-
 /// Converts a higher-dimensional point back to its real value.
 ///
 /// This is meant to convert back to the real type in use from a value
@@ -163,9 +167,35 @@ Point<RatT, kDimension - 1> Point<RatT, kDimension>::as_simpler() const
   Point<RatT, kDimension - 1> ret;
 
   using namespace std;
-  copy(cbegin(values_), cend(values_) - 1, begin(ret.values_));
+  copy(std::cbegin(values_), std::cend(values_) - 1, std::begin(ret.values_));
 
   return ret;
+}
+
+
+template <typename RatT, size_t kDimension>
+RatT& Point<RatT, kDimension>::operator[](size_t index)
+{
+  return values_[index];
+}
+
+template <typename RatT, size_t kDimension>
+RatT& Point<RatT, kDimension>::at(size_t index)
+{
+  return values_.at(index);
+}
+
+
+template <typename RatT, size_t kDimension>
+typename std::array<RatT, kDimension>::iterator Point<RatT, kDimension>::begin()
+{
+  return values_.begin();
+}
+
+template <typename RatT, size_t kDimension>
+typename std::array<RatT, kDimension>::iterator Point<RatT, kDimension>::end()
+{
+  return values_.end();
 }
 
 // Related Operators
