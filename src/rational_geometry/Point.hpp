@@ -36,34 +36,36 @@ namespace rational_geometry {
 /// its full accuracy. One suggestion might be to throw an exception on a
 /// inaccurate operation from your RatT type.
 ///
-/// \todo  Get cbegin() & cend() to work
+/// \note  It is safe for this class to inherit from std::array<> (which has no
+///        virtual destructor), because this subclass adds no new member fields.
+///
+/// \note  This class exists, where one might think naked std::arrays would
+///        suffice, because of the overloading of various operators that assume
+///        their arguments are containers that are specifically geometric
+///        vectors/points. I didn't want to pollute the "operator space" of
+///        std::array<>s.
+///
+/// virtual destructor
+///
+/// don't want operator overloading spillover to affect naked std::arrays
 ///
 template <typename RatT, std::size_t kDimension = 3>
-class Point
+class Point : public std::array<RatT, kDimension>
 {
  protected:
   // CONSTRUCTORS
   Point(const Point<RatT, kDimension - 1>& smaller_point, RatT last);
 
  public:
-  // INTERNAL STATE
-  std::array<RatT, kDimension> values_;
-
   // CONSTRUCTORS
   Point();
   Point(const std::initializer_list<RatT>& values);
-  Point(const std::array<RatT, kDimension>& values);
+  explicit Point(const std::array<RatT, kDimension>& values);
 
   // ACCESSORS
   Point<RatT, kDimension + 1> as_point() const;
   Point<RatT, kDimension + 1> as_vector() const;
   Point<RatT, kDimension - 1> as_simpler() const;
-
-  RatT& operator[](size_t index);
-  RatT& at(size_t index);
-
-  typename std::array<RatT, kDimension>::iterator begin();
-  typename std::array<RatT, kDimension>::iterator end();
 
   // FRIENDS
   friend Point<RatT, kDimension - 1>;
@@ -89,7 +91,7 @@ using Point2D = Point<RatT, 2>;
 /// Creates a Point with kDimension dimensions, with all values at 0.
 ///
 template <typename RatT, size_t kDimension>
-Point<RatT, kDimension>::Point() : values_{}
+Point<RatT, kDimension>::Point() : std::array<RatT, kDimension>()
 {
 }
 
@@ -97,17 +99,15 @@ Point<RatT, kDimension>::Point() : values_{}
 ///
 template <typename RatT, size_t kDimension>
 Point<RatT, kDimension>::Point(const std::initializer_list<RatT>& values)
-    : values_{} // 0 initialize
+    : Point<RatT, kDimension>()
 {
-  using namespace std;
-  auto start = std::begin(values);
-  auto stop  = start + min(values.size(), values_.size());
-  copy(start, stop, std::begin(values_));
+  std::copy(std::cbegin(values),
+      std::cbegin(values) + std::min(values.size(), kDimension), begin());
 }
 
 template <typename RatT, size_t kDimension>
 Point<RatT, kDimension>::Point(const std::array<RatT, kDimension>& values)
-    : values_{values}
+    : std::array<RatT, kDimension>(values)
 {
 }
 
@@ -121,9 +121,8 @@ template <typename RatT, size_t kDimension>
 Point<RatT, kDimension>::Point(
     const Point<RatT, kDimension - 1>& smaller_point, RatT last)
 {
-  std::copy(std::begin(smaller_point.values_), std::end(smaller_point.values_),
-      std::begin(values_));
-  *std::rbegin(values_) = last;
+  std::copy(std::begin(smaller_point), std::end(smaller_point), begin());
+  *rbegin() = last;
 }
 
 //   Accessors
@@ -167,35 +166,9 @@ Point<RatT, kDimension - 1> Point<RatT, kDimension>::as_simpler() const
   Point<RatT, kDimension - 1> ret;
 
   using namespace std;
-  copy(std::cbegin(values_), std::cend(values_) - 1, std::begin(ret.values_));
+  std::copy(cbegin(), cend() - 1, std::begin(ret));
 
   return ret;
-}
-
-
-template <typename RatT, size_t kDimension>
-RatT& Point<RatT, kDimension>::operator[](size_t index)
-{
-  return values_[index];
-}
-
-template <typename RatT, size_t kDimension>
-RatT& Point<RatT, kDimension>::at(size_t index)
-{
-  return values_.at(index);
-}
-
-
-template <typename RatT, size_t kDimension>
-typename std::array<RatT, kDimension>::iterator Point<RatT, kDimension>::begin()
-{
-  return values_.begin();
-}
-
-template <typename RatT, size_t kDimension>
-typename std::array<RatT, kDimension>::iterator Point<RatT, kDimension>::end()
-{
-  return values_.end();
 }
 
 // Related Operators
@@ -218,7 +191,7 @@ bool operator==(const Point<RatT_l, kDimension>& l_op,
   // contained to be the same. It's fine with me if they're different if they
   // really do compare equal. Hence this over-complex reimplimentation.
   using namespace std;
-  return equal(cbegin(l_op.values_), cend(l_op.values_), cbegin(r_op.values_));
+  return equal(cbegin(l_op), cend(l_op), cbegin(r_op));
 }
 
 /// Test for inequality
@@ -242,8 +215,8 @@ bool operator<(const Point<RatT_l, kDimension>& l_op,
 {
   // see note in operator==. Find it by searching "over-complex".
   using namespace std;
-  return lexicographical_compare(cbegin(l_op.values_), cend(l_op.values_),
-      cbegin(r_op.values_), cend(r_op.values_));
+  return lexicographical_compare(
+      cbegin(l_op), cend(l_op), cbegin(r_op), cend(r_op));
 }
 
 template <typename RatT_l, typename RatT_r, std::size_t kDimension>
@@ -280,7 +253,7 @@ auto operator+(const Point<RatT_l, kDimension>& l_op,
   Point<decltype(declval<RatT_l>() + declval<RatT_r>()), kDimension> ret;
 
   for (std::size_t i = 0; i < kDimension; ++i) {
-    ret.values_[i] = l_op.values_[i] + r_op.values_[i];
+    ret[i] = l_op[i] + r_op[i];
   }
   return ret;
 }
@@ -294,7 +267,7 @@ auto operator*(const Point<RatT_l, kDimension>& l_op, const RatT_r& r_op)
   Point<decltype(declval<RatT_l>() * r_op), kDimension> ret;
 
   for (std::size_t i = 0; i < kDimension; ++i) {
-    ret.values_[i] = l_op.values_[i] * r_op;
+    ret[i] = l_op[i] * r_op;
   }
   return ret;
 }
@@ -333,7 +306,7 @@ auto dot(const Point<RatT_l, kDimension>& l_op,
            declval<RatT_l>() * declval<RatT_r>()) sum{0};
   // clang-format on
   for (std::size_t i = 0; i < kDimension; ++i) {
-    sum += l_op.values_[i] * r_op.values_[i];
+    sum += l_op[i] * r_op[i];
   }
 
   return sum;
@@ -363,12 +336,9 @@ auto cross(const Point<RatT_l, 3>& l_op, const Point<RatT_r, 3>& r_op)
                  declval<RatT_l>() * declval<RatT_r>()), 3> ret{};
   // clang-format on
 
-  const auto& l = l_op.values_;
-  const auto& r = r_op.values_;
-
-  ret.values_[0] = l[1] * r[2] - l[2] * r[1];
-  ret.values_[1] = l[2] * r[0] - l[0] * r[2];
-  ret.values_[2] = l[0] * r[1] - l[1] * r[0];
+  ret[0] = l_op[1] * r_op[2] - l_op[2] * r_op[1];
+  ret[1] = l_op[2] * r_op[0] - l_op[0] * r_op[2];
+  ret[2] = l_op[0] * r_op[1] - l_op[1] * r_op[0];
 
   return ret;
 }
@@ -379,7 +349,7 @@ std::ostream& operator<<(
 {
   the_stream << typeid(the_point).name();
   the_stream << ":(";
-  for (const auto& coordinate : the_point.values_) {
+  for (const auto& coordinate : the_point) {
     the_stream << coordinate << ", ";
   }
   the_stream << ")";

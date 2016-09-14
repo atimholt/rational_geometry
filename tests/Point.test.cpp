@@ -31,14 +31,22 @@ TEST_CASE("Testing Point.hpp")
   {
     SUBCASE("constructors")
     {
+      SUBCASE("Point()")
+      {
+        IPoint2D a{};
+
+        CHECK(a[0] == 0);
+        CHECK(a[1] == 0);
+      }
+
       SUBCASE("Point(std::initializer_list)")
       {
         IPoint3D val_a{1, 2, 3};
-        CHECK(val_a.values_.size() == 3);
+        CHECK(val_a.size() == 3);
 
         IPoint3D val_b{2, 5};
-        CHECK(val_b.values_[1] == 5);
-        CHECK(val_b.values_[2] == 0);
+        CHECK(val_b[1] == 5);
+        CHECK(val_b[2] == 0);
       }
 
       SUBCASE("Point(std::array<>)")
@@ -47,7 +55,7 @@ TEST_CASE("Testing Point.hpp")
 
         IPoint3D val_a{argument};
 
-        CHECK(val_a.values_.size() == 3);
+        CHECK(val_a.size() == 3);
       }
     }
 
@@ -62,8 +70,8 @@ TEST_CASE("Testing Point.hpp")
 
         auto val_b = val_a.as_point();
 
-        CHECK(val_b.values_.size() == result_dimension);
-        CHECK(val_b.values_[result_dimension - 1] == 1);
+        CHECK(val_b.size() == result_dimension);
+        CHECK(val_b[result_dimension - 1] == 1);
 
         std::string expected_value{typeid(Point<int, 4>).name()};
         CHECK(expected_value == typeid(val_b).name());
@@ -78,8 +86,8 @@ TEST_CASE("Testing Point.hpp")
 
         auto val_b = val_a.as_vector();
 
-        CHECK(val_b.values_.size() == result_dimension);
-        CHECK(val_b.values_[result_dimension - 1] == 0);
+        CHECK(val_b.size() == result_dimension);
+        CHECK(val_b[result_dimension - 1] == 0);
 
         std::string expected_value{typeid(Point<int, 4>).name()};
         CHECK(expected_value == typeid(val_b).name());
@@ -131,7 +139,7 @@ TEST_CASE("Testing Point.hpp")
 
           auto it = begin(a);
           *(it++) = 1;
-          *it = 7;
+          *it     = 7;
 
           CHECK(expected == a);
         }
@@ -143,9 +151,28 @@ TEST_CASE("Testing Point.hpp")
           auto it = end(a);
           --it;
           *(it--) = 7;
-          *it = 1;
+          *it     = 1;
 
           CHECK(expected == a);
+        }
+
+        SUBCASE("cbegin()")
+        {
+          auto it = cbegin(arb_vals);
+
+          CHECK(*it == 1);
+          ++it;
+          CHECK(*it == 7);
+        }
+
+        SUBCASE("cend()")
+        {
+          auto it = cend(arb_vals);
+
+          --it;
+          CHECK(*it == 7);
+          --it;
+          CHECK(*it == 1);
         }
       }
     }

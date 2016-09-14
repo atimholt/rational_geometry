@@ -112,7 +112,7 @@ Point<RatT, kWidth> Matrix<RatT, kHeight, kWidth>::get_row(size_t which) const
   Point<RatT, kWidth> ret;
 
   using namespace std;
-  copy(cbegin(values_[which]), cend(values_[which]), begin(ret.values_));
+  copy(cbegin(values_[which]), cend(values_[which]), begin(ret));
 
   return ret;
 }
@@ -123,7 +123,7 @@ Point<RatT, kHeight> Matrix<RatT, kHeight, kWidth>::get_column(
 {
   Point<RatT, kHeight> ret;
   for (int i = 0; i < kHeight; ++i) {
-    ret.values_[i] = values_[i][which];
+    ret[i] = values_[i][which];
   }
   return ret;
 }
@@ -138,7 +138,7 @@ Matrix<RatT, kHeight, kWidth>& Matrix<RatT, kHeight, kWidth>::set_row(
     size_t which, const Point<RatT, kWidth>& values)
 {
   using namespace std;
-  copy(cbegin(values.values_), cend(values.values_), begin(values_[which]));
+  copy(cbegin(values), cend(values), begin(values_[which]));
 
   return *this;
 }
@@ -150,7 +150,7 @@ Matrix<RatT, kHeight, kWidth>& Matrix<RatT, kHeight, kWidth>::set_column(
     size_t which, const Point<RatT, kHeight>& values)
 {
   for (int i = 0; i < kHeight; ++i) {
-    values_[i][which] = values.values_[i];
+    values_[i][which] = values[i];
   }
 
   return *this;
