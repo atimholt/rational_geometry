@@ -291,19 +291,41 @@ TEST_CASE("Testing Point.hpp")
     CHECK(expected == factor * a);
   }
 
-  SUBCASE("dot(Point<>, Point<>)")
+  SUBCASE("dot(...)")
   {
     IPoint2D i{i2};
     IPoint2D j{j2};
 
-    auto i_j = dot(i, j);
-    CHECK(0 == i_j);
+    SUBCASE("dot(Point<>, Point<>)")
+    {
+      auto i_j = dot(i, j);
+      CHECK(0 == i_j);
 
-    auto orthogonal = dot(3 * i + 4 * j, -4 * i + 3 * j);
-    CHECK(0 == orthogonal);
+      auto orthogonal = dot(3 * i + 4 * j, -4 * i + 3 * j);
+      CHECK(0 == orthogonal);
 
-    auto something_different = dot(3 * i, 2 * i);
-    CHECK(6 == something_different);
+      auto something_different = dot(3 * i, 2 * i);
+      CHECK(6 == something_different);
+    }
+
+    SUBCASE("dot(template<>, template<>)")
+    {
+      std::array<int, 2> i{1, 0};
+      std::array<int, 2> j{0, 1};
+
+      auto i_j = dot(i, j);
+
+      CHECK(0 == i_j);
+    }
+
+    SUBCASE("dot(Point<>, template<>) (Just different types, basically)")
+    {
+      std::array<int, 2> j{0, 1};
+
+      auto i_j = dot(i, j);
+
+      CHECK(0 == i_j);
+    }
   }
 
   SUBCASE("cross(Point<>, Point<>)")
@@ -320,6 +342,19 @@ TEST_CASE("Testing Point.hpp")
     CHECK(-1 * i == cross(k, j));
     CHECK(-1 * j == cross(i, k));
     CHECK(-1 * k == cross(j, i));
+
+    SUBCASE("cross(template<>, template<>)")
+    {
+      typedef std::array<int, 3> IArray3;
+
+      IArray3 i{1, 0, 0};
+      IArray3 j{0, 1, 0};
+      IArray3 k{0, 0, 1};
+
+      CHECK(i == cross(j, k));
+      CHECK(j == cross(k, i));
+      CHECK(k == cross(i, j));
+    }
   }
 }
 
