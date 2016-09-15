@@ -218,6 +218,11 @@ bool operator<(const Matrix<RatT_l, kHeight, kWidth>& l_op,
 //   Other Operators
 //  -----------------
 
+/// Multiply two Matrices
+///
+/// \todo  Eventually use references to members instead of creating Points. This
+///        is a harder problem than at first blush.
+///
 template <typename RatT_l,
     typename RatT_r,
     size_t kl_Height,
@@ -245,6 +250,20 @@ auto operator*(const Matrix<RatT_l, kl_Height, kCommon_Dimension>& l_op,
   }
 
   return ret;
+}
+
+/// Multiply a Point by a Matrix.
+///
+template <typename RatT_l, typename RatT_r, size_t kHeight, size_t kWidth>
+auto operator*(const Matrix<RatT_l, kHeight, kWidth>& l_op,
+    const Point<RatT_r, kWidth>& r_op)
+{
+  // Width of l_op is height of r_op_matrix.
+  Matrix<RatT_r, kWidth, 1> r_op_matrix;
+  r_op_matrix.set_column(0, r_op);
+
+  auto ret = l_op * r_op_matrix;
+  return ret.get_column(0);
 }
 
 // Related Functions

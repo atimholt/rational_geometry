@@ -319,6 +319,57 @@ TEST_CASE("Testing Matrix.hpp")
         CHECK(expected_type != typeid(result).name());
       }
     }
+
+    SUBCASE("Matrix<> * Point<>")
+    {
+      typedef Matrix<int, 3> IMat3;
+      typedef Point<int, 2> IPoint2;
+      // clang-format off
+      const IMat3 identity{
+          {1, 0, 0},
+          {0, 1, 0},
+          {0, 0, 1}};
+
+      const IMat3 translator{
+          {1, 0, 2},
+          {0, 1, 3},
+          {0, 0, 1}};
+
+      const IMat3 rotator{
+          {0,-1, 0},
+          {1, 0, 0},
+          {0, 0, 1}};
+
+      const IMat3 scaler{
+          {5, 0, 0},
+          {0, 5, 0},
+          {0, 0, 1}};
+      // clang-format on
+
+      IPoint2 origin{0, 0};
+
+      auto translated = translator * origin.as_point();
+      IPoint2 translated_expected{2, 3};
+      REQUIRE(translated.as_simpler() == translated_expected);
+
+      auto rotated = rotator * translated;
+      IPoint2 rotated_expected{-3, 2};
+      REQUIRE(rotated.as_simpler() == rotated_expected);
+
+      auto scaled = scaler * rotated;
+      IPoint2 scaled_expected{-15, 10};
+      REQUIRE(scaled.as_simpler() == scaled_expected);
+
+      auto identitied = identity * scaled;
+      IPoint2 identitied_expected{-15, 10};
+      REQUIRE(identitied.as_simpler() == identitied_expected);
+      REQUIRE(identitied == scaled);
+
+      auto all_together =
+          identity * scaler * rotator * translator * origin.as_point();
+      IPoint2 all_together_expected = identitied.as_simpler();
+      CHECK(all_together.as_simpler() == all_together_expected);
+    }
   }
 }
 
