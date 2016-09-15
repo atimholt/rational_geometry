@@ -371,6 +371,24 @@ TEST_CASE("Testing Matrix.hpp")
       CHECK(all_together.as_simpler() == all_together_expected);
     }
   }
+
+  SUBCASE("Related functions")
+  {
+    SUBCASE("make_translation")
+    {
+      Point<int, 2> a{2, 3};
+
+      auto mat_a = make_translation(a);
+      // clang-format off
+      Matrix<int, 3> expected{
+          {1, 0, 2},
+          {0, 1, 3},
+          {0, 0, 1}};
+      // clang-format on
+
+      CHECK(expected == mat_a);
+    }
+  }
 }
 
 

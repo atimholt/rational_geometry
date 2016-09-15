@@ -285,6 +285,19 @@ std::ostream& operator<<(
   return the_stream;
 }
 
+template <typename RatT, size_t kDimensions>
+auto make_translation(Point<RatT, kDimensions> new_origin)
+{
+  Matrix<RatT, kDimensions + 1, kDimensions + 1> ret{};
+
+  // 1st argument not off by one.
+  return ret.set_column(kDimensions, new_origin.as_point());
+}
+
+// \todo  Implement make_rotation(Point, Point, Point);
+// \todo  Implement make_scale(RatT, RatT, RatT);
+// \todo  Implement make_scale(RatT);
+
 //-------------------
 // Related Functions
 
