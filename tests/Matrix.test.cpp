@@ -374,7 +374,7 @@ TEST_CASE("Testing Matrix.hpp")
 
   SUBCASE("Related functions")
   {
-    SUBCASE("make_translation")
+    SUBCASE("make_translation()")
     {
       Point<int, 2> a{2, 3};
 
@@ -387,6 +387,24 @@ TEST_CASE("Testing Matrix.hpp")
       // clang-format on
 
       CHECK(expected == mat_a);
+    }
+
+    SUBCASE("make_rotation()")
+    {
+      typedef std::array<Point<int, 2>,2> Rotation;
+
+      Point<int, 2> i{0, 1};
+      Point<int, 2> j{-1, 0};
+      auto result = make_rotation(Rotation{i, j});
+
+      // clang-format off
+      Matrix<int, 3> expected{
+          {0, -1, 0},
+          {1,  0, 0},
+          {0,  0, 1}};
+      // clang-format on
+
+      CHECK(expected == result);
     }
   }
 }

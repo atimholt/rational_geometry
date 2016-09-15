@@ -290,11 +290,35 @@ auto make_translation(Point<RatT, kDimensions> new_origin)
 {
   Matrix<RatT, kDimensions + 1, kDimensions + 1> ret{};
 
-  // 1st argument not off by one.
+  // The 1st argument here is not off by one.
   return ret.set_column(kDimensions, new_origin.as_point());
 }
 
-// \todo  Implement make_rotation(Point, Point, Point);
+/// Make a rotation matrix based on its transform of the axial versors.
+///
+/// \param transformed_versors  a kDimension-sized initializer list of
+///                             kDimension-dimensional Points.
+///
+/// \todo  Consider a variadic function.
+///
+/// \sa  https://en.wikipedia.org/wiki/Versor_(physics)
+///
+template <typename RatT, size_t kDimension>
+auto make_rotation(
+    const std::array<Point<RatT, kDimension>, kDimension>& transformed_versors)
+{
+  Matrix<RatT, kDimension + 1> ret{};
+
+  auto versor         = std::cbegin(transformed_versors);
+  auto number_to_copy = std::min(kDimension, transformed_versors.size());
+
+  for (int i = 0; i < number_to_copy; ++i, ++versor) {
+    ret.set_column(i, versor->as_vector());
+  }
+
+  return ret;
+}
+
 // \todo  Implement make_scale(RatT, RatT, RatT);
 // \todo  Implement make_scale(RatT);
 
