@@ -9,13 +9,6 @@
 #ifndef _RATIONAL_GEOMETRY_RATIONAL_HPP_INCLUDED_
 #define _RATIONAL_GEOMETRY_RATIONAL_HPP_INCLUDED_
 
-// Includes
-//----------
-
-
-//----------
-// Includes
-
 namespace rational_geometry {
 
 // Class Template Declaration
@@ -31,8 +24,9 @@ namespace rational_geometry {
 /// type (e.g. boost::rational) may be used in the rest of this library.
 ///
 /// Theoretically, this class is as fast as its underlying integer type in
-/// (integer) multiplication and same-instantiated-type addition. It is also
-/// faster than, say, boost::rational in nearly every operation.
+/// multiplication/division (by an integer) and same-instantiated-type
+/// addition. It is also faster than, say, boost::rational in nearly every
+/// operation.
 ///
 /// This is because the denominator is templatized away from the run-time
 /// internal representation. As a consequence, only a single integer value is
@@ -78,17 +72,78 @@ class Rational
 {
   // STATIC ASSERTIONS
   static_assert(kDenominator > 0,
-      "kDenominator template argument of Rational<> class must be positive.");
+      "kDenominator template argument of rational_geometry::Rational<> class "
+      "must be positive.");
+
+  // INTERNAL STATE
+  SignedIntT numerator_;
 
  public:
+  // CONSTRUCTORS
+  Rational();
+  Rational(SignedIntT value);
+
+  // ACCESSORS
+  SignedIntT numerator() const;
+  SignedIntT denominator() const;
+
   // OPERATORS
+  /// \todo  implement
   operator double();
+  /// \todo  implement
   Rational& operator++();
+  /// \todo  implement
   Rational operator++(int);
 };
 
+// Class Template Definitions
 //----------------------------
-// Class Template Declaration
+//   Constructors
+//  --------------
+
+template <typename SignedIntT, SignedIntT kDenominator>
+Rational<SignedIntT, kDenominator>::Rational() : numerator_{0}
+{
+}
+
+template <typename SignedIntT, SignedIntT kDenominator>
+Rational<SignedIntT, kDenominator>::Rational(SignedIntT value)
+    : numerator_{value * kDenominator}
+{
+}
+
+//   Accessors
+//  -----------
+
+template <typename SignedIntT, SignedIntT kDenominator>
+SignedIntT Rational<SignedIntT, kDenominator>::numerator() const
+{
+  return numerator_;
+}
+
+template <typename SignedIntT, SignedIntT kDenominator>
+SignedIntT Rational<SignedIntT, kDenominator>::denominator() const
+{
+  return kDenominator;
+}
+
+// Related Operators
+//-------------------
+
+template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
+bool operator==(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op)
+{
+  return l_op.numerator() == r_op * kDenominator;
+}
+
+template <typename IntT_l, typename SignedIntT_r, SignedIntT_r kDenominator>
+bool operator==(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op)
+{
+  return l_op * kDenominator == r_op.numerator();
+}
+
+//-------------------
+// Related Operators
 
 } // namespace rational_geometry
 

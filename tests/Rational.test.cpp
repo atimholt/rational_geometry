@@ -20,7 +20,64 @@ TEST_CASE("Testing Rational.hpp")
   // friendlier base 10) * 3 (for good measure)
   const intmax_t arbitrary_composite = 270'270'000;
 
-  typedef Rational<intmax_t, arbitrary_composite> my_rational_t;
+  typedef Rational<intmax_t, arbitrary_composite> MyRationalT;
+
+  SUBCASE("Rational<> class")
+  {
+    SUBCASE("Constructors")
+    {
+      SUBCASE("Rational()")
+      {
+        MyRationalT a{};
+
+        CHECK(a == 0);
+      }
+
+      SUBCASE("Rational(SignedIntT)")
+      {
+        MyRationalT a{23};
+
+        CHECK(a == 23);
+      }
+    }
+
+    SUBCASE("Accessors")
+    {
+      Rational<int, 12> a{6};
+
+      SUBCASE("numerator()")
+      {
+        CHECK(a.numerator() == 72);
+      }
+
+      SUBCASE("denominator()")
+      {
+        CHECK(a.denominator() == 12);
+      }
+    }
+
+    SUBCASE("Related Operators")
+    {
+      SUBCASE("==")
+      {
+        SUBCASE("Rational == int")
+        {
+          MyRationalT a{23};
+
+          bool are_equal = a == 23;
+          CHECK(are_equal);
+        }
+
+        SUBCASE("int == Rational")
+        {
+          MyRationalT a{23};
+
+          bool are_equal = 23 == a;
+          CHECK(are_equal);
+        }
+      }
+    }
+  }
 }
 
 
