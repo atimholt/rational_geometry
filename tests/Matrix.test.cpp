@@ -391,7 +391,7 @@ TEST_CASE("Testing Matrix.hpp")
 
     SUBCASE("make_rotation()")
     {
-      typedef std::array<Point<int, 2>,2> Rotation;
+      typedef std::array<Point<int, 2>, 2> Rotation;
 
       Point<int, 2> i{0, 1};
       Point<int, 2> j{-1, 0};
@@ -405,6 +405,21 @@ TEST_CASE("Testing Matrix.hpp")
       // clang-format on
 
       CHECK(expected == result);
+    }
+
+    SUBCASE("make_scale()")
+    {
+      const auto kSize = 2;
+      auto a           = make_scale<kSize>(5);
+
+      // clang-format off
+      Matrix<int, kSize + 1> expected{
+          {5, 0, 0},
+          {0, 5, 0},
+          {0, 0, 1}};
+      // clang-format on
+
+      CHECK(expected == a);
     }
   }
 }

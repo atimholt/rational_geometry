@@ -1,16 +1,20 @@
-/// \file     Matrix.hpp
-/// \author   Tim Holt
+/// \file    Matrix.hpp
+/// \author  Tim Holt
 ///
 /// A Matrix class and its related functions.
 ///
 /// The class is templatized so that any rational type may be used for the
 /// matrix elements.
 ///
+/// Much of why these algorithms produce the results they do is left out of
+/// comments because knowledge of the subject (or ability to research it) is
+/// assumed.
+///
 /// \todo  Make as many functions constexpr as possible.
 ///
-/// \todo  Implement relevant functions.
-///
 /// \todo  change code style to put return type on its own line in definitions.
+///
+/// \todo  Implement make_scale(RatT, RatT, RatT...);
 ///
 /// This code is under the MIT license, please see LICENSE.txt for more
 /// information
@@ -319,8 +323,23 @@ auto make_rotation(
   return ret;
 }
 
-// \todo  Implement make_scale(RatT, RatT, RatT);
-// \todo  Implement make_scale(RatT);
+/// Make a scaling matrix.
+///
+/// \note  the template arguments are reversed in this case so that the function
+///        may be called by specifying size without having to specify type.
+///
+template <size_t kDimension, typename RatT>
+auto make_scale(RatT scalar)
+{
+  Matrix<RatT, kDimension + 1> ret{}; // identity matrix
+
+  // Not off by 1, last column left alone. Really.
+  for (int i = 0; i < kDimension; ++i) {
+    ret.set_column(i, scalar * ret.get_column(i));
+  }
+
+  return ret;
+}
 
 //-------------------
 // Related Functions
