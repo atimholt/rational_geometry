@@ -90,10 +90,12 @@ class Rational
 
   // OPERATORS
   operator long double();
-  /// \todo  implement
+
   Rational& operator++();
-  /// \todo  implement
   Rational operator++(int);
+
+  Rational& operator--();
+  Rational operator--(int);
 };
 
 // Class Template Definitions
@@ -145,6 +147,7 @@ Rational<SignedIntT, kDenominator>::operator long double()
   return static_cast<long double>(numerator()) / denominator();
 }
 
+
 template <typename SignedIntT, SignedIntT kDenominator>
 Rational<SignedIntT, kDenominator>& Rational<SignedIntT, kDenominator>::
 operator++()
@@ -159,6 +162,24 @@ operator++(int)
 {
   auto ret = *this;
   ++(*this);
+  return ret;
+}
+
+
+template <typename SignedIntT, SignedIntT kDenominator>
+Rational<SignedIntT, kDenominator>& Rational<SignedIntT, kDenominator>::
+operator--()
+{
+  numerator_ -= kDenominator;
+  return *this;
+}
+
+template <typename SignedIntT, SignedIntT kDenominator>
+Rational<SignedIntT, kDenominator> Rational<SignedIntT, kDenominator>::
+operator--(int)
+{
+  auto ret = *this;
+  --(*this);
   return ret;
 }
 

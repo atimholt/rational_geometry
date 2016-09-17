@@ -82,6 +82,16 @@ TEST_CASE("Testing Rational.hpp")
         CHECK(a++ == 1);
         CHECK(a == 2);
       }
+
+      SUBCASE("operator--")
+      {
+        MyRationalT a{};
+        REQUIRE(a == 0);
+
+        CHECK(--a == -1);
+        CHECK(a-- == -1);
+        CHECK(a == -2);
+      }
     }
   }
 
