@@ -92,6 +92,13 @@ TEST_CASE("Testing Rational.hpp")
         CHECK(a-- == -1);
         CHECK(a == -2);
       }
+
+      SUBCASE("unary operator-")
+      {
+        MyRationalT a{1};
+
+        CHECK(-a == -1);
+      }
     }
   }
 

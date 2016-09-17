@@ -96,6 +96,8 @@ class Rational
 
   Rational& operator--();
   Rational operator--(int);
+
+  Rational operator-() const;
 };
 
 // Class Template Definitions
@@ -119,7 +121,9 @@ Rational<SignedIntT, kDenominator>::Rational(SignedIntT value)
 template <typename SignedIntT, SignedIntT kDenominator>
 Rational<SignedIntT, kDenominator>::Rational(
     SignedIntT numerator, SignedIntT denominator)
-    : numerator_{(numerator * kDenominator) / denominator}
+    : numerator_{denominator == kDenominator ?
+                     numerator :
+                     (numerator * kDenominator) / denominator}
 {
 }
 
@@ -181,6 +185,14 @@ operator--(int)
   auto ret = *this;
   --(*this);
   return ret;
+}
+
+
+template <typename SignedIntT, SignedIntT kDenominator>
+Rational<SignedIntT, kDenominator> Rational<SignedIntT, kDenominator>::
+operator-() const
+{
+  return {-numerator(), kDenominator};
 }
 
 // Related Operators
