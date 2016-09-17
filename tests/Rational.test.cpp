@@ -39,6 +39,14 @@ TEST_CASE("Testing Rational.hpp")
 
         CHECK(a == 23);
       }
+
+      SUBCASE("Rational(SignedIntT, SignedIntT)")
+      {
+        Rational<int, 12> a{2, 3};
+
+        CHECK(a.numerator() == 8);
+        CHECK(a.denominator() == 12);
+      }
     }
 
     SUBCASE("Accessors")
@@ -56,25 +64,33 @@ TEST_CASE("Testing Rational.hpp")
       }
     }
 
-    SUBCASE("Related Operators")
+    SUBCASE("Operators")
     {
-      SUBCASE("==")
+      SUBCASE("double conversion")
       {
-        SUBCASE("Rational == int")
-        {
-          MyRationalT a{23};
+        // \todo  Test double conversion
+      }
+    }
+  }
 
-          bool are_equal = a == 23;
-          CHECK(are_equal);
-        }
+  SUBCASE("Related Operators")
+  {
+    SUBCASE("==")
+    {
+      SUBCASE("Rational == int")
+      {
+        MyRationalT a{23};
 
-        SUBCASE("int == Rational")
-        {
-          MyRationalT a{23};
+        bool are_equal = a == 23;
+        CHECK(are_equal);
+      }
 
-          bool are_equal = 23 == a;
-          CHECK(are_equal);
-        }
+      SUBCASE("int == Rational")
+      {
+        MyRationalT a{23};
+
+        bool are_equal = 23 == a;
+        CHECK(are_equal);
       }
     }
   }

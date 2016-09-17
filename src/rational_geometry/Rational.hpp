@@ -81,7 +81,8 @@ class Rational
  public:
   // CONSTRUCTORS
   Rational();
-  Rational(SignedIntT value);
+  explicit Rational(SignedIntT value);
+  Rational(SignedIntT numerator, SignedIntT denominator);
 
   // ACCESSORS
   SignedIntT numerator() const;
@@ -109,6 +110,15 @@ Rational<SignedIntT, kDenominator>::Rational() : numerator_{0}
 template <typename SignedIntT, SignedIntT kDenominator>
 Rational<SignedIntT, kDenominator>::Rational(SignedIntT value)
     : numerator_{value * kDenominator}
+{
+}
+
+/// \todo  consider simplifying input to reduce risk of overflow
+///
+template <typename SignedIntT, SignedIntT kDenominator>
+Rational<SignedIntT, kDenominator>::Rational(
+    SignedIntT numerator, SignedIntT denominator)
+    : numerator_{(numerator * kDenominator) / denominator}
 {
 }
 
