@@ -72,6 +72,16 @@ TEST_CASE("Testing Rational.hpp")
 
         CHECK(static_cast<long double>(a) == doctest::Approx(1.5));
       }
+
+      SUBCASE("operator++")
+      {
+        MyRationalT a{};
+        REQUIRE(a == 0);
+
+        CHECK(++a == 1);
+        CHECK(a++ == 1);
+        CHECK(a == 2);
+      }
     }
   }
 
