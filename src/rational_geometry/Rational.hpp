@@ -90,7 +90,7 @@ class Rational
 
   // OPERATORS
   /// \todo  implement
-  operator double();
+  operator long double();
   /// \todo  implement
   Rational& operator++();
   /// \todo  implement
@@ -135,6 +135,15 @@ template <typename SignedIntT, SignedIntT kDenominator>
 SignedIntT Rational<SignedIntT, kDenominator>::denominator() const
 {
   return kDenominator;
+}
+
+//   Operators
+//  -----------
+
+template <typename SignedIntT, SignedIntT kDenominator>
+Rational<SignedIntT, kDenominator>::operator long double()
+{
+  return static_cast<long double>(numerator()) / denominator();
 }
 
 // Related Operators

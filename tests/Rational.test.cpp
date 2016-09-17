@@ -68,7 +68,9 @@ TEST_CASE("Testing Rational.hpp")
     {
       SUBCASE("double conversion")
       {
-        // \todo  Test double conversion
+        MyRationalT a{3, 2};
+
+        CHECK(static_cast<long double>(a) == doctest::Approx(1.5));
       }
     }
   }
