@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 
+from shutil import copyfile
+from subprocess import call
 import os
 import platform
-import json
-from shutil import copyfile
 
 VERSION='0.0.0'
 APPNAME='rational_geometry'
@@ -12,18 +12,18 @@ top = '.'
 out = 'bin'
 
 def options(opt):
-    opt.load('compiler_cxx waf_unit_test')
+    opt.load('compiler_cxx')
 
 def configure(conf):
-    # TODO figure out how to use waf_unit_test correctly. That is, get it to
-    #      display the output from doctest.
-    conf.load('compiler_cxx waf_unit_test')
-    # conf.load('compiler_cxx')
+    conf.env.MSVC_VERSIONS = ['msvc 14.0']
+    conf.env.MSVC_TARGETS = ['x64']
+    conf.env.CXXFLAGS = ['/nologo', '/EHsc', '/MD']
+    conf.load('compiler_cxx msvc')
 
-    # TODO check for compiler in use, rather than OS.
-    # TODO evaluate usefulness of these arguments
-    if platform.system() == 'Windows':
-        conf.env.CXXFLAGS = ['/nologo', '/EHsc', '/MD']
+def post(ctx):
+    print("\n -- Running Unit tests: --\n")
+    call(['./bin/rational_geometry_test.exe'])
+    print("\n -- End Unit tests --\n")
 
 def build(bld):
     my_source = ['tests/test.cpp'
@@ -33,13 +33,10 @@ def build(bld):
 
     bld.program(
             source   = my_source,
-            features = 'cxx cxxprogram test',
+            features = 'cxx cxxprogram',
             target   = 'rational_geometry_test')
 
-    bld.options.all_tests = True
-
-    from waflib.Tools import waf_unit_test
-    bld.add_post_fun(waf_unit_test.summary)
+    bld.add_post_fun(post)
 
 # vim:set et ts=4 sts=4 sw=4 ft=python:
 
