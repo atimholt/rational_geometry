@@ -121,6 +121,26 @@ TEST_CASE("Testing Rational.hpp")
         bool are_equal = 23 == a;
         CHECK(are_equal);
       }
+
+      SUBCASE("Rational<same> == Rational<same>")
+      {
+        MyRationalT a{23};
+        MyRationalT b{23};
+        MyRationalT c{57};
+
+        bool are_equal;
+        are_equal = a == a;
+        CHECK(are_equal);
+
+        are_equal = a == b;
+        CHECK(are_equal);
+
+        are_equal = b == a;
+        CHECK(are_equal);
+
+        are_equal = b == c;
+        CHECK_FALSE(are_equal);
+      }
     }
   }
 }

@@ -210,6 +210,13 @@ bool operator==(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op)
   return l_op * kDenominator == r_op.numerator();
 }
 
+template <typename SignedIntT, SignedIntT kDenominator>
+bool operator==(Rational<SignedIntT, kDenominator> l_op,
+    Rational<SignedIntT, kDenominator> r_op)
+{
+  return l_op.numerator() == r_op.numerator();
+}
+
 //-------------------
 // Related Operators
 
