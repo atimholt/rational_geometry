@@ -269,6 +269,34 @@ Rational<SignedIntT, kDenominator> operator+(
   return *reinterpret_cast<Rational<SignedIntT, kDenominator>*>(&ret);
 }
 
+
+template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
+auto operator-(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
+    typename std::enable_if<std::is_integral<IntT_r>::value,
+        Rational<SignedIntT_l, kDenominator>>::type
+{
+  SignedIntT_l ret{l_op.numerator() - r_op * kDenominator};
+  return *reinterpret_cast<Rational<SignedIntT_l, kDenominator>*>(&ret);
+}
+
+template <typename IntT_l, typename SignedIntT_r, SignedIntT_r kDenominator>
+auto operator-(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
+    typename std::enable_if<std::is_integral<IntT_l>::value,
+        Rational<SignedIntT_r, kDenominator>>::type
+{
+  SignedIntT_r ret{l_op * kDenominator - r_op.numerator()};
+  return *reinterpret_cast<Rational<SignedIntT_r, kDenominator>*>(&ret);
+}
+
+template <typename SignedIntT, SignedIntT kDenominator>
+Rational<SignedIntT, kDenominator> operator-(
+    Rational<SignedIntT, kDenominator> l_op,
+    Rational<SignedIntT, kDenominator> r_op)
+{
+  SignedIntT ret{l_op.numerator() - r_op.numerator()};
+  return *reinterpret_cast<Rational<SignedIntT, kDenominator>*>(&ret);
+}
+
 //-------------------
 // Related Operators
 

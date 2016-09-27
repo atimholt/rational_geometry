@@ -185,6 +185,31 @@ TEST_CASE("Testing Rational.hpp")
         CHECK_FALSE(a + b == r_2_3);
       }
     }
+
+    SUBCASE("binary -")
+    {
+      SUBCASE("Rational - int")
+      {
+        MyRationalT a{3};
+
+        CHECK(a - 2 == 1);
+      }
+
+      SUBCASE("int - Rational")
+      {
+        MyRationalT a{2};
+
+        CHECK(3 - a == 1);
+      }
+
+      SUBCASE("Rational - Rational")
+      {
+        MyRationalT a{3};
+        MyRationalT b{2};
+
+        CHECK(a - b == 1);
+      }
+    }
   }
 }
 
