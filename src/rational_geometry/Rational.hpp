@@ -28,8 +28,8 @@ namespace rational_geometry {
 /// denominator and optional rounding detection.
 ///
 /// <b>Use of this particular rational type is <i>not</i> required for use of
-/// the rest of the ZGeo library.</b> Any sufficiently sane rational number
-/// type (e.g. boost::rational) may be used in the rest of this library.
+/// the rest of the rational number library.</b> Any sufficiently sane rational
+/// number type (e.g. boost::rational) may be used in the rest of this library.
 ///
 /// Theoretically, this class is as fast as its underlying integer type in
 /// multiplication/division (by an integer) and same-instantiated-type

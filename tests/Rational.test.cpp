@@ -6,7 +6,6 @@
 #include <climits>
 #include <cstdint>
 #include <string>
-//#include <sstream>
 #include <typeinfo>
 
 namespace rational_geometry {
