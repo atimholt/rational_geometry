@@ -219,6 +219,8 @@ operator-() const
 
 // Related Operators
 //-------------------
+//   Comparison
+//  ------------
 
 template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
 auto operator==(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
@@ -241,6 +243,10 @@ bool operator==(Rational<SignedIntT, kDenominator> l_op,
   return l_op.numerator() == r_op.numerator();
 }
 
+//   Arithmetic
+//  ------------
+//     Addition
+//    ----------
 
 template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
 auto operator+(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
@@ -269,6 +275,8 @@ Rational<SignedIntT, kDenominator> operator+(
   return *reinterpret_cast<Rational<SignedIntT, kDenominator>*>(&ret);
 }
 
+//     Subtraction
+//    -------------
 
 template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
 auto operator-(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
