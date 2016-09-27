@@ -361,6 +361,30 @@ bool operator<=(Rational<SignedIntT, kDenominator> l_op,
   return !(r_op < l_op);
 }
 
+//     Greater Than or Equal To
+//    --------------------------
+
+template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
+auto operator>=(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
+    typename std::enable_if<std::is_integral<IntT_r>::value, bool>::type
+{
+  return !(l_op < r_op);
+}
+
+template <typename IntT_l, typename SignedIntT_r, SignedIntT_r kDenominator>
+auto operator>=(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
+    typename std::enable_if<std::is_integral<IntT_l>::value, bool>::type
+{
+  return !(l_op < r_op);
+}
+
+template <typename SignedIntT, SignedIntT kDenominator>
+bool operator>=(Rational<SignedIntT, kDenominator> l_op,
+    Rational<SignedIntT, kDenominator> r_op)
+{
+  return !(l_op < r_op);
+}
+
 //   Arithmetic
 //  ------------
 //     Multiplication
