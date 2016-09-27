@@ -83,6 +83,12 @@ class Rational
       "kDenominator template argument of rational_geometry::Rational<> class "
       "must be positive.");
 
+  static_assert(
+      std::is_integral<SignedIntT>::value, "SignedIntT must be integer type");
+
+  static_assert(
+      std::is_signed<SignedIntT>::value, "SignedIntT must be a signed type");
+
   // INTERNAL STATE
   SignedIntT numerator_;
 
