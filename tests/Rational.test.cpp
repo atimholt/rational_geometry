@@ -138,6 +138,34 @@ TEST_CASE("Testing Rational.hpp")
         }
       }
 
+      SUBCASE("!=")
+      {
+        SUBCASE("Rational != int")
+        {
+          MyRationalT a{23};
+
+          CHECK(a != 24);
+        }
+
+        SUBCASE("int == Rational")
+        {
+          MyRationalT a{23};
+
+          CHECK(24 != a);
+        }
+
+        SUBCASE("Rational<same> == Rational<same>")
+        {
+          MyRationalT a{23};
+          MyRationalT b{23};
+          MyRationalT c{57};
+
+          CHECK(a != c);
+          CHECK(c != a);
+          CHECK_FALSE(a != b);
+        }
+      }
+
       SUBCASE("<")
       {
         SUBCASE("Rational < real")
