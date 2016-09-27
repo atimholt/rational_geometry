@@ -272,20 +272,40 @@ bool operator!=(Rational<SignedIntT, kDenominator> l_op,
 //     Less Than
 //    -----------
 
-template <typename SignedIntT_l, typename RealT_r, SignedIntT_l kDenominator>
-auto operator<(Rational<SignedIntT_l, kDenominator> l_op, RealT_r r_op) ->
-    typename std::enable_if<std::is_arithmetic<RealT_r>::value, bool>::type
+/// Determine if a rational is less than an int
+///
+/// Floating type comparison is precluded because of the special case where
+/// both operands are equal (either actually or conceptually so). The result in
+/// this case would imply accuracy where there is none.
+///
+/// Converting either operand to the type of the other allows the library user
+/// to be explicit about what they really want.
+///
+template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
+auto operator<(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
+    typename std::enable_if<std::is_integral<IntT_r>::value, bool>::type
 {
   return l_op.numerator() < r_op * kDenominator;
 }
 
-template <typename RealT_l, typename SignedIntT_r, SignedIntT_r kDenominator>
-auto operator<(RealT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
-    typename std::enable_if<std::is_arithmetic<RealT_l>::value, bool>::type
+/// Determine if an int is less than a rational
+///
+/// Floating type comparison is precluded because of the special case where
+/// both operands are equal (either actually or conceptually so). The result in
+/// this case would imply accuracy where there is none.
+///
+/// Converting either operand to the type of the other allows the library user
+/// to be explicit about what they really want.
+///
+template <typename IntT_l, typename SignedIntT_r, SignedIntT_r kDenominator>
+auto operator<(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
+    typename std::enable_if<std::is_integral<IntT_l>::value, bool>::type
 {
   return l_op * kDenominator < r_op.numerator();
 }
 
+/// Determine if a rational is less than another rational of the same type.
+///
 template <typename SignedIntT, SignedIntT kDenominator>
 bool operator<(Rational<SignedIntT, kDenominator> l_op,
     Rational<SignedIntT, kDenominator> r_op)

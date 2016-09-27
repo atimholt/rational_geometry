@@ -168,22 +168,17 @@ TEST_CASE("Testing Rational.hpp")
 
       SUBCASE("<")
       {
-        SUBCASE("Rational < real")
+        SUBCASE("Rational < int")
         {
           MyRationalT a{5};
           CHECK(a < 6);
-          CHECK(a < 5.1);
-
           CHECK_FALSE(6 < a);
         }
 
-        SUBCASE("real < Rational")
+        SUBCASE("int < Rational")
         {
           MyRationalT a{5};
-
           CHECK(4 < a);
-          CHECK(4.9 < a);
-
           CHECK_FALSE(a < 4);
         }
 
