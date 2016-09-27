@@ -113,16 +113,14 @@ TEST_CASE("Testing Rational.hpp")
       {
         MyRationalT a{23};
 
-        bool are_equal = a == 23;
-        CHECK(are_equal);
+        CHECK(a == 23);
       }
 
       SUBCASE("int == Rational")
       {
         MyRationalT a{23};
 
-        bool are_equal = 23 == a;
-        CHECK(are_equal);
+        CHECK(23 == a);
       }
 
       SUBCASE("Rational<same> == Rational<same>")
@@ -131,18 +129,10 @@ TEST_CASE("Testing Rational.hpp")
         MyRationalT b{23};
         MyRationalT c{57};
 
-        bool are_equal;
-        are_equal = a == a;
-        CHECK(are_equal);
-
-        are_equal = a == b;
-        CHECK(are_equal);
-
-        are_equal = b == a;
-        CHECK(are_equal);
-
-        are_equal = b == c;
-        CHECK_FALSE(are_equal);
+        CHECK(a == a);
+        CHECK(a == b);
+        CHECK(b == a);
+        CHECK_FALSE(b == c);
       }
     }
 
@@ -179,16 +169,9 @@ TEST_CASE("Testing Rational.hpp")
         MyRationalT r_1_4{1, 4};
         MyRationalT r_11_12{11, 12};
 
-        bool are_equal;
-
-        are_equal = a + b == c;
-        CHECK(are_equal);
-
-        are_equal = r_2_3 + r_1_4 == r_11_12;
-        CHECK(are_equal);
-
-        are_equal = a + b == r_2_3;
-        CHECK_FALSE(are_equal);
+        CHECK(a + b == c);
+        CHECK(r_2_3 + r_1_4 == r_11_12);
+        CHECK_FALSE(a + b == r_2_3);
       }
     }
   }
