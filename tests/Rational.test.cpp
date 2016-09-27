@@ -5,7 +5,9 @@
 
 #include <climits>
 #include <cstdint>
-#include <sstream>
+#include <string>
+//#include <sstream>
+#include <typeinfo>
 
 namespace rational_geometry {
 
@@ -63,17 +65,17 @@ TEST_CASE("Testing Rational.hpp")
       {
         CHECK(a.denominator() == 12);
       }
+
+      SUBCASE("as_long_double")
+      {
+        MyRationalT a{3, 2};
+
+        CHECK(a.as_long_double() == doctest::Approx(1.5));
+      }
     }
 
     SUBCASE("Operators")
     {
-      SUBCASE("double conversion")
-      {
-        MyRationalT a{3, 2};
-
-        CHECK(static_cast<long double>(a) == doctest::Approx(1.5));
-      }
-
       SUBCASE("operator++")
       {
         MyRationalT a{};
@@ -146,6 +148,26 @@ TEST_CASE("Testing Rational.hpp")
 
     SUBCASE("binary +")
     {
+      SUBCASE("Rational + int")
+      {
+        MyRationalT a{2};
+
+        CHECK(a + 1 == 3);
+
+        MyRationalT b{2, 3};
+        MyRationalT expected{5, 3};
+
+        std::string result_type_name{typeid(b + 1).name()};
+        std::string b_type_name{typeid(b).name()};
+        CHECK(b_type_name == result_type_name);
+
+        CHECK(expected == b + 1);
+      }
+
+      SUBCASE("int + Rational")
+      {
+      }
+
       /// \todo  figure out why this works without being implemented.
       SUBCASE("Rational<same> + Rational<same>")
       {
