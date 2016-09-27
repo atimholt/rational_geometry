@@ -107,239 +107,245 @@ TEST_CASE("Testing Rational.hpp")
 
   SUBCASE("Related Operators")
   {
-    SUBCASE("==")
+    SUBCASE("Comparison")
     {
-      SUBCASE("Rational == int")
+      SUBCASE("==")
       {
-        MyRationalT a{23};
+        SUBCASE("Rational == int")
+        {
+          MyRationalT a{23};
 
-        CHECK(a == 23);
+          CHECK(a == 23);
+        }
+
+        SUBCASE("int == Rational")
+        {
+          MyRationalT a{23};
+
+          CHECK(23 == a);
+        }
+
+        SUBCASE("Rational<same> == Rational<same>")
+        {
+          MyRationalT a{23};
+          MyRationalT b{23};
+          MyRationalT c{57};
+
+          CHECK(a == a);
+          CHECK(a == b);
+          CHECK(b == a);
+          CHECK_FALSE(b == c);
+        }
       }
 
-      SUBCASE("int == Rational")
+      SUBCASE("<")
       {
-        MyRationalT a{23};
+        SUBCASE("Rational < real")
+        {
+          MyRationalT a{5};
+          CHECK(a < 6);
+          CHECK(a < 5.1);
 
-        CHECK(23 == a);
-      }
+          CHECK_FALSE(6 < a);
+        }
 
-      SUBCASE("Rational<same> == Rational<same>")
-      {
-        MyRationalT a{23};
-        MyRationalT b{23};
-        MyRationalT c{57};
+        SUBCASE("real < Rational")
+        {
+          MyRationalT a{5};
 
-        CHECK(a == a);
-        CHECK(a == b);
-        CHECK(b == a);
-        CHECK_FALSE(b == c);
+          CHECK(4 < a);
+          CHECK(4.9 < a);
+
+          CHECK_FALSE(a < 4);
+        }
+
+        SUBCASE("Rational<same> < Rational<same>")
+        {
+          MyRationalT a{5};
+          MyRationalT b{5};
+          MyRationalT c{7};
+
+          CHECK(a < c);
+          CHECK_FALSE(a < b);
+        }
       }
     }
 
-    SUBCASE("<")
+    SUBCASE("Arithmetic")
     {
-      SUBCASE("Rational < real")
+      SUBCASE("binary *")
       {
-        MyRationalT a{5};
-        CHECK(a < 6);
-        CHECK(a < 5.1);
+        SUBCASE("Rational * int")
+        {
+          MyRationalT a{2};
 
-        CHECK_FALSE(6 < a);
+          CHECK(a * 3 == 6);
+
+          MyRationalT b{2, 3};
+
+          std::string result_type_name{typeid(b * 3).name()};
+          std::string b_type_name{typeid(b).name()};
+          CHECK(b_type_name == result_type_name);
+
+          CHECK(2 == b * 3);
+        }
+
+        SUBCASE("int * Rational")
+        {
+          MyRationalT a{2};
+
+          CHECK(3 * a == 6);
+
+          MyRationalT b{2, 3};
+
+          std::string result_type_name{typeid(3 * b).name()};
+          std::string b_type_name{typeid(b).name()};
+          CHECK(b_type_name == result_type_name);
+
+          CHECK(2 == 3 * b);
+        }
+
+        SUBCASE("Rational<same> * Rational<same>")
+        {
+          MyRationalT a{2};
+          MyRationalT b{3};
+          MyRationalT c{6};
+
+          MyRationalT r_2_3{2, 3};
+          MyRationalT r_1_4{1, 4};
+          MyRationalT r_1_6{1, 6};
+
+          CHECK(a * b == c);
+          CHECK(r_2_3 * r_1_4 == r_1_6);
+          CHECK_FALSE(a * b == r_2_3);
+        }
       }
 
-      SUBCASE("real < Rational")
+      SUBCASE("/")
       {
-        MyRationalT a{5};
+        SUBCASE("Rational / int")
+        {
+          MyRationalT a{18};
 
-        CHECK(4 < a);
-        CHECK(4.9 < a);
+          CHECK(a / 3 == 6);
 
-        CHECK_FALSE(a < 4);
+          MyRationalT b{2};
+          MyRationalT expected{2, 3};
+
+          std::string result_type_name{typeid(b / 3).name()};
+          std::string b_type_name{typeid(b).name()};
+          CHECK(b_type_name == result_type_name);
+
+          CHECK(expected == b / 3);
+        }
+
+        SUBCASE("int / Rational")
+        {
+          MyRationalT a{3};
+
+          CHECK(18 / a == 6);
+
+          MyRationalT b{3};
+          MyRationalT expected{2, 3};
+
+          std::string result_type_name{typeid(2 / b).name()};
+          std::string b_type_name{typeid(b).name()};
+          CHECK(b_type_name == result_type_name);
+
+          CHECK(expected == 2 / b);
+        }
+
+        SUBCASE("Rational<same> / Rational<same>")
+        {
+          MyRationalT a{2};
+          MyRationalT b{3};
+          MyRationalT c{6};
+
+          MyRationalT r_2_3{2, 3};
+          MyRationalT r_1_4{1, 4};
+          MyRationalT r_1_6{1, 6};
+
+          CHECK(a == c / b);
+          CHECK(r_2_3 * r_1_4 == r_1_6);
+          CHECK(r_1_4 == r_1_6 / r_2_3);
+          CHECK_FALSE(a * b == r_2_3);
+          CHECK_FALSE(r_2_3 / b == a);
+        }
       }
 
-      SUBCASE("Rational<same> < Rational<same>")
+      SUBCASE("binary +")
       {
-        MyRationalT a{5};
-        MyRationalT b{5};
-        MyRationalT c{7};
+        SUBCASE("Rational + int")
+        {
+          MyRationalT a{2};
 
-        CHECK(a < c);
-        CHECK_FALSE(a < b);
-      }
-    }
+          CHECK(a + 1 == 3);
 
-    SUBCASE("binary *")
-    {
-      SUBCASE("Rational * int")
-      {
-        MyRationalT a{2};
+          MyRationalT b{2, 3};
+          MyRationalT expected{5, 3};
 
-        CHECK(a * 3 == 6);
+          std::string result_type_name{typeid(b + 1).name()};
+          std::string b_type_name{typeid(b).name()};
+          CHECK(b_type_name == result_type_name);
 
-        MyRationalT b{2, 3};
+          CHECK(expected == b + 1);
+        }
 
-        std::string result_type_name{typeid(b * 3).name()};
-        std::string b_type_name{typeid(b).name()};
-        CHECK(b_type_name == result_type_name);
+        SUBCASE("int + Rational")
+        {
+          MyRationalT a{2};
 
-        CHECK(2 == b * 3);
-      }
+          CHECK(1 + a == 3);
 
-      SUBCASE("int * Rational")
-      {
-        MyRationalT a{2};
+          MyRationalT b{2, 3};
+          MyRationalT expected{5, 3};
 
-        CHECK(3 * a == 6);
+          std::string result_type_name{typeid(1 + b).name()};
+          std::string b_type_name{typeid(b).name()};
+          CHECK(b_type_name == result_type_name);
 
-        MyRationalT b{2, 3};
+          CHECK(expected == 1 + b);
+        }
 
-        std::string result_type_name{typeid(3 * b).name()};
-        std::string b_type_name{typeid(b).name()};
-        CHECK(b_type_name == result_type_name);
+        SUBCASE("Rational<same> + Rational<same>")
+        {
+          MyRationalT a{2};
+          MyRationalT b{3};
+          MyRationalT c{5};
 
-        CHECK(2 == 3 * b);
-      }
+          MyRationalT r_2_3{2, 3};
+          MyRationalT r_1_4{1, 4};
+          MyRationalT r_11_12{11, 12};
 
-      SUBCASE("Rational<same> * Rational<same>")
-      {
-        MyRationalT a{2};
-        MyRationalT b{3};
-        MyRationalT c{6};
-
-        MyRationalT r_2_3{2, 3};
-        MyRationalT r_1_4{1, 4};
-        MyRationalT r_1_6{1, 6};
-
-        CHECK(a * b == c);
-        CHECK(r_2_3 * r_1_4 == r_1_6);
-        CHECK_FALSE(a * b == r_2_3);
-      }
-    }
-
-    SUBCASE("/")
-    {
-      SUBCASE("Rational / int")
-      {
-        MyRationalT a{18};
-
-        CHECK(a / 3 == 6);
-
-        MyRationalT b{2};
-        MyRationalT expected{2, 3};
-
-        std::string result_type_name{typeid(b / 3).name()};
-        std::string b_type_name{typeid(b).name()};
-        CHECK(b_type_name == result_type_name);
-
-        CHECK(expected == b / 3);
+          CHECK(a + b == c);
+          CHECK(r_2_3 + r_1_4 == r_11_12);
+          CHECK_FALSE(a + b == r_2_3);
+        }
       }
 
-      SUBCASE("int / Rational")
+      SUBCASE("binary -")
       {
-        MyRationalT a{3};
+        SUBCASE("Rational - int")
+        {
+          MyRationalT a{3};
 
-        CHECK(18 / a == 6);
+          CHECK(a - 2 == 1);
+        }
 
-        MyRationalT b{3};
-        MyRationalT expected{2, 3};
+        SUBCASE("int - Rational")
+        {
+          MyRationalT a{2};
 
-        std::string result_type_name{typeid(2 / b).name()};
-        std::string b_type_name{typeid(b).name()};
-        CHECK(b_type_name == result_type_name);
+          CHECK(3 - a == 1);
+        }
 
-        CHECK(expected == 2 / b);
-      }
+        SUBCASE("Rational - Rational")
+        {
+          MyRationalT a{3};
+          MyRationalT b{2};
 
-      SUBCASE("Rational<same> / Rational<same>")
-      {
-        MyRationalT a{2};
-        MyRationalT b{3};
-        MyRationalT c{6};
-
-        MyRationalT r_2_3{2, 3};
-        MyRationalT r_1_4{1, 4};
-        MyRationalT r_1_6{1, 6};
-
-        CHECK(a == c / b);
-        CHECK(r_2_3 * r_1_4 == r_1_6);
-        CHECK(r_1_4 == r_1_6 / r_2_3);
-        CHECK_FALSE(a * b == r_2_3);
-        CHECK_FALSE(r_2_3 / b == a);
-      }
-    }
-
-    SUBCASE("binary +")
-    {
-      SUBCASE("Rational + int")
-      {
-        MyRationalT a{2};
-
-        CHECK(a + 1 == 3);
-
-        MyRationalT b{2, 3};
-        MyRationalT expected{5, 3};
-
-        std::string result_type_name{typeid(b + 1).name()};
-        std::string b_type_name{typeid(b).name()};
-        CHECK(b_type_name == result_type_name);
-
-        CHECK(expected == b + 1);
-      }
-
-      SUBCASE("int + Rational")
-      {
-        MyRationalT a{2};
-
-        CHECK(1 + a == 3);
-
-        MyRationalT b{2, 3};
-        MyRationalT expected{5, 3};
-
-        std::string result_type_name{typeid(1 + b).name()};
-        std::string b_type_name{typeid(b).name()};
-        CHECK(b_type_name == result_type_name);
-
-        CHECK(expected == 1 + b);
-      }
-
-      SUBCASE("Rational<same> + Rational<same>")
-      {
-        MyRationalT a{2};
-        MyRationalT b{3};
-        MyRationalT c{5};
-
-        MyRationalT r_2_3{2, 3};
-        MyRationalT r_1_4{1, 4};
-        MyRationalT r_11_12{11, 12};
-
-        CHECK(a + b == c);
-        CHECK(r_2_3 + r_1_4 == r_11_12);
-        CHECK_FALSE(a + b == r_2_3);
-      }
-    }
-
-    SUBCASE("binary -")
-    {
-      SUBCASE("Rational - int")
-      {
-        MyRationalT a{3};
-
-        CHECK(a - 2 == 1);
-      }
-
-      SUBCASE("int - Rational")
-      {
-        MyRationalT a{2};
-
-        CHECK(3 - a == 1);
-      }
-
-      SUBCASE("Rational - Rational")
-      {
-        MyRationalT a{3};
-        MyRationalT b{2};
-
-        CHECK(a - b == 1);
+          CHECK(a - b == 1);
+        }
       }
     }
   }
