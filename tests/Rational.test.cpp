@@ -184,6 +184,58 @@ TEST_CASE("Testing Rational.hpp")
       }
     }
 
+    SUBCASE("/")
+    {
+      SUBCASE("Rational / int")
+      {
+        MyRationalT a{18};
+
+        CHECK(a / 3 == 6);
+
+        MyRationalT b{2};
+        MyRationalT expected{2, 3};
+
+        std::string result_type_name{typeid(b / 3).name()};
+        std::string b_type_name{typeid(b).name()};
+        CHECK(b_type_name == result_type_name);
+
+        CHECK(expected == b / 3);
+      }
+
+      SUBCASE("int / Rational")
+      {
+        MyRationalT a{3};
+
+        CHECK(18 / a == 6);
+
+        MyRationalT b{3};
+        MyRationalT expected{2, 3};
+
+        std::string result_type_name{typeid(2 / b).name()};
+        std::string b_type_name{typeid(b).name()};
+        CHECK(b_type_name == result_type_name);
+
+        CHECK(expected == 2 / b);
+      }
+
+      SUBCASE("Rational<same> / Rational<same>")
+      {
+        MyRationalT a{2};
+        MyRationalT b{3};
+        MyRationalT c{6};
+
+        MyRationalT r_2_3{2, 3};
+        MyRationalT r_1_4{1, 4};
+        MyRationalT r_1_6{1, 6};
+
+        CHECK(a == c / b);
+        CHECK(r_2_3 * r_1_4 == r_1_6);
+        CHECK(r_1_4 == r_1_6 / r_2_3);
+        CHECK_FALSE(a * b == r_2_3);
+        CHECK_FALSE(r_2_3 / b == a);
+      }
+    }
+
     SUBCASE("binary +")
     {
       SUBCASE("Rational + int")
