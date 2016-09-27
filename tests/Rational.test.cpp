@@ -156,9 +156,20 @@ TEST_CASE("Testing Rational.hpp")
 
       SUBCASE("int + Rational")
       {
+        MyRationalT a{2};
+
+        CHECK(1 + a == 3);
+
+        MyRationalT b{2, 3};
+        MyRationalT expected{5, 3};
+
+        std::string result_type_name{typeid(1 + b).name()};
+        std::string b_type_name{typeid(b).name()};
+        CHECK(b_type_name == result_type_name);
+
+        CHECK(expected == 1 + b);
       }
 
-      /// \todo  figure out why this works without being implemented.
       SUBCASE("Rational<same> + Rational<same>")
       {
         MyRationalT a{2};

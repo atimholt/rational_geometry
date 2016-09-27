@@ -157,6 +157,14 @@ SignedIntT Rational<SignedIntT, kDenominator>::denominator() const
 }
 
 
+/// Get the long double equivalent of the rational number.
+///
+/// This is used instead of an operator long double() because such a function
+/// implies that conversion to a long double brings no loss of functionality.
+/// However, a long double is not adequate in every place a rational number is
+/// needed for the same reasons this rational number class exists in the first
+/// place.
+///
 template <typename SignedIntT, SignedIntT kDenominator>
 long double Rational<SignedIntT, kDenominator>::as_long_double() const
 {
