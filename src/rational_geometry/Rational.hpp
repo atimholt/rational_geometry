@@ -221,6 +221,8 @@ operator-() const
 //-------------------
 //   Comparison
 //  ------------
+//     Equality
+//    ----------
 
 template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
 auto operator==(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
@@ -241,6 +243,30 @@ bool operator==(Rational<SignedIntT, kDenominator> l_op,
     Rational<SignedIntT, kDenominator> r_op)
 {
   return l_op.numerator() == r_op.numerator();
+}
+
+//     Less Than
+//    -----------
+
+template <typename SignedIntT_l, typename RealT_r, SignedIntT_l kDenominator>
+auto operator<(Rational<SignedIntT_l, kDenominator> l_op, RealT_r r_op) ->
+    typename std::enable_if<std::is_arithmetic<RealT_r>::value, bool>::type
+{
+  return l_op.numerator() < r_op * kDenominator;
+}
+
+template <typename RealT_l, typename SignedIntT_r, SignedIntT_r kDenominator>
+auto operator<(RealT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
+    typename std::enable_if<std::is_arithmetic<RealT_l>::value, bool>::type
+{
+  return l_op * kDenominator < r_op.numerator();
+}
+
+template <typename SignedIntT, SignedIntT kDenominator>
+bool operator<(Rational<SignedIntT, kDenominator> l_op,
+    Rational<SignedIntT, kDenominator> r_op)
+{
+  return l_op.numerator() < r_op.numerator();
 }
 
 //   Arithmetic
