@@ -56,7 +56,7 @@ template <typename T>
 constexpr auto lcm(T a, T b) ->
     typename std::enable_if<std::is_integral<T>::value, T>::type
 {
-  return (a / gcd(a, b)) * b;
+  return rational_geometry::abs((a / gcd(a, b)) * b);
 }
 
 //-----------

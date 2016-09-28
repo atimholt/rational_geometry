@@ -77,6 +77,18 @@ TEST_CASE("Testing common_factor.hpp")
     std::string expected_type = typeid(expected).name();
 
     CHECK(c_type == expected_type);
+
+    SUBCASE("negative numbers")
+    {
+      constexpr long c1 = lcm(-a, b);
+      constexpr long c2 = lcm(a, -b);
+      constexpr long c3 = lcm(-a, -b);
+
+      // Always positive results.
+      CHECK(expected == c1);
+      CHECK(expected == c2);
+      CHECK(expected == c3); 
+    }
   }
 }
 
