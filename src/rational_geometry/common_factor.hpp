@@ -3,6 +3,12 @@
 ///
 /// Tools for dealing with the factors of integers.
 ///
+/// As much as I hate re-implementing something already so frequently
+/// implemented, this is meant to be a header-only library with no external
+/// dependencies. Beyond that, even boost's common_factor.hpp does not make use
+/// of modern c++'s constexpr keyword, separating its gcd & lcm functions into
+/// separate runtime and compile time headers.
+///
 /// This code is under the MIT license, please see LICENSE.txt for more
 /// information
 
