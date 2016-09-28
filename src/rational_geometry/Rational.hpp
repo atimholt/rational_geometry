@@ -150,6 +150,16 @@ Rational<SignedIntT, kDenominator>::Rational(
                      numerator :
                      (numerator * kDenominator) / denominator}
 {
+#ifndef RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION
+  if (denominator != kDenominator && (numerator * kDenominator) % denominator) {
+    std::stringstream what_error;
+    what_error << "Inexact construction of a Rational<"
+               << typeid(SignedIntT).name() << ", " << kDenominator
+               << ">s:\n  (" << numerator << " * " << kDenominator << ") / "
+               << denominator << " devolves to a " << typeid(SignedIntT).name();
+    throw std::domain_error(what_error.str());
+  }
+#endif
 }
 
 /// Creates nearest representable Rational to the given value.

@@ -49,6 +49,23 @@ TEST_CASE("Testing Rational.hpp")
 
         CHECK(a.numerator() == 8);
         CHECK(a.denominator() == 12);
+
+        SUBCASE("Exceptional")
+        {
+          try {
+            Rational<int, 12> a{3, 17};
+            CHECK(false);
+          }
+          catch (std::domain_error e) {
+            using namespace std::literals;
+            // Because it's vendor dependent:
+            auto int_name = typeid(int).name();
+            CHECK(std::string(e.what())
+                  == "Inexact construction of a Rational<"s + int_name
+                         + ", 12>s:\n"s + "  (3 * 12) / 17 devolves to a "s
+                         + int_name);
+          }
+        }
       }
 
       SUBCASE("Rational(long double)")
