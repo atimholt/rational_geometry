@@ -367,6 +367,16 @@ TEST_CASE("Testing Rational.hpp")
           CHECK(a * b == c);
           CHECK(r_2_3 * r_1_4 == r_1_6);
           CHECK_FALSE(a * b == r_2_3);
+
+          SUBCASE("Exceptional")
+          {
+            using SmallerRat = Rational<int, 12>;
+
+            SmallerRat a{1,3};
+            SmallerRat b{2,3};
+
+            CHECK_THROWS_AS(a * b, std::domain_error);
+          }
         }
       }
 

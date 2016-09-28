@@ -16,6 +16,12 @@
 #include <iostream>
 #include <type_traits>
 
+#ifndef RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#endif
+
 //----------
 // Includes
 
@@ -446,6 +452,17 @@ Rational<SignedIntT, kDenominator> operator*(
     Rational<SignedIntT, kDenominator> r_op)
 {
   SignedIntT ret{l_op.numerator() * r_op.numerator()};
+#ifndef RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION
+  if (ret % kDenominator) {
+    std::stringstream what_error;
+    what_error << "Inexact operation multiplying two Rational<"
+               << typeid(SignedIntT).name() << ", " << kDenominator
+               << ">s:\n  (" << l_op << " * " << r_op << ") requires (" << ret
+               << "/" << kDenominator << ") to return a "
+               << typeid(SignedIntT).name();
+    throw std::domain_error(what_error.str());
+  }
+#endif
   ret /= kDenominator;
   return *reinterpret_cast<Rational<SignedIntT, kDenominator>*>(&ret);
 }
