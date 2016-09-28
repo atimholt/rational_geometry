@@ -13,6 +13,7 @@
 //----------
 
 #include <cmath>
+#include <iostream>
 #include <type_traits>
 
 //----------
@@ -532,6 +533,17 @@ Rational<SignedIntT, kDenominator> operator-(
 {
   SignedIntT ret{l_op.numerator() - r_op.numerator()};
   return *reinterpret_cast<Rational<SignedIntT, kDenominator>*>(&ret);
+}
+
+//   ostream Output
+//  ----------------
+
+template <typename SignedIntT, SignedIntT kDenominator>
+std::ostream& operator<<(
+    std::ostream& the_stream, const Rational<SignedIntT, kDenominator>& value)
+{
+  the_stream << value.numerator() << '/' << kDenominator;
+  return the_stream;
 }
 
 //-------------------

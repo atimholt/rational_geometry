@@ -5,6 +5,7 @@
 
 #include <climits>
 #include <cstdint>
+#include <sstream>
 #include <string>
 #include <typeinfo>
 
@@ -464,6 +465,18 @@ TEST_CASE("Testing Rational.hpp")
           CHECK(a - b == 1);
         }
       }
+    }
+
+    SUBCASE("ostream output")
+    {
+      std::stringstream a{};
+
+      a << Rational<int, 4>{1, 4};
+      CHECK(a.str() == "1/4");
+
+      a.str("");
+      a << Rational<int, 12>{1,3};
+      CHECK(a.str() == "4/12");
     }
   }
 }
