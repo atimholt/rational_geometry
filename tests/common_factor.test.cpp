@@ -19,12 +19,15 @@ TEST_CASE("Testing common_factor.hpp")
     CHECK(2 == b);
   }
 
+  // clang-format off
+  const long a          = 2 * 2 * 3 * 3 * 5 * 5 * 5;
+  const long b          =             3 * 5 * 5     * 7 * 11;
+  // clang-format on
+
   SUBCASE("constexpr gcd<>()")
   {
     // clang-format off
-    const long a = 2 * 2 * 3 * 3 * 5 * 5 * 5;
-    const long b =             3 * 5 * 5     * 7 * 11;
-    const long expected =      3 * 5 * 5;
+    const long expected =             3 * 5 * 5;
     // clang-format on
 
     SUBCASE("normal case")
@@ -61,6 +64,19 @@ TEST_CASE("Testing common_factor.hpp")
       CHECK(c_type == expected_type);
       // no implicit conversion to signed.
     }
+  }
+
+  SUBCASE("constexpr lcm<>()")
+  {
+    const long expected = 2 * 2 * 3 * 3 * 5 * 5 * 5 * 7 * 11;
+
+    constexpr auto c = lcm(a, b);
+    CHECK(expected == c);
+
+    std::string c_type        = typeid(c).name();
+    std::string expected_type = typeid(expected).name();
+
+    CHECK(c_type == expected_type);
   }
 }
 

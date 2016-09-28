@@ -50,6 +50,15 @@ constexpr auto gcd(T a, T b) ->
   return rational_geometry::abs(0 == b ? a : gcd<T>(b, a % b));
 }
 
+/// Find the least common multiple between to integral numbers.
+///
+template <typename T>
+constexpr auto lcm(T a, T b) ->
+    typename std::enable_if<std::is_integral<T>::value, T>::type
+{
+  return (a / gcd(a, b)) * b;
+}
+
 //-----------
 // Functions
 
