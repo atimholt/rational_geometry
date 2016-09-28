@@ -53,12 +53,43 @@ TEST_CASE("Testing Rational.hpp")
 
       SUBCASE("Rational(long double)")
       {
-        MyRationalT a{23L};
+        MyRationalT a{23.0L};
         CHECK(a == 23);
 
         MyRationalT expected{51, 50};
         MyRationalT b{51.0L / 50};
         CHECK(expected == b);
+      }
+
+      SUBCASE("Rational(double)")
+      {
+        MyRationalT a{23.0};
+        CHECK(a == 23);
+
+        MyRationalT expected{51, 50};
+        MyRationalT b{1.02};
+        CHECK(expected == b);
+      }
+
+      SUBCASE("Rational(float)")
+      {
+        MyRationalT a{23.0f};
+        CHECK(a == 23);
+
+        MyRationalT expected{51, 50};
+        MyRationalT b{1.02f};
+
+        if (sizeof(float) * CHAR_BIT <= 32) {
+          // float is too small a type for the large denominator!
+          CHECK_FALSE(expected == b);
+        }
+        else {
+          CHECK(expected == b);
+        }
+
+        Rational<int, 100> expected_smaller_denom{51, 50};
+        Rational<int, 100> b_smaller_denom{51.0f / 50};
+        CHECK(expected_smaller_denom == b_smaller_denom);
       }
     }
 
@@ -475,7 +506,7 @@ TEST_CASE("Testing Rational.hpp")
       CHECK(a.str() == "1/4");
 
       a.str("");
-      a << Rational<int, 12>{1,3};
+      a << Rational<int, 12>{1, 3};
       CHECK(a.str() == "4/12");
     }
   }

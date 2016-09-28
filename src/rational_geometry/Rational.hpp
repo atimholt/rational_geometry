@@ -100,6 +100,8 @@ class Rational
   explicit Rational(int value);
   Rational(SignedIntT numerator, SignedIntT denominator);
   explicit Rational(long double value);
+  explicit Rational(double value);
+  explicit Rational(float value);
 
   // ACCESSORS
   SignedIntT numerator() const;
@@ -153,6 +155,18 @@ Rational<SignedIntT, kDenominator>::Rational(
 template <typename SignedIntT, SignedIntT kDenominator>
 Rational<SignedIntT, kDenominator>::Rational(long double value)
     : numerator_{static_cast<SignedIntT>(std::round(value * kDenominator))}
+{
+}
+
+template <typename SignedIntT, SignedIntT kDenominator>
+Rational<SignedIntT, kDenominator>::Rational(double value)
+    : Rational(static_cast<long double>(value))
+{
+}
+
+template <typename SignedIntT, SignedIntT kDenominator>
+Rational<SignedIntT, kDenominator>::Rational(float value)
+    : Rational(static_cast<long double>(value))
 {
 }
 
