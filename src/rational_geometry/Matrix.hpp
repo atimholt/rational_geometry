@@ -341,6 +341,24 @@ auto make_scale(RatT scalar)
   return ret;
 }
 
+/// Make a scaling matrix that scales only 1 dimension.
+///
+/// \note  the template arguments are reversed in this case so that the function
+///        may be called by specifying size without having to specify type.
+///
+template <size_t kDimension, typename RatT>
+auto make_stretch(size_t which_dimension, RatT scalar)
+{
+  Matrix<RatT, kDimension + 1> ret{}; // identity matrix
+
+  // Only scale dimension that exists.
+  if (which_dimension < kDimension) {
+    ret.values_[which_dimension][which_dimension] = scalar;
+  }
+
+  return ret;
+}
+
 //-------------------
 // Related Functions
 

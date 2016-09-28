@@ -421,6 +421,41 @@ TEST_CASE("Testing Matrix.hpp")
 
       CHECK(expected == a);
     }
+
+    SUBCASE("make_stretch()")
+    {
+      const auto kSize = 2;
+      auto a           = make_stretch<kSize>(0, 5);
+      auto b           = make_stretch<kSize>(1, 5);
+      auto c           = make_stretch<kSize>(2, 5);
+
+      // clang-format off
+      Matrix<int, kSize + 1> expected_a{
+          {5, 0, 0},
+          {0, 1, 0},
+          {0, 0, 1}};
+
+      Matrix<int, kSize + 1> expected_b{
+          {1, 0, 0},
+          {0, 5, 0},
+          {0, 0, 1}};
+
+      Matrix<int, kSize + 1> expected_a_b{
+          {5, 0, 0},
+          {0, 5, 0},
+          {0, 0, 1}};
+      // clang-format on
+
+      Matrix<int, kSize + 1> expected_c{}; // Expect an identity matrix.
+
+      CHECK(expected_a == a);
+      CHECK(expected_b == b);
+      CHECK(expected_c == c);
+
+      // Compose arbitrary scales.
+      CHECK(expected_a_b == a * b);
+      CHECK(expected_a_b == b * a);
+    }
   }
 }
 
