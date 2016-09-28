@@ -49,6 +49,16 @@ TEST_CASE("Testing Rational.hpp")
         CHECK(a.numerator() == 8);
         CHECK(a.denominator() == 12);
       }
+
+      SUBCASE("Rational(long double)")
+      {
+        MyRationalT a{23L};
+        CHECK(a == 23);
+
+        MyRationalT expected{51, 50};
+        MyRationalT b{51.0L / 50};
+        CHECK(expected == b);
+      }
     }
 
     SUBCASE("Accessors")

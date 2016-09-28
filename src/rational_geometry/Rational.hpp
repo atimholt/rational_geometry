@@ -12,6 +12,7 @@
 // Includes
 //----------
 
+#include <cmath>
 #include <type_traits>
 
 //----------
@@ -95,8 +96,9 @@ class Rational
  public:
   // CONSTRUCTORS
   Rational();
-  explicit Rational(SignedIntT value);
+  explicit Rational(int value);
   Rational(SignedIntT numerator, SignedIntT denominator);
+  explicit Rational(long double value);
 
   // ACCESSORS
   SignedIntT numerator() const;
@@ -125,7 +127,7 @@ Rational<SignedIntT, kDenominator>::Rational() : numerator_{0}
 }
 
 template <typename SignedIntT, SignedIntT kDenominator>
-Rational<SignedIntT, kDenominator>::Rational(SignedIntT value)
+Rational<SignedIntT, kDenominator>::Rational(int value)
     : numerator_{value * kDenominator}
 {
 }
@@ -138,6 +140,18 @@ Rational<SignedIntT, kDenominator>::Rational(
     : numerator_{denominator == kDenominator ?
                      numerator :
                      (numerator * kDenominator) / denominator}
+{
+}
+
+/// Creates nearest representable Rational to the given value.
+///
+/// \note  While this has more use than many possible float-to-rational
+///        conversions, a float of sufficiently high magnitude will not have
+///        enough resolution for this method to be accurate.
+///
+template <typename SignedIntT, SignedIntT kDenominator>
+Rational<SignedIntT, kDenominator>::Rational(long double value)
+    : numerator_{static_cast<SignedIntT>(std::round(value * kDenominator))}
 {
 }
 
