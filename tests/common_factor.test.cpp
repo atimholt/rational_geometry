@@ -44,6 +44,23 @@ TEST_CASE("Testing common_factor.hpp")
       CHECK(expected == c2);
       CHECK(expected == c3);
     }
+
+    SUBCASE("unsigned numbers")
+    {
+      const unsigned long a        = 3 * 7;
+      const unsigned long b        = 3 * 5;
+      const unsigned long expected = 3;
+
+      constexpr auto c = gcd(a, b);
+      CHECK(expected == c);
+      // So no special unsigned abs() is required.
+
+      std::string c_type        = typeid(c).name();
+      std::string expected_type = typeid(expected).name();
+
+      CHECK(c_type == expected_type);
+      // no implicit conversion to signed.
+    }
   }
 }
 
