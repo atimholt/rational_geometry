@@ -56,14 +56,13 @@ TEST_CASE("Testing Rational.hpp")
             Rational<int, 12> a{3, 17};
             CHECK(false);
           }
-          catch (std::domain_error e) {
+          catch (unrepresentable_operation_error<int> e) {
             using namespace std::literals;
             // Because it's vendor dependent:
             auto int_name = typeid(int).name();
             CHECK(std::string(e.what())
                   == "Inexact construction of a Rational<"s + int_name
-                         + ", 12>s:\n"s + "  (3 * 12) / 17 devolves to a "s
-                         + int_name);
+                         + ", 12>"s);
           }
         }
       }
@@ -392,7 +391,7 @@ TEST_CASE("Testing Rational.hpp")
             SmallerRat a{1,3};
             SmallerRat b{2,3};
 
-            CHECK_THROWS_AS(a * b, std::domain_error);
+            CHECK_THROWS_AS(a * b, unrepresentable_operation_error<int>);
           }
         }
       }

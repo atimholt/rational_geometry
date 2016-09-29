@@ -17,8 +17,9 @@
 #include <type_traits>
 
 #ifndef RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION
+#include "unrepresentable_operation_error.hpp"
+
 #include <sstream>
-#include <stdexcept>
 #include <string>
 #endif
 
@@ -154,10 +155,9 @@ Rational<SignedIntT, kDenominator>::Rational(
   if (denominator != kDenominator && (numerator * kDenominator) % denominator) {
     std::stringstream what_error;
     what_error << "Inexact construction of a Rational<"
-               << typeid(SignedIntT).name() << ", " << kDenominator
-               << ">s:\n  (" << numerator << " * " << kDenominator << ") / "
-               << denominator << " devolves to a " << typeid(SignedIntT).name();
-    throw std::domain_error(what_error.str());
+               << typeid(SignedIntT).name() << ", " << kDenominator << ">";
+    throw unrepresentable_operation_error<SignedIntT>(
+        what_error.str(), numerator * kDenominator, denominator);
   }
 #endif
 }
@@ -470,7 +470,8 @@ Rational<SignedIntT, kDenominator> operator*(
                << ">s:\n  (" << l_op << " * " << r_op << ") requires (" << ret
                << "/" << kDenominator << ") to return a "
                << typeid(SignedIntT).name();
-    throw std::domain_error(what_error.str());
+    throw unrepresentable_operation_error<SignedIntT>{
+        what_error.str(), ret, kDenominator};
   }
 #endif
   ret /= kDenominator;
