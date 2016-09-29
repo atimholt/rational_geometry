@@ -487,18 +487,20 @@ auto operator/(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
         Rational<SignedIntT_l, kDenominator>>::type
 {
 #ifndef RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION
-  if (l_op.numerator() % r_op) {
+  auto top_int    = l_op.numerator();
+  auto bottom_int = r_op;
+  if (top_int % bottom_int) {
     std::stringstream what_error;
     // clang-format off
     what_error << "Inexact operation in ("
                << typeid(l_op).name() << " " << l_op
                << " / "
                << typeid(r_op).name() << " " << r_op << "):  "
-               << l_op.numerator() << "/"
-               << r_op << " -> " << typeid(SignedIntT_l).name();
+               << top_int << "/" << bottom_int
+               << " -> " << typeid(SignedIntT_l).name();
     // clang-format on
     throw unrepresentable_operation_error<SignedIntT_l>{
-        what_error.str(), l_op.numerator(), r_op};
+        what_error.str(), top_int, bottom_int};
   }
 #endif
   SignedIntT_l ret{l_op.numerator() / r_op};
