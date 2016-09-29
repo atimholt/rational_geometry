@@ -12,6 +12,8 @@
 namespace rational_geometry {
 
 
+using namespace std::string_literals;
+
 TEST_CASE("Testing Rational.hpp")
 {
   // log_2 of the constant below, rounded up. add 1 for sign bit
@@ -388,8 +390,8 @@ TEST_CASE("Testing Rational.hpp")
           {
             using SmallerRat = Rational<int, 12>;
 
-            SmallerRat a{1,3};
-            SmallerRat b{2,3};
+            SmallerRat a{1, 3};
+            SmallerRat b{2, 3};
 
             CHECK_THROWS_AS(a * b, unrepresentable_operation_error<int>);
           }
@@ -412,6 +414,29 @@ TEST_CASE("Testing Rational.hpp")
           CHECK(b_type_name == result_type_name);
 
           CHECK(expected == b / 3);
+
+          SUBCASE("Exceptional")
+          {
+            using RatI18 = Rational<int, 18>;
+            RatI18 a{1};
+            CHECK_THROWS_AS(a / 27, unrepresentable_operation_error<int>);
+
+            // Doesn't throw
+            RatI18 b{3};
+            RatI18 expected{1, 9};
+            CHECK(expected == b / 27);
+
+            try {
+              a / 27;
+            }
+            catch (unrepresentable_operation_error<int> e) {
+              CHECK(e.get_minimum_fix_factor() == 3);
+              auto expected = "Inexact operation in ("s + typeid(a).name()
+                              + " 18/18 / "s + typeid(int).name()
+                              + " 27):  18/27 -> "s + typeid(int).name();
+              CHECK(e.what() == expected);
+            }
+          }
         }
 
         SUBCASE("int / Rational")
