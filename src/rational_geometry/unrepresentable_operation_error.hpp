@@ -52,6 +52,9 @@ class unrepresentable_operation_error : public std::domain_error
   // ACCESSORS
   IntT get_inadequate_denominator() const;
   IntT get_minimum_fix_factor() const;
+
+  // OTHER METHODS
+  IntT& accumulate_fix_factor(IntT& running_accumulation) const;
 };
 
 // Class Template Definitions
@@ -92,6 +95,20 @@ IntT unrepresentable_operation_error<typename IntT>::get_minimum_fix_factor()
     const
 {
   return minimum_fix_factor_;
+}
+
+//   Other Methods
+//  ---------------
+
+template <typename IntT>
+IntT& unrepresentable_operation_error<typename IntT>::accumulate_fix_factor(
+    IntT& running_accumulation) const
+{
+  if (running_accumulation <= 0) {
+    running_accumulation = 1;
+  }
+  running_accumulation = lcm(running_accumulation, get_minimum_fix_factor());
+  return running_accumulation;
 }
 
 //---------
