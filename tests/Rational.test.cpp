@@ -394,6 +394,20 @@ TEST_CASE("Testing Rational.hpp")
             SmallerRat b{2, 3};
 
             CHECK_THROWS_AS(a * b, unrepresentable_operation_error<int>);
+
+            // Doesn't throw
+            CHECK((3 * a) * b == b);
+
+            try {
+              a * b;
+            }
+            catch (unrepresentable_operation_error<int> e) {
+              CHECK(e.get_minimum_fix_factor() == 3);
+              auto expected = "Inexact operation in ("s + typeid(a).name()
+                              + " 4/12 * "s + typeid(b).name()
+                              + " 8/12):  32/12 -> "s + typeid(int).name();
+              CHECK(expected == std::string(e.what()));
+            }
           }
         }
       }

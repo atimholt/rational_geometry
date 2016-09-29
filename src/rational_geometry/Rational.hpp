@@ -463,15 +463,20 @@ Rational<SignedIntT, kDenominator> operator*(
 {
   SignedIntT ret{l_op.numerator() * r_op.numerator()};
 #ifndef RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION
-  if (ret % kDenominator) {
+  auto top_int    = ret;
+  auto bottom_int = kDenominator;
+  if (top_int % bottom_int) {
     std::stringstream what_error;
-    what_error << "Inexact operation multiplying two Rational<"
-               << typeid(SignedIntT).name() << ", " << kDenominator
-               << ">s:\n  (" << l_op << " * " << r_op << ") requires (" << ret
-               << "/" << kDenominator << ") to return a "
-               << typeid(SignedIntT).name();
+    // clang-format off
+    what_error << "Inexact operation in ("
+               << typeid(l_op).name() << " " << l_op
+               << " * "
+               << typeid(r_op).name() << " " << r_op << "):  "
+               << top_int << "/" << bottom_int
+               << " -> " << typeid(SignedIntT).name();
+    // clang-format on
     throw unrepresentable_operation_error<SignedIntT>{
-        what_error.str(), ret, kDenominator};
+        what_error.str(), top_int, bottom_int};
   }
 #endif
   ret /= kDenominator;
