@@ -453,6 +453,27 @@ TEST_CASE("Testing Rational.hpp")
           CHECK(b_type_name == result_type_name);
 
           CHECK(expected == 2 / b);
+
+          SUBCASE("Exceptional")
+          {
+            using RatI18 = Rational<int, 18>;
+            RatI18 a{5, 18};
+            CHECK_THROWS_AS(1 / a, unrepresentable_operation_error<int>);
+
+            // Doesn't throw
+            CHECK(18 == 5 / a);
+
+            try {
+              1 / a;
+            }
+            catch (unrepresentable_operation_error<int> e) {
+              CHECK(e.get_minimum_fix_factor() == 5);
+              auto expected = "Inexact operation in ("s + typeid(int).name()
+                              + " 1 / "s + typeid(a).name()
+                              + " 5/18):  324/5 -> "s + typeid(int).name();
+              CHECK(expected == std::string(e.what()));
+            }
+          }
         }
 
         SUBCASE("Rational<same> / Rational<same>")
