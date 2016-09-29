@@ -19,7 +19,6 @@ TEST_CASE("Testing unrepresentable_operation_error.hpp")
       auto a =
           unrepresentable_operation_error<int>("This error is a test", 12, 8);
 
-      CHECK(a.get_inadequate_denominator() == 12);
       CHECK(a.get_minimum_fix_factor() == 2);
     }
 

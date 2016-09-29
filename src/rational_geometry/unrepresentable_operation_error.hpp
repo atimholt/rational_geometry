@@ -39,18 +39,17 @@ class unrepresentable_operation_error : public std::domain_error
   static_assert(std::is_integral<IntT>::value, "IntT must be integer type");
 
   // INTERNAL STATE
-  IntT inadequate_denominator_;
   IntT minimum_fix_factor_;
 
  public:
   // CONSTRUCTORS
+  unrepresentable_operation_error(const std::string& what_arg,
+      IntT operation_numerator,
+      IntT operation_divisor);
   unrepresentable_operation_error(
-      const std::string& what_arg, IntT denominator, IntT divisor);
-  unrepresentable_operation_error(
-      const char* what_arg, IntT denominator, IntT divisor);
+      const char* what_arg, IntT operation_numerator, IntT operation_divisor);
 
   // ACCESSORS
-  IntT get_inadequate_denominator() const;
   IntT get_minimum_fix_factor() const;
 
   // OTHER METHODS
@@ -64,31 +63,26 @@ class unrepresentable_operation_error : public std::domain_error
 
 template <typename IntT>
 unrepresentable_operation_error<typename IntT>::unrepresentable_operation_error(
-    const std::string& what_arg, IntT denominator, IntT divisor)
+    const std::string& what_arg,
+    IntT operation_numerator,
+    IntT operation_divisor)
     : std::domain_error(what_arg)
-    , inadequate_denominator_{denominator}
-    , minimum_fix_factor_{divisor / gcd(denominator, divisor)}
+    , minimum_fix_factor_{
+          operation_divisor / gcd(operation_numerator, operation_divisor)}
 {
 }
 
 template <typename IntT>
 unrepresentable_operation_error<typename IntT>::unrepresentable_operation_error(
-    const char* what_arg, IntT denominator, IntT divisor)
+    const char* what_arg, IntT operation_numerator, IntT operation_divisor)
     : std::domain_error(what_arg)
-    , inadequate_denominator_{denominator}
-    , minimum_fix_factor_{divisor / gcd(denominator, divisor)}
+    , minimum_fix_factor_{
+          operation_divisor / gcd(operation_numerator, operation_divisor)}
 {
 }
 
 //   Accessors
 //  -----------
-
-template <typename IntT>
-IntT unrepresentable_operation_error<
-    typename IntT>::get_inadequate_denominator() const
-{
-  return inadequate_denominator_;
-}
 
 template <typename IntT>
 IntT unrepresentable_operation_error<typename IntT>::get_minimum_fix_factor()
