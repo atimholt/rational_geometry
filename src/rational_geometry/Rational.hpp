@@ -531,14 +531,28 @@ auto operator/(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
   return *reinterpret_cast<Rational<SignedIntT_r, kDenominator>*>(&ret);
 }
 
-/// \todo  add compile-time option for throwing an exception outside of this
-///        this operator's accuracy.
-///
 template <typename SignedIntT, SignedIntT kDenominator>
 Rational<SignedIntT, kDenominator> operator/(
     Rational<SignedIntT, kDenominator> l_op,
     Rational<SignedIntT, kDenominator> r_op)
 {
+#ifndef RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION
+  auto top_int    = l_op.numerator() * kDenominator;
+  auto bottom_int = r_op.numerator();
+  if (top_int % bottom_int) {
+    std::stringstream what_error;
+    // clang-format off
+    what_error << "Inexact operation in ("
+               << typeid(l_op).name() << " " << l_op
+               << " / "
+               << typeid(r_op).name() << " " << r_op << "):  "
+               << top_int << "/" << bottom_int
+               << " -> " << typeid(SignedIntT).name();
+    // clang-format on
+    throw unrepresentable_operation_error<SignedIntT>{
+        what_error.str(), top_int, bottom_int};
+  }
+#endif
   SignedIntT ret{(l_op.numerator() * kDenominator) / r_op.numerator()};
   return *reinterpret_cast<Rational<SignedIntT, kDenominator>*>(&ret);
 }
