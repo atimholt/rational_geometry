@@ -6,6 +6,9 @@
 /// \todo  Make it possible to include the file multiple times with differing
 ///        flags.
 ///
+/// \todo  Test all permutations of user-settable flags (requires multiple
+///        inclusion ability).
+///
 /// \todo  Consider removing absolutely all overhead when not checking for
 ///        overflow (this would require the worst kind of code duplication)
 ///
@@ -51,7 +54,9 @@ namespace rational_geometry {
 /// Theoretically, this class is as fast as its underlying integer type in
 /// multiplication/division (by an integer) and same-instantiated-type
 /// addition. It is also faster than, say, boost::rational in nearly every
-/// operation.
+/// operation. (Factuality of this statement is subject to actual benchmarking,
+/// not undertaken. It should be noted that boost/rational admits it is not
+/// actually meant to be speedy, though.)
 ///
 /// This is because the denominator is templatized away from the run-time
 /// internal representation. As a consequence, only a single integer value is
@@ -64,33 +69,58 @@ namespace rational_geometry {
 /// necessary (but this is not the recommended use).
 ///
 /// The creator of this library recommends determining--at or before compile
-/// time--a composite number sufficient to render <i>all</i> the rational
-/// values you wish to represent within your project. To this end, facility is
-/// [planned to be] provided for throwing exceptions when rounding errors
-/// occur. These exceptions [will] have a field representing the (ideally)
-/// small number needed to multiply the value of kDenominator by to prevent the
-/// exact same instigating operation from throwing after a recompile & re-run.
-/// Because this rounding error detection has overhead, its code [will be]
-/// separate from the intended end-use code. Additionally, rounding is not an
-/// error unless you want it to be. Just keep in mind that allowing uses that
-/// cause rounding removes most of the meaning/purpose of the == operator.
+/// time--a composite number for kDenominator sufficient to render <i>all</i>
+/// the rational values you wish to represent within your project (or at least
+/// one that covers the domain of accuracy you desire). To this end, facility
+/// is provided for throwing exceptions (of type
+/// rational_geometry::unrepresentable_operation_error) when rounding errors
+/// occur. These exceptions have a field (.remaining_divisor_) representing the
+/// (ideally) small number needed to multiply by the value you have chosen for
+/// kDenominator to prevent the exact same instigating operation from throwing
+/// after a recompile & re-run. Because this rounding error detection has
+/// overhead, its code is toggleable using the
+/// RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION precompiler flag. Simply
+/// define it before including rational_geometry/Rational.hpp.
 ///
-/// For reasons of speed (and ease of implementation, to some degree), [it is
-/// currently planned that] this library will perform operations which run a
-/// higher risk of overflowing the underlying integer type. That is, performing
-/// operations between two numerators before involving denominators alleviates
-/// any need to determine greatest common factors, etc.. For a wide variety of
-/// use cases, this is not a problem: integer multiplication, addition, and
-/// values much smaller than the std::numeric_limits::max<>() for the
-/// underlying integer type are particularly safe. The library user may skirt
-/// closer to the limits of the class if they are careful (i.e., write lots of
-/// tests that cover your actual usage, particularly tests that check that
-/// operations that should fail actually do!). If you're really worried, use a
-/// large integer type.
+/// The library user might alternatively choose to use the
+/// RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION flag to simply disregard
+/// innacuracies beyond their chosen fixed denominator.
+///
+/// The unrepresentable_operation_error class has a method
+/// (.accumulate_fix_factor(IntType&)) which automatically modifies the
+/// variable passed to it to the accumulated least common multiple of all such
+/// exceptions upon which the accumulate_fix_factor() method is called. The int
+/// passed to it should be the same type as the signed int type upon which you
+/// have instantiated the Rational class template, and must be initialized to a
+/// value of 1 before use. This accumulation will probably have to be performed
+/// in the catch block of try-catch statements in your unit tests. Write an
+/// assertion that the int is still equal to 1 after all accumulations to
+/// ensure that your chosen value for kDimension is sufficient. If the
+/// assertion fails, the variable's value is exactly that number you need to
+/// multiply kDimension by for all your tests to fall within your chosen domain
+/// of accuracy.
+///
+/// For reasons of speed, this library can be set to perform operations which
+/// run a higher risk of overflowing the underlying integer type, via the
+/// RATIONAL_GEOMETRY_SKIP_OVERFLOW_PROTECTIONS flag. <b>Using this flag may
+/// cause overflows in places that will be unexpected if the library user does
+/// not have a working knowledge of how the Rational class works internally</b>
+/// For a wide variety of use cases, this is not a problem: integer
+/// multiplication, addition, and values much smaller than the
+/// std::numeric_limits::max<>() for the underlying integer type are
+/// particularly safe. The library user may skirt closer to the limits of the
+/// class if they are careful (i.e., write lots of tests that cover your actual
+/// usage, particularly tests that check that operations that should fail
+/// actually do!). If you're really worried, use a large integer type (or don't
+/// set the flag in the first place). The library user may turn off overflow
+/// protection if they are instantiating Rational upon some manner of infinite
+/// precision integer type (these are typically called something like BigInt).
+/// Be aware of the pros & cons of your chosen integer type.
 ///
 /// \note  In its pre-alpha state (and probably well beyond that), this library
 ///        will remain un-benchmarked. Its primary use, for some time, will be
-///        as a rational number type that adds no new external dependencies.
+///        as a rational number type that adds no new external dependencies to
+///        the rational_geometry library.
 ///
 template <typename SignedIntT, SignedIntT kDenominator>
 class Rational
