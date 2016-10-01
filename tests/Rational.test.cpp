@@ -232,6 +232,19 @@ TEST_CASE("Testing Rational.hpp")
           MyRationalT a{5};
           CHECK(a < 6);
           CHECK_FALSE(a < 4);
+
+          using SmallerRat = Rational<int, 12>;
+          SmallerRat b{11,12};
+          SmallerRat c{12,12};
+          SmallerRat d{13,12};
+
+          CHECK(b < 1);
+          CHECK_FALSE(c < 1);
+          CHECK_FALSE(d < 1);
+
+          CHECK_FALSE(-b < -1);
+          CHECK_FALSE(-c < -1);
+          CHECK(-d < -1);
         }
 
         SUBCASE("int < Rational")
@@ -239,6 +252,19 @@ TEST_CASE("Testing Rational.hpp")
           MyRationalT a{5};
           CHECK(4 < a);
           CHECK_FALSE(6 < a);
+
+          using SmallerRat = Rational<int, 12>;
+          SmallerRat b{11,12};
+          SmallerRat c{12,12};
+          SmallerRat d{13,12};
+
+          CHECK_FALSE(1 < b);
+          CHECK_FALSE(1 < c);
+          CHECK(1 < d);
+
+          CHECK(-1 < -b);
+          CHECK_FALSE(-1 < -c);
+          CHECK_FALSE(-1 < -d);
         }
 
         SUBCASE("Rational<same> < Rational<same>")

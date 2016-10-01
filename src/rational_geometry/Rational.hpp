@@ -417,7 +417,14 @@ template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
 auto operator<(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
     typename std::enable_if<std::is_integral<IntT_r>::value, bool>::type
 {
+#ifndef RATIONAL_GEOMETRY_SKIP_OVERFLOW_PROTECTIONS
+  if (l_op.numerator() / kDenominator < r_op) return true;
+  if (l_op.numerator() / kDenominator > r_op) return false;
+  auto ret = partial_division({r_op, kDenominator}, l_op.numerator());
+  return ret.remaining_divisor_ < ret.partial_result_;
+#else
   return l_op.numerator() < r_op * kDenominator;
+#endif
 }
 
 /// Determine if an int is less than a rational
@@ -433,7 +440,14 @@ template <typename IntT_l, typename SignedIntT_r, SignedIntT_r kDenominator>
 auto operator<(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
     typename std::enable_if<std::is_integral<IntT_l>::value, bool>::type
 {
+#ifndef RATIONAL_GEOMETRY_SKIP_OVERFLOW_PROTECTIONS
+  if (l_op < r_op.numerator() / kDenominator) return true;
+  if (l_op > r_op.numerator() / kDenominator) return false;
+  auto ret = partial_division({l_op, kDenominator}, r_op.numerator());
+  return ret.partial_result_ < ret.remaining_divisor_;
+#else
   return l_op * kDenominator < r_op.numerator();
+#endif
 }
 
 /// Determine if a rational is less than another rational of the same type.
