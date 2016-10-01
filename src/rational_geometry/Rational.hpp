@@ -3,6 +3,12 @@
 ///
 /// A faster rational number type and its related functions.
 ///
+/// \todo  Make it possible to include the file multiple times with differing
+///        flags.
+///
+/// \todo  Consider removing absolutely all overhead when not checking for
+///        overflow (this would require the worst kind of code duplication)
+///
 /// This code is under the MIT license, please see LICENSE.txt for more
 /// information
 
@@ -14,7 +20,9 @@
 
 #include <cmath>
 #include <iostream>
+#include <numeric>
 #include <type_traits>
+#include <vector>
 
 #ifndef RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION
 #include "unrepresentable_operation_error.hpp"
@@ -126,6 +134,55 @@ class Rational
   Rational operator-() const;
 };
 
+// Helper Functions
+//------------------
+
+template <typename IntT>
+struct PartialDivisionResult
+{
+  IntT partial_result_;
+  IntT remaining_divisor_;
+};
+
+template <typename IntT>
+PartialDivisionResult<IntT> partial_division(IntT top_int, IntT bottom_int)
+{
+#ifndef RATIONAL_GEOMETRY_SKIP_OVERFLOW_PROTECTIONS
+  PartialDivisionResult<IntT> ret;
+
+  auto common_factor     = gcd(top_int, bottom_int);
+  ret.partial_result_    = top_int / common_factor;
+  ret.remaining_divisor_ = bottom_int / common_factor;
+
+  return ret;
+#else
+  return {top_int / bottom_int, 1};
+#endif
+}
+
+template <typename IntT>
+PartialDivisionResult<IntT> partial_division(
+    const std::vector<IntT>& top_ints, IntT bottom_int)
+{
+#ifndef RATIONAL_GEOMETRY_SKIP_OVERFLOW_PROTECTIONS
+  using namespace std;
+  PartialDivisionResult<IntT> init{1, bottom_int};
+
+  return std::accumulate(cbegin(top_ints), cend(top_ints), init,
+      [](PartialDivisionResult<IntT> so_far, IntT current_numerator) {
+        auto current_result =
+            partial_division(current_numerator, so_far.remaining_divisor_);
+        current_result.partial_result_ *= so_far.partial_result_;
+        return current_result;
+      });
+#else
+  return {std::accumulate(cbegin(top_ints), cend(top_ints), 1, std::multiplies)
+              / bottom_int,
+      1};
+#endif
+}
+
+
 // Class Template Definitions
 //----------------------------
 //   Constructors
@@ -142,14 +199,13 @@ Rational<SignedIntT, kDenominator>::Rational(int value)
 {
 }
 
-/// \todo  consider simplifying input to reduce risk of overflow
-///
 template <typename SignedIntT, SignedIntT kDenominator>
 Rational<SignedIntT, kDenominator>::Rational(
     SignedIntT numerator, SignedIntT denominator)
     : numerator_{denominator == kDenominator ?
                      numerator :
-                     (numerator * kDenominator) / denominator}
+                     partial_division({numerator, kDenominator}, denominator)
+                         .partial_result_}
 {
 #ifndef RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION
   if (denominator != kDenominator && (numerator * kDenominator) % denominator) {
@@ -453,33 +509,28 @@ auto operator*(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
   return *reinterpret_cast<Rational<SignedIntT_r, kDenominator>*>(&ret);
 }
 
-/// \todo  add compile-time option for throwing an exception outside of this
-///        this operator's accuracy.
-///
 template <typename SignedIntT, SignedIntT kDenominator>
 Rational<SignedIntT, kDenominator> operator*(
     Rational<SignedIntT, kDenominator> l_op,
     Rational<SignedIntT, kDenominator> r_op)
 {
-  SignedIntT ret{l_op.numerator() * r_op.numerator()};
+  auto result = partial_division({l_op.numerator(), r_op.numerator()}, kDenominator);
 #ifndef RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION
-  auto top_int    = ret;
-  auto bottom_int = kDenominator;
-  if (top_int % bottom_int) {
+  if (result.remaining_divisor_ != 1) {
     std::stringstream what_error;
     // clang-format off
     what_error << "Inexact operation in ("
                << typeid(l_op).name() << " " << l_op
                << " * "
                << typeid(r_op).name() << " " << r_op << "):  "
-               << top_int << "/" << bottom_int
+               << result.partial_result_ << "/" << result.remaining_divisor_
                << " -> " << typeid(SignedIntT).name();
     // clang-format on
     throw unrepresentable_operation_error<SignedIntT>{
-        what_error.str(), top_int, bottom_int};
+        what_error.str(), result.partial_result_, result.remaining_divisor_};
   }
 #endif
-  ret /= kDenominator;
+  SignedIntT ret{result.partial_result_};
   return *reinterpret_cast<Rational<SignedIntT, kDenominator>*>(&ret);
 }
 
@@ -517,24 +568,24 @@ auto operator/(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
     typename std::enable_if<std::is_integral<IntT_l>::value,
         Rational<SignedIntT_r, kDenominator>>::type
 {
+  auto result =
+      partial_division({l_op, kDenominator, kDenominator}, r_op.numerator());
 #ifndef RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION
-  auto top_int    = l_op * kDenominator * kDenominator;
-  auto bottom_int = r_op.numerator();
-  if (top_int % bottom_int) {
+  if (result.remaining_divisor_ != 1) {
     std::stringstream what_error;
     // clang-format off
     what_error << "Inexact operation in ("
                << typeid(l_op).name() << " " << l_op
                << " / "
                << typeid(r_op).name() << " " << r_op << "):  "
-               << top_int << "/" << bottom_int
+               << result.partial_result_ << "/" << result.remaining_divisor_
                << " -> " << typeid(SignedIntT_r).name();
     // clang-format on
     throw unrepresentable_operation_error<SignedIntT_r>{
-        what_error.str(), top_int, bottom_int};
+        what_error.str(), result.partial_result_, result.remaining_divisor_};
   }
 #endif
-  SignedIntT_r ret{(l_op * kDenominator * kDenominator) / r_op.numerator()};
+  SignedIntT_r ret{result.partial_result_};
   return *reinterpret_cast<Rational<SignedIntT_r, kDenominator>*>(&ret);
 }
 
@@ -543,24 +594,24 @@ Rational<SignedIntT, kDenominator> operator/(
     Rational<SignedIntT, kDenominator> l_op,
     Rational<SignedIntT, kDenominator> r_op)
 {
+  auto result =
+      partial_division({l_op.numerator(), kDenominator}, r_op.numerator());
 #ifndef RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION
-  auto top_int    = l_op.numerator() * kDenominator;
-  auto bottom_int = r_op.numerator();
-  if (top_int % bottom_int) {
+  if (result.remaining_divisor_ != 1) {
     std::stringstream what_error;
     // clang-format off
     what_error << "Inexact operation in ("
                << typeid(l_op).name() << " " << l_op
                << " / "
                << typeid(r_op).name() << " " << r_op << "):  "
-               << top_int << "/" << bottom_int
+               << result.partial_result_ << "/" << result.remaining_divisor_
                << " -> " << typeid(SignedIntT).name();
     // clang-format on
     throw unrepresentable_operation_error<SignedIntT>{
-        what_error.str(), top_int, bottom_int};
+        what_error.str(), result.partial_result_, result.remaining_divisor_};
   }
 #endif
-  SignedIntT ret{(l_op.numerator() * kDenominator) / r_op.numerator()};
+  SignedIntT ret{result.partial_result_};
   return *reinterpret_cast<Rational<SignedIntT, kDenominator>*>(&ret);
 }
 

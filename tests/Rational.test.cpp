@@ -405,7 +405,7 @@ TEST_CASE("Testing Rational.hpp")
               CHECK(e.get_minimum_fix_factor() == 3);
               auto expected = "Inexact operation in ("s + typeid(a).name()
                               + " 4/12 * "s + typeid(b).name()
-                              + " 8/12):  32/12 -> "s + typeid(int).name();
+                              + " 8/12):  8/3 -> "s + typeid(int).name();
               CHECK(expected == std::string(e.what()));
             }
           }
