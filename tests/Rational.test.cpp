@@ -646,6 +646,23 @@ TEST_CASE("Testing Rational.hpp")
       CHECK(a.str() == "4/12");
     }
   }
+
+  SUBCASE("Related Functions")
+  {
+    SUBCASE("simplify(Rational<>)")
+    {
+      Rational<int, 12> a{3};
+      auto result_a = simplify(a);
+
+      CHECK(result_a.first == 3);
+      CHECK(result_a.second == 1);
+
+      Rational<int, 8> b{2,4};
+      auto result_b = simplify(b);
+      CHECK(result_b.first == 1);
+      CHECK(result_b.second == 2);
+    }
+  }
 }
 
 

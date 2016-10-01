@@ -25,6 +25,7 @@
 #include <iostream>
 #include <numeric>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 #ifndef RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION
@@ -211,7 +212,6 @@ PartialDivisionResult<IntT> partial_division(
       1};
 #endif
 }
-
 
 // Class Template Definitions
 //----------------------------
@@ -732,8 +732,19 @@ std::ostream& operator<<(
   return the_stream;
 }
 
+// Related Functions
 //-------------------
-// Related Operators
+
+template <typename SignedIntT, SignedIntT kDenominator>
+std::pair<SignedIntT, SignedIntT> simplify(
+    Rational<SignedIntT, kDenominator> value)
+{
+  auto ret = partial_division(value.numerator(), value.denominator());
+  return *reinterpret_cast<std::pair<SignedIntT, SignedIntT>*>(&ret);
+}
+
+//-------------------
+// Related Functions
 
 } // namespace rational_geometry
 
