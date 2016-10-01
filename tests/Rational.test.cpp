@@ -399,7 +399,9 @@ TEST_CASE("Testing Rational.hpp")
             CHECK((3 * a) * b == b);
 
             try {
+              // clang-format off
               a * b;
+              // clang-format on
             }
             catch (unrepresentable_operation_error<int> e) {
               CHECK(e.get_minimum_fix_factor() == 3);

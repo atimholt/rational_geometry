@@ -545,7 +545,8 @@ Rational<SignedIntT, kDenominator> operator*(
     Rational<SignedIntT, kDenominator> l_op,
     Rational<SignedIntT, kDenominator> r_op)
 {
-  auto result = partial_division({l_op.numerator(), r_op.numerator()}, kDenominator);
+  auto result =
+      partial_division({l_op.numerator(), r_op.numerator()}, kDenominator);
 #ifndef RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION
   if (result.remaining_divisor_ != 1) {
     std::stringstream what_error;
