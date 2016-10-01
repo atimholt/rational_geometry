@@ -345,7 +345,8 @@ template <typename SignedIntT, SignedIntT kDenominator>
 Rational<SignedIntT, kDenominator> Rational<SignedIntT, kDenominator>::
 operator-() const
 {
-  return {-numerator(), kDenominator};
+  SignedIntT ret{-numerator_};
+  return *reinterpret_cast<Rational<SignedIntT, kDenominator>*>(&ret);
 }
 
 // Related Operators
