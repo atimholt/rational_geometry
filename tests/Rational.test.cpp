@@ -125,11 +125,25 @@ TEST_CASE("Testing Rational.hpp")
         CHECK(a.denominator() == 12);
       }
 
-      SUBCASE("as_long_double")
+      SUBCASE("as_long_double()")
       {
         MyRationalT a{3, 2};
 
         CHECK(a.as_long_double() == doctest::Approx(1.5));
+      }
+
+      SUBCASE("as_simplified()")
+      {
+        Rational<int, 12> a{3};
+        auto result_a = a.as_simplified();
+
+        CHECK(result_a.first == 3);
+        CHECK(result_a.second == 1);
+
+        Rational<int, 8> b{2, 4};
+        auto result_b = b.as_simplified();
+        CHECK(result_b.first == 1);
+        CHECK(result_b.second == 2);
       }
     }
 
@@ -234,9 +248,9 @@ TEST_CASE("Testing Rational.hpp")
           CHECK_FALSE(a < 4);
 
           using SmallerRat = Rational<int, 12>;
-          SmallerRat b{11,12};
-          SmallerRat c{12,12};
-          SmallerRat d{13,12};
+          SmallerRat b{11, 12};
+          SmallerRat c{12, 12};
+          SmallerRat d{13, 12};
 
           CHECK(b < 1);
           CHECK_FALSE(c < 1);
@@ -254,9 +268,9 @@ TEST_CASE("Testing Rational.hpp")
           CHECK_FALSE(6 < a);
 
           using SmallerRat = Rational<int, 12>;
-          SmallerRat b{11,12};
-          SmallerRat c{12,12};
-          SmallerRat d{13,12};
+          SmallerRat b{11, 12};
+          SmallerRat c{12, 12};
+          SmallerRat d{13, 12};
 
           CHECK_FALSE(1 < b);
           CHECK_FALSE(1 < c);
@@ -644,23 +658,6 @@ TEST_CASE("Testing Rational.hpp")
       a.str("");
       a << Rational<int, 12>{1, 3};
       CHECK(a.str() == "4/12");
-    }
-  }
-
-  SUBCASE("Related Functions")
-  {
-    SUBCASE("simplify(Rational<>)")
-    {
-      Rational<int, 12> a{3};
-      auto result_a = simplify(a);
-
-      CHECK(result_a.first == 3);
-      CHECK(result_a.second == 1);
-
-      Rational<int, 8> b{2,4};
-      auto result_b = simplify(b);
-      CHECK(result_b.first == 1);
-      CHECK(result_b.second == 2);
     }
   }
 }

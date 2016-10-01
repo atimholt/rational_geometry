@@ -40,6 +40,54 @@
 
 namespace rational_geometry {
 
+// Helper Functions
+//------------------
+
+template <typename IntT>
+struct PartialDivisionResult
+{
+  IntT partial_result_;
+  IntT remaining_divisor_;
+};
+
+template <typename IntT>
+PartialDivisionResult<IntT> partial_division(IntT top_int, IntT bottom_int)
+{
+#ifndef RATIONAL_GEOMETRY_SKIP_OVERFLOW_PROTECTIONS
+  PartialDivisionResult<IntT> ret;
+
+  auto common_factor     = gcd(top_int, bottom_int);
+  ret.partial_result_    = top_int / common_factor;
+  ret.remaining_divisor_ = bottom_int / common_factor;
+
+  return ret;
+#else
+  return {top_int / bottom_int, 1};
+#endif
+}
+
+template <typename IntT>
+PartialDivisionResult<IntT> partial_division(
+    const std::vector<IntT>& top_ints, IntT bottom_int)
+{
+#ifndef RATIONAL_GEOMETRY_SKIP_OVERFLOW_PROTECTIONS
+  using namespace std;
+  PartialDivisionResult<IntT> init{1, bottom_int};
+
+  return std::accumulate(cbegin(top_ints), cend(top_ints), init,
+      [](PartialDivisionResult<IntT> so_far, IntT current_numerator) {
+        auto current_result =
+            partial_division(current_numerator, so_far.remaining_divisor_);
+        current_result.partial_result_ *= so_far.partial_result_;
+        return current_result;
+      });
+#else
+  return {std::accumulate(cbegin(top_ints), cend(top_ints), 1, std::multiplies)
+              / bottom_int,
+      1};
+#endif
+}
+
 // Class Template Declaration
 //----------------------------
 
@@ -154,6 +202,7 @@ class Rational
   SignedIntT denominator() const;
 
   long double as_long_double() const;
+  std::pair<SignedIntT, SignedIntT> as_simplified() const;
 
   // OPERATORS
   Rational& operator++();
@@ -164,54 +213,6 @@ class Rational
 
   Rational operator-() const;
 };
-
-// Helper Functions
-//------------------
-
-template <typename IntT>
-struct PartialDivisionResult
-{
-  IntT partial_result_;
-  IntT remaining_divisor_;
-};
-
-template <typename IntT>
-PartialDivisionResult<IntT> partial_division(IntT top_int, IntT bottom_int)
-{
-#ifndef RATIONAL_GEOMETRY_SKIP_OVERFLOW_PROTECTIONS
-  PartialDivisionResult<IntT> ret;
-
-  auto common_factor     = gcd(top_int, bottom_int);
-  ret.partial_result_    = top_int / common_factor;
-  ret.remaining_divisor_ = bottom_int / common_factor;
-
-  return ret;
-#else
-  return {top_int / bottom_int, 1};
-#endif
-}
-
-template <typename IntT>
-PartialDivisionResult<IntT> partial_division(
-    const std::vector<IntT>& top_ints, IntT bottom_int)
-{
-#ifndef RATIONAL_GEOMETRY_SKIP_OVERFLOW_PROTECTIONS
-  using namespace std;
-  PartialDivisionResult<IntT> init{1, bottom_int};
-
-  return std::accumulate(cbegin(top_ints), cend(top_ints), init,
-      [](PartialDivisionResult<IntT> so_far, IntT current_numerator) {
-        auto current_result =
-            partial_division(current_numerator, so_far.remaining_divisor_);
-        current_result.partial_result_ *= so_far.partial_result_;
-        return current_result;
-      });
-#else
-  return {std::accumulate(cbegin(top_ints), cend(top_ints), 1, std::multiplies)
-              / bottom_int,
-      1};
-#endif
-}
 
 // Class Template Definitions
 //----------------------------
@@ -300,6 +301,14 @@ template <typename SignedIntT, SignedIntT kDenominator>
 long double Rational<SignedIntT, kDenominator>::as_long_double() const
 {
   return static_cast<long double>(numerator()) / denominator();
+}
+
+template <typename SignedIntT, SignedIntT kDenominator>
+std::pair<SignedIntT, SignedIntT>
+Rational<SignedIntT, kDenominator>::as_simplified() const
+{
+  auto ret = partial_division(numerator(), denominator());
+  return *reinterpret_cast<std::pair<SignedIntT, SignedIntT>*>(&ret);
 }
 
 //   Operators
@@ -732,19 +741,8 @@ std::ostream& operator<<(
   return the_stream;
 }
 
-// Related Functions
 //-------------------
-
-template <typename SignedIntT, SignedIntT kDenominator>
-std::pair<SignedIntT, SignedIntT> simplify(
-    Rational<SignedIntT, kDenominator> value)
-{
-  auto ret = partial_division(value.numerator(), value.denominator());
-  return *reinterpret_cast<std::pair<SignedIntT, SignedIntT>*>(&ret);
-}
-
-//-------------------
-// Related Functions
+// Related Operators
 
 } // namespace rational_geometry
 
