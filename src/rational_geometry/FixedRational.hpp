@@ -90,8 +90,8 @@ inline PartialDivisionResult<IntT> partial_division(
 
 /// A faster rational number type with a narrower use case.
 ///
-/// Basically, it's a fixed-point fractional type with an arbitrary
-/// denominator and optional rounding detection.
+/// Basically, it's a fixed-point fractional type with an arbitrary denominator
+/// and optional rounding detection.
 ///
 /// <b>Use of this particular rational type is <i>not</i> required for use of
 /// the rest of the rational number library.</b> Any sufficiently sane rational
@@ -111,10 +111,8 @@ inline PartialDivisionResult<IntT> partial_division(
 /// numerator and denominator are never canceled away unless the library user
 /// explicitly asks for such a representation. Even then, this requested
 /// representation <i>cannot</i> be reflected back into the FixedRational<>
-/// value's
-/// internals. A different instantiation of the FixedRational<> template would
-/// be
-/// necessary (but this is not the recommended use).
+/// value's internals. A different instantiation of the FixedRational<>
+/// template would be necessary (but this is not the recommended use).
 ///
 /// The creator of this library recommends determining--at or before compile
 /// time--a composite number for kDenominator sufficient to render <i>all</i>
@@ -126,13 +124,12 @@ inline PartialDivisionResult<IntT> partial_division(
 /// (ideally) small number needed to multiply by the value you have chosen for
 /// kDenominator to prevent the exact same instigating operation from throwing
 /// after a recompile & re-run. Because this rounding error detection has
-/// overhead, its code is toggleable using the
-/// RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION precompiler flag. Simply
-/// define it before including rational_geometry/FixedRational.hpp.
+/// overhead, its code is toggleable using the kDoThrowOnInexact template
+/// parameter. The default value is true.
 ///
-/// The library user might alternatively choose to use the
-/// RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION flag to simply disregard
-/// innacuracies beyond their chosen fixed denominator.
+/// The library user might alternatively choose to use the kDoThrowOnInexact
+/// flag to simply disregard innacuracies beyond their chosen fixed
+/// denominator.
 ///
 /// The unrepresentable_operation_error class has a method
 /// (.accumulate_fix_factor(IntType&)) which automatically modifies the
@@ -140,23 +137,21 @@ inline PartialDivisionResult<IntT> partial_division(
 /// exceptions upon which the accumulate_fix_factor() method is called. The int
 /// passed to it should be the same type as the signed int type upon which you
 /// have instantiated the FixedRational class template, and must be initialized
-/// to a
-/// value of 1 before use. This accumulation will probably have to be performed
-/// in the catch block of try-catch statements in your unit tests. Write an
-/// assertion that the int is still equal to 1 after all accumulations to
-/// ensure that your chosen value for kDimension is sufficient. If the
+/// to a value of 1 before use. This accumulation will probably have to be
+/// performed in the catch block of try-catch statements in your unit tests.
+/// Write an assertion that the int is still equal to 1 after all accumulations
+/// to ensure that your chosen value for kDimension is sufficient. If the
 /// assertion fails, the variable's value is exactly that number you need to
 /// multiply kDimension by for all your tests to fall within your chosen domain
 /// of accuracy.
 ///
 /// For reasons of speed, this library can be set to perform operations which
 /// run a higher risk of overflowing the underlying integer type, via the
-/// RATIONAL_GEOMETRY_SKIP_OVERFLOW_PROTECTIONS flag. <b>Using this flag may
-/// cause overflows in places that will be unexpected if the library user does
-/// not have a working knowledge of how the FixedRational class works
-/// internally</b>
-/// For a wide variety of use cases, this is not a problem: integer
-/// multiplication, addition, and values much smaller than the
+/// RATIONAL_GEOMETRY_SKIP_OVERFLOW_PROTECTIONS preprocessor flag. <b>Using
+/// this flag may cause overflows in places that will be unexpected if the
+/// library user does not have a working knowledge of how the FixedRational
+/// class works internally</b> For a wide variety of use cases, this is not a
+/// problem: integer multiplication, addition, and values much smaller than the
 /// std::numeric_limits::max<>() for the underlying integer type are
 /// particularly safe. The library user may skirt closer to the limits of the
 /// class if they are careful (i.e., write lots of tests that cover your actual
@@ -164,9 +159,8 @@ inline PartialDivisionResult<IntT> partial_division(
 /// actually do!). If you're really worried, use a large integer type (or don't
 /// set the flag in the first place). The library user may turn off overflow
 /// protection if they are instantiating FixedRational upon some manner of
-/// infinite
-/// precision integer type (these are typically called something like BigInt).
-/// Be aware of the pros & cons of your chosen integer type.
+/// infinite precision integer type (these are typically called something like
+/// BigInt). Be aware of the pros & cons of your chosen integer type.
 ///
 /// \note  In its pre-alpha state (and probably well beyond that), this library
 ///        will remain un-benchmarked. Its primary use, for some time, will be
@@ -640,12 +634,12 @@ auto operator/(
     if (top_int % bottom_int) {
       std::stringstream what_error;
       // clang-format off
-    what_error << "Inexact operation in ("
-               << typeid(l_op).name() << " " << l_op
-               << " / "
-               << typeid(r_op).name() << " " << r_op << "):  "
-               << top_int << "/" << bottom_int
-               << " -> " << typeid(SignedIntT_l).name();
+      what_error << "Inexact operation in ("
+                 << typeid(l_op).name() << " " << l_op
+                 << " / "
+                 << typeid(r_op).name() << " " << r_op << "):  "
+                 << top_int << "/" << bottom_int
+                 << " -> " << typeid(SignedIntT_l).name();
       // clang-format on
       throw unrepresentable_operation_error<SignedIntT_l>{
           what_error.str(), top_int, bottom_int};

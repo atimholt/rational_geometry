@@ -28,9 +28,8 @@ namespace rational_geometry {
 /// \brief  An error indicating that a FixedRational number has been used
 ///         outside of its domain of full accuracy.
 ///
-/// This exception may be deactivated by defining
-/// RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION before including the
-/// "rational_geometry/FixedRational.hpp" header, where it is used.
+/// This exception is only thrown if FixedRational is instantiated with
+/// kDoThrowOnInexact set to true (this is the default).
 ///
 template <typename IntT>
 class unrepresentable_operation_error : public std::domain_error
