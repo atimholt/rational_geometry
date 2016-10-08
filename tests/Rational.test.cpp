@@ -27,6 +27,8 @@ TEST_CASE("Testing Rational.hpp")
 
   typedef Rational<intmax_t, arbitrary_composite> MyRationalT;
 
+  using ApproxRat = Rational<intmax_t, 12, false>;
+
   SUBCASE("Rational<> class")
   {
     SUBCASE("Constructors")
@@ -66,6 +68,13 @@ TEST_CASE("Testing Rational.hpp")
                   == "Inexact construction of a Rational<"s + int_name
                          + ", 12>"s);
           }
+        }
+
+        SUBCASE("Approximate")
+        {
+          ApproxRat inexact{3, 17};
+          ApproxRat expected{1, 6};
+          CHECK(expected == inexact);
         }
       }
 
@@ -442,6 +451,7 @@ TEST_CASE("Testing Rational.hpp")
               // clang-format off
               a * b;
               // clang-format on
+              CHECK(false);
             }
             catch (unrepresentable_operation_error<int> e) {
               CHECK(e.get_minimum_fix_factor() == 3);
@@ -450,6 +460,15 @@ TEST_CASE("Testing Rational.hpp")
                               + " 8/12):  8/3 -> "s + typeid(int).name();
               CHECK(expected == std::string(e.what()));
             }
+          }
+
+          SUBCASE("Approximate")
+          {
+            ApproxRat a{1, 3};
+            ApproxRat expected{1, 12};
+
+            // 1/9 is unrepresentable.
+            CHECK(a * a == expected);
           }
         }
       }
@@ -484,6 +503,7 @@ TEST_CASE("Testing Rational.hpp")
 
             try {
               a / 27;
+              CHECK(false);
             }
             catch (unrepresentable_operation_error<int> e) {
               CHECK(e.get_minimum_fix_factor() == 3);
@@ -492,6 +512,14 @@ TEST_CASE("Testing Rational.hpp")
                               + " 27):  18/27 -> "s + typeid(int).name();
               CHECK(e.what() == expected);
             }
+          }
+
+          SUBCASE("Approximate")
+          {
+            ApproxRat a{1, 3};
+            ApproxRat expected{1, 12};
+
+            CHECK(a / 3 == expected);
           }
         }
 
@@ -521,6 +549,7 @@ TEST_CASE("Testing Rational.hpp")
 
             try {
               1 / a;
+              CHECK(false);
             }
             catch (unrepresentable_operation_error<int> e) {
               CHECK(e.get_minimum_fix_factor() == 5);
@@ -529,6 +558,14 @@ TEST_CASE("Testing Rational.hpp")
                               + " 5/18):  324/5 -> "s + typeid(int).name();
               CHECK(expected == std::string(e.what()));
             }
+          }
+
+          SUBCASE("Approximate")
+          {
+            ApproxRat a{9};
+            ApproxRat expected{1, 12};
+
+            CHECK(1 / a == expected);
           }
         }
 
@@ -560,6 +597,7 @@ TEST_CASE("Testing Rational.hpp")
 
             try {
               b / a;
+              CHECK(false);
             }
             catch (unrepresentable_operation_error<int> e) {
               CHECK(e.get_minimum_fix_factor() == 5);
@@ -568,6 +606,15 @@ TEST_CASE("Testing Rational.hpp")
                               + " 5/18):  324/5 -> "s + typeid(int).name();
               CHECK(expected == std::string(e.what()));
             }
+          }
+
+          SUBCASE("Approximate")
+          {
+            ApproxRat a{1, 3};
+            ApproxRat b{3};
+            ApproxRat expected{1, 12};
+
+            CHECK(a / b == expected);
           }
         }
       }
