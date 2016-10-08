@@ -1,8 +1,8 @@
 /// \file     unrepresentable_operation_error.hpp
 /// \author   Tim Holt
 ///
-/// \brief  An error indicating that a Rational number has been used outside of
-///         its domain of full accuracy.
+/// \brief  An error indicating that a FixedRational number has been used
+///         outside of its domain of full accuracy.
 ///
 /// This code is under the MIT license, please see LICENSE.txt for more
 /// information
@@ -25,12 +25,12 @@ namespace rational_geometry {
 // Class Template Declaration
 //----------------------------
 
-/// \brief  An error indicating that a Rational number has been used outside of
-///         its domain of full accuracy.
+/// \brief  An error indicating that a FixedRational number has been used
+///         outside of its domain of full accuracy.
 ///
 /// This exception may be deactivated by defining
 /// RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION before including the
-/// "rational_geometry/Rational.hpp" header, where it is used.
+/// "rational_geometry/FixedRational.hpp" header, where it is used.
 ///
 template <typename IntT>
 class unrepresentable_operation_error : public std::domain_error

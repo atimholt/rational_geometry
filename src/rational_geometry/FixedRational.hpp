@@ -1,4 +1,4 @@
-/// \file    Rational.hpp
+/// \file    FixedRational.hpp
 /// \author  Tim Holt
 ///
 /// A faster rational number type and its related functions.
@@ -110,8 +110,10 @@ inline PartialDivisionResult<IntT> partial_division(
 /// into its most simplified form. That is, common factors between the
 /// numerator and denominator are never canceled away unless the library user
 /// explicitly asks for such a representation. Even then, this requested
-/// representation <i>cannot</i> be reflected back into the Rational<> value's
-/// internals. A different instantiation of the Rational<> template would be
+/// representation <i>cannot</i> be reflected back into the FixedRational<>
+/// value's
+/// internals. A different instantiation of the FixedRational<> template would
+/// be
 /// necessary (but this is not the recommended use).
 ///
 /// The creator of this library recommends determining--at or before compile
@@ -126,7 +128,7 @@ inline PartialDivisionResult<IntT> partial_division(
 /// after a recompile & re-run. Because this rounding error detection has
 /// overhead, its code is toggleable using the
 /// RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION precompiler flag. Simply
-/// define it before including rational_geometry/Rational.hpp.
+/// define it before including rational_geometry/FixedRational.hpp.
 ///
 /// The library user might alternatively choose to use the
 /// RATIONAL_GEOMETRY_DONT_THROW_ON_INEXACT_OPERATION flag to simply disregard
@@ -137,7 +139,8 @@ inline PartialDivisionResult<IntT> partial_division(
 /// variable passed to it to the accumulated least common multiple of all such
 /// exceptions upon which the accumulate_fix_factor() method is called. The int
 /// passed to it should be the same type as the signed int type upon which you
-/// have instantiated the Rational class template, and must be initialized to a
+/// have instantiated the FixedRational class template, and must be initialized
+/// to a
 /// value of 1 before use. This accumulation will probably have to be performed
 /// in the catch block of try-catch statements in your unit tests. Write an
 /// assertion that the int is still equal to 1 after all accumulations to
@@ -150,7 +153,8 @@ inline PartialDivisionResult<IntT> partial_division(
 /// run a higher risk of overflowing the underlying integer type, via the
 /// RATIONAL_GEOMETRY_SKIP_OVERFLOW_PROTECTIONS flag. <b>Using this flag may
 /// cause overflows in places that will be unexpected if the library user does
-/// not have a working knowledge of how the Rational class works internally</b>
+/// not have a working knowledge of how the FixedRational class works
+/// internally</b>
 /// For a wide variety of use cases, this is not a problem: integer
 /// multiplication, addition, and values much smaller than the
 /// std::numeric_limits::max<>() for the underlying integer type are
@@ -159,7 +163,8 @@ inline PartialDivisionResult<IntT> partial_division(
 /// usage, particularly tests that check that operations that should fail
 /// actually do!). If you're really worried, use a large integer type (or don't
 /// set the flag in the first place). The library user may turn off overflow
-/// protection if they are instantiating Rational upon some manner of infinite
+/// protection if they are instantiating FixedRational upon some manner of
+/// infinite
 /// precision integer type (these are typically called something like BigInt).
 /// Be aware of the pros & cons of your chosen integer type.
 ///
@@ -171,11 +176,12 @@ inline PartialDivisionResult<IntT> partial_division(
 template <typename SignedIntT,
     SignedIntT kDenominator,
     bool kDoThrowOnInexact = true>
-class Rational
+class FixedRational
 {
   // STATIC ASSERTIONS
   static_assert(kDenominator > 0,
-      "kDenominator template argument of rational_geometry::Rational<> class "
+      "kDenominator template argument of rational_geometry::FixedRational<> "
+      "class "
       "must be positive.");
 
   static_assert(
@@ -189,12 +195,12 @@ class Rational
 
  public:
   // CONSTRUCTORS
-  Rational();
-  explicit Rational(int value);
-  Rational(SignedIntT numerator, SignedIntT denominator);
-  explicit Rational(long double value);
-  explicit Rational(double value);
-  explicit Rational(float value);
+  FixedRational();
+  explicit FixedRational(int value);
+  FixedRational(SignedIntT numerator, SignedIntT denominator);
+  explicit FixedRational(long double value);
+  explicit FixedRational(double value);
+  explicit FixedRational(float value);
 
   // ACCESSORS
   SignedIntT numerator() const;
@@ -204,13 +210,13 @@ class Rational
   std::pair<SignedIntT, SignedIntT> as_simplified() const;
 
   // OPERATORS
-  Rational& operator++();
-  Rational operator++(int);
+  FixedRational& operator++();
+  FixedRational operator++(int);
 
-  Rational& operator--();
-  Rational operator--(int);
+  FixedRational& operator--();
+  FixedRational operator--(int);
 
-  Rational operator-() const;
+  FixedRational operator-() const;
 };
 
 // Class Template Definitions
@@ -219,19 +225,20 @@ class Rational
 //  --------------
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::Rational()
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::FixedRational()
     : numerator_{0}
 {
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::Rational(int value)
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::FixedRational(
+    int value)
     : numerator_{value * kDenominator}
 {
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::Rational(
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::FixedRational(
     SignedIntT numerator, SignedIntT denominator)
     : numerator_{numerator}
 {
@@ -242,7 +249,7 @@ Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::Rational(
 
   if (kDoThrowOnInexact && result.remaining_divisor_ != 1) {
     std::stringstream what_error;
-    what_error << "Inexact construction of a Rational<"
+    what_error << "Inexact construction of a FixedRational<"
                << typeid(SignedIntT).name() << ", " << kDenominator << ">";
     throw unrepresentable_operation_error<SignedIntT>(
         what_error.str(), result.partial_result_, result.remaining_divisor_);
@@ -250,28 +257,30 @@ Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::Rational(
   numerator_ = result.full_division();
 }
 
-/// Creates nearest representable Rational to the given value.
+/// Creates nearest representable FixedRational to the given value.
 ///
 /// \note  While this has more use than many possible float-to-rational
 ///        conversions, a float of sufficiently high magnitude will not have
 ///        enough resolution for this method to be accurate.
 ///
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::Rational(
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::FixedRational(
     long double value)
     : numerator_{static_cast<SignedIntT>(std::round(value * kDenominator))}
 {
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::Rational(double value)
-    : Rational(static_cast<long double>(value))
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::FixedRational(
+    double value)
+    : FixedRational(static_cast<long double>(value))
 {
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::Rational(float value)
-    : Rational(static_cast<long double>(value))
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::FixedRational(
+    float value)
+    : FixedRational(static_cast<long double>(value))
 {
 }
 
@@ -280,14 +289,14 @@ Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::Rational(float value)
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
 SignedIntT
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::numerator() const
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::numerator() const
 {
   return numerator_;
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
 SignedIntT
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::denominator() const
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::denominator() const
 {
   return kDenominator;
 }
@@ -303,14 +312,16 @@ Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::denominator() const
 ///
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
 long double
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::as_long_double() const
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::as_long_double()
+    const
 {
   return static_cast<long double>(numerator()) / denominator();
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
 std::pair<SignedIntT, SignedIntT>
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::as_simplified() const
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::as_simplified()
+    const
 {
   auto ret = partial_division(numerator(), denominator());
   return *reinterpret_cast<std::pair<SignedIntT, SignedIntT>*>(&ret);
@@ -320,16 +331,16 @@ Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::as_simplified() const
 //  -----------
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>&
-    Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator++()
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>&
+    FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator++()
 {
   numerator_ += kDenominator;
   return *this;
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>
-    Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator++(int)
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>
+    FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator++(int)
 {
   auto ret = *this;
   ++(*this);
@@ -338,16 +349,16 @@ Rational<SignedIntT, kDenominator, kDoThrowOnInexact>
 
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>&
-    Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator--()
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>&
+    FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator--()
 {
   numerator_ -= kDenominator;
   return *this;
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>
-    Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator--(int)
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>
+    FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator--(int)
 {
   auto ret = *this;
   --(*this);
@@ -356,11 +367,11 @@ Rational<SignedIntT, kDenominator, kDoThrowOnInexact>
 
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator-() const
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator-() const
 {
   SignedIntT ret{-numerator_};
-  return *reinterpret_cast<Rational<SignedIntT, kDenominator>*>(&ret);
+  return *reinterpret_cast<FixedRational<SignedIntT, kDenominator>*>(&ret);
 }
 
 // Related Operators
@@ -375,8 +386,9 @@ template <typename SignedIntT_l,
     SignedIntT_l kDenominator,
     bool kDoThrowOnInexact>
 auto operator==(
-    Rational<SignedIntT_l, kDenominator, kDoThrowOnInexact> l_op, IntT_r r_op)
-    -> typename std::enable_if<std::is_integral<IntT_r>::value, bool>::type
+    FixedRational<SignedIntT_l, kDenominator, kDoThrowOnInexact> l_op,
+    IntT_r r_op) ->
+    typename std::enable_if<std::is_integral<IntT_r>::value, bool>::type
 {
   return l_op.numerator() == r_op * kDenominator;
 }
@@ -385,16 +397,16 @@ template <typename IntT_l,
     typename SignedIntT_r,
     SignedIntT_r kDenominator,
     bool kDoThrowOnInexact>
-auto operator==(
-    IntT_l l_op, Rational<SignedIntT_r, kDenominator, kDoThrowOnInexact> r_op)
-    -> typename std::enable_if<std::is_integral<IntT_l>::value, bool>::type
+auto operator==(IntT_l l_op,
+    FixedRational<SignedIntT_r, kDenominator, kDoThrowOnInexact> r_op) ->
+    typename std::enable_if<std::is_integral<IntT_l>::value, bool>::type
 {
   return l_op * kDenominator == r_op.numerator();
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
-bool operator==(Rational<SignedIntT, kDenominator, kDoThrowOnInexact> l_op,
-    Rational<SignedIntT, kDenominator, kDoThrowOnInexact> r_op)
+bool operator==(FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> l_op,
+    FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> r_op)
 {
   return l_op.numerator() == r_op.numerator();
 }
@@ -403,22 +415,22 @@ bool operator==(Rational<SignedIntT, kDenominator, kDoThrowOnInexact> l_op,
 //    ------------
 
 template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
-auto operator!=(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
+auto operator!=(FixedRational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
     typename std::enable_if<std::is_integral<IntT_r>::value, bool>::type
 {
   return !(l_op == r_op);
 }
 
 template <typename IntT_l, typename SignedIntT_r, SignedIntT_r kDenominator>
-auto operator!=(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
+auto operator!=(IntT_l l_op, FixedRational<SignedIntT_r, kDenominator> r_op) ->
     typename std::enable_if<std::is_integral<IntT_l>::value, bool>::type
 {
   return !(l_op == r_op);
 }
 
 template <typename SignedIntT, SignedIntT kDenominator>
-bool operator!=(Rational<SignedIntT, kDenominator> l_op,
-    Rational<SignedIntT, kDenominator> r_op)
+bool operator!=(FixedRational<SignedIntT, kDenominator> l_op,
+    FixedRational<SignedIntT, kDenominator> r_op)
 {
   return !(l_op == r_op);
 }
@@ -436,7 +448,7 @@ bool operator!=(Rational<SignedIntT, kDenominator> l_op,
 /// to be explicit about what they really want.
 ///
 template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
-auto operator<(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
+auto operator<(FixedRational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
     typename std::enable_if<std::is_integral<IntT_r>::value, bool>::type
 {
 #ifndef RATIONAL_GEOMETRY_SKIP_OVERFLOW_PROTECTIONS
@@ -459,7 +471,7 @@ auto operator<(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
 /// to be explicit about what they really want.
 ///
 template <typename IntT_l, typename SignedIntT_r, SignedIntT_r kDenominator>
-auto operator<(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
+auto operator<(IntT_l l_op, FixedRational<SignedIntT_r, kDenominator> r_op) ->
     typename std::enable_if<std::is_integral<IntT_l>::value, bool>::type
 {
 #ifndef RATIONAL_GEOMETRY_SKIP_OVERFLOW_PROTECTIONS
@@ -475,8 +487,8 @@ auto operator<(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
 /// Determine if a rational is less than another rational of the same type.
 ///
 template <typename SignedIntT, SignedIntT kDenominator>
-bool operator<(Rational<SignedIntT, kDenominator> l_op,
-    Rational<SignedIntT, kDenominator> r_op)
+bool operator<(FixedRational<SignedIntT, kDenominator> l_op,
+    FixedRational<SignedIntT, kDenominator> r_op)
 {
   return l_op.numerator() < r_op.numerator();
 }
@@ -485,22 +497,22 @@ bool operator<(Rational<SignedIntT, kDenominator> l_op,
 //    --------------
 
 template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
-auto operator>(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
+auto operator>(FixedRational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
     typename std::enable_if<std::is_integral<IntT_r>::value, bool>::type
 {
   return r_op < l_op;
 }
 
 template <typename IntT_l, typename SignedIntT_r, SignedIntT_r kDenominator>
-auto operator>(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
+auto operator>(IntT_l l_op, FixedRational<SignedIntT_r, kDenominator> r_op) ->
     typename std::enable_if<std::is_integral<IntT_l>::value, bool>::type
 {
   return r_op < l_op;
 }
 
 template <typename SignedIntT, SignedIntT kDenominator>
-bool operator>(Rational<SignedIntT, kDenominator> l_op,
-    Rational<SignedIntT, kDenominator> r_op)
+bool operator>(FixedRational<SignedIntT, kDenominator> l_op,
+    FixedRational<SignedIntT, kDenominator> r_op)
 {
   return r_op < l_op;
 }
@@ -509,22 +521,22 @@ bool operator>(Rational<SignedIntT, kDenominator> l_op,
 //    -----------------------
 
 template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
-auto operator<=(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
+auto operator<=(FixedRational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
     typename std::enable_if<std::is_integral<IntT_r>::value, bool>::type
 {
   return !(r_op < l_op);
 }
 
 template <typename IntT_l, typename SignedIntT_r, SignedIntT_r kDenominator>
-auto operator<=(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
+auto operator<=(IntT_l l_op, FixedRational<SignedIntT_r, kDenominator> r_op) ->
     typename std::enable_if<std::is_integral<IntT_l>::value, bool>::type
 {
   return !(r_op < l_op);
 }
 
 template <typename SignedIntT, SignedIntT kDenominator>
-bool operator<=(Rational<SignedIntT, kDenominator> l_op,
-    Rational<SignedIntT, kDenominator> r_op)
+bool operator<=(FixedRational<SignedIntT, kDenominator> l_op,
+    FixedRational<SignedIntT, kDenominator> r_op)
 {
   return !(r_op < l_op);
 }
@@ -533,22 +545,22 @@ bool operator<=(Rational<SignedIntT, kDenominator> l_op,
 //    --------------------------
 
 template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
-auto operator>=(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
+auto operator>=(FixedRational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
     typename std::enable_if<std::is_integral<IntT_r>::value, bool>::type
 {
   return !(l_op < r_op);
 }
 
 template <typename IntT_l, typename SignedIntT_r, SignedIntT_r kDenominator>
-auto operator>=(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
+auto operator>=(IntT_l l_op, FixedRational<SignedIntT_r, kDenominator> r_op) ->
     typename std::enable_if<std::is_integral<IntT_l>::value, bool>::type
 {
   return !(l_op < r_op);
 }
 
 template <typename SignedIntT, SignedIntT kDenominator>
-bool operator>=(Rational<SignedIntT, kDenominator> l_op,
-    Rational<SignedIntT, kDenominator> r_op)
+bool operator>=(FixedRational<SignedIntT, kDenominator> l_op,
+    FixedRational<SignedIntT, kDenominator> r_op)
 {
   return !(l_op < r_op);
 }
@@ -562,31 +574,32 @@ template <typename SignedIntT_l,
     typename IntT_r,
     SignedIntT_l kDenominator,
     bool kDoThrowOnInexact>
-auto operator*(Rational<SignedIntT_l, kDenominator, kDoThrowOnInexact> l_op,
+auto operator*(
+    FixedRational<SignedIntT_l, kDenominator, kDoThrowOnInexact> l_op,
     IntT_r r_op) -> typename std::enable_if<std::is_integral<IntT_r>::value,
-    Rational<SignedIntT_l, kDenominator, kDoThrowOnInexact>>::type
+    FixedRational<SignedIntT_l, kDenominator, kDoThrowOnInexact>>::type
 {
   SignedIntT_l ret{l_op.numerator() * r_op};
-  return *reinterpret_cast<Rational<SignedIntT_l, kDenominator>*>(&ret);
+  return *reinterpret_cast<FixedRational<SignedIntT_l, kDenominator>*>(&ret);
 }
 
 template <typename IntT_l,
     typename SignedIntT_r,
     SignedIntT_r kDenominator,
     bool kDoThrowOnInexact>
-auto operator*(
-    IntT_l l_op, Rational<SignedIntT_r, kDenominator, kDoThrowOnInexact> r_op)
-    -> typename std::enable_if<std::is_integral<IntT_l>::value,
-        Rational<SignedIntT_r, kDenominator, kDoThrowOnInexact>>::type
+auto operator*(IntT_l l_op,
+    FixedRational<SignedIntT_r, kDenominator, kDoThrowOnInexact> r_op) ->
+    typename std::enable_if<std::is_integral<IntT_l>::value,
+        FixedRational<SignedIntT_r, kDenominator, kDoThrowOnInexact>>::type
 {
   SignedIntT_r ret{l_op * r_op.numerator()};
-  return *reinterpret_cast<Rational<SignedIntT_r, kDenominator>*>(&ret);
+  return *reinterpret_cast<FixedRational<SignedIntT_r, kDenominator>*>(&ret);
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact> operator*(
-    Rational<SignedIntT, kDenominator, kDoThrowOnInexact> l_op,
-    Rational<SignedIntT, kDenominator, kDoThrowOnInexact> r_op)
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> operator*(
+    FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> l_op,
+    FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> r_op)
 {
   auto result =
       partial_division({l_op.numerator(), r_op.numerator()}, kDenominator);
@@ -605,7 +618,7 @@ Rational<SignedIntT, kDenominator, kDoThrowOnInexact> operator*(
         what_error.str(), result.partial_result_, result.remaining_divisor_};
   }
   SignedIntT ret{result.full_division()};
-  return *reinterpret_cast<Rational<SignedIntT, kDenominator,
+  return *reinterpret_cast<FixedRational<SignedIntT, kDenominator,
       kDoThrowOnInexact>*>(&ret);
 }
 
@@ -616,9 +629,10 @@ template <typename SignedIntT_l,
     typename IntT_r,
     SignedIntT_l kDenominator,
     bool kDoThrowOnInexact>
-auto operator/(Rational<SignedIntT_l, kDenominator, kDoThrowOnInexact> l_op,
+auto operator/(
+    FixedRational<SignedIntT_l, kDenominator, kDoThrowOnInexact> l_op,
     IntT_r r_op) -> typename std::enable_if<std::is_integral<IntT_r>::value,
-    Rational<SignedIntT_l, kDenominator, kDoThrowOnInexact>>::type
+    FixedRational<SignedIntT_l, kDenominator, kDoThrowOnInexact>>::type
 {
   if (kDoThrowOnInexact) {
     auto top_int    = l_op.numerator();
@@ -638,7 +652,7 @@ auto operator/(Rational<SignedIntT_l, kDenominator, kDoThrowOnInexact> l_op,
     }
   }
   SignedIntT_l ret{l_op.numerator() / r_op};
-  return *reinterpret_cast<Rational<SignedIntT_l, kDenominator,
+  return *reinterpret_cast<FixedRational<SignedIntT_l, kDenominator,
       kDoThrowOnInexact>*>(&ret);
 }
 
@@ -646,10 +660,10 @@ template <typename IntT_l,
     typename SignedIntT_r,
     SignedIntT_r kDenominator,
     bool kDoThrowOnInexact>
-auto operator/(
-    IntT_l l_op, Rational<SignedIntT_r, kDenominator, kDoThrowOnInexact> r_op)
-    -> typename std::enable_if<std::is_integral<IntT_l>::value,
-        Rational<SignedIntT_r, kDenominator, kDoThrowOnInexact>>::type
+auto operator/(IntT_l l_op,
+    FixedRational<SignedIntT_r, kDenominator, kDoThrowOnInexact> r_op) ->
+    typename std::enable_if<std::is_integral<IntT_l>::value,
+        FixedRational<SignedIntT_r, kDenominator, kDoThrowOnInexact>>::type
 {
   auto result =
       partial_division({l_op, kDenominator, kDenominator}, r_op.numerator());
@@ -667,14 +681,14 @@ auto operator/(
         what_error.str(), result.partial_result_, result.remaining_divisor_};
   }
   SignedIntT_r ret{result.full_division()};
-  return *reinterpret_cast<Rational<SignedIntT_r, kDenominator,
+  return *reinterpret_cast<FixedRational<SignedIntT_r, kDenominator,
       kDoThrowOnInexact>*>(&ret);
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
-Rational<SignedIntT, kDenominator, kDoThrowOnInexact> operator/(
-    Rational<SignedIntT, kDenominator, kDoThrowOnInexact> l_op,
-    Rational<SignedIntT, kDenominator, kDoThrowOnInexact> r_op)
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> operator/(
+    FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> l_op,
+    FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> r_op)
 {
   auto result =
       partial_division({l_op.numerator(), kDenominator}, r_op.numerator());
@@ -692,7 +706,7 @@ Rational<SignedIntT, kDenominator, kDoThrowOnInexact> operator/(
         what_error.str(), result.partial_result_, result.remaining_divisor_};
   }
   SignedIntT ret{result.full_division()};
-  return *reinterpret_cast<Rational<SignedIntT, kDenominator,
+  return *reinterpret_cast<FixedRational<SignedIntT, kDenominator,
       kDoThrowOnInexact>*>(&ret);
 }
 
@@ -700,60 +714,60 @@ Rational<SignedIntT, kDenominator, kDoThrowOnInexact> operator/(
 //    ----------
 
 template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
-auto operator+(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
+auto operator+(FixedRational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
     typename std::enable_if<std::is_integral<IntT_r>::value,
-        Rational<SignedIntT_l, kDenominator>>::type
+        FixedRational<SignedIntT_l, kDenominator>>::type
 {
   SignedIntT_l ret{l_op.numerator() + r_op * kDenominator};
-  return *reinterpret_cast<Rational<SignedIntT_l, kDenominator>*>(&ret);
+  return *reinterpret_cast<FixedRational<SignedIntT_l, kDenominator>*>(&ret);
 }
 
 template <typename IntT_l, typename SignedIntT_r, SignedIntT_r kDenominator>
-auto operator+(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
+auto operator+(IntT_l l_op, FixedRational<SignedIntT_r, kDenominator> r_op) ->
     typename std::enable_if<std::is_integral<IntT_l>::value,
-        Rational<SignedIntT_r, kDenominator>>::type
+        FixedRational<SignedIntT_r, kDenominator>>::type
 {
   SignedIntT_r ret{l_op * kDenominator + r_op.numerator()};
-  return *reinterpret_cast<Rational<SignedIntT_r, kDenominator>*>(&ret);
+  return *reinterpret_cast<FixedRational<SignedIntT_r, kDenominator>*>(&ret);
 }
 
 template <typename SignedIntT, SignedIntT kDenominator>
-Rational<SignedIntT, kDenominator> operator+(
-    Rational<SignedIntT, kDenominator> l_op,
-    Rational<SignedIntT, kDenominator> r_op)
+FixedRational<SignedIntT, kDenominator> operator+(
+    FixedRational<SignedIntT, kDenominator> l_op,
+    FixedRational<SignedIntT, kDenominator> r_op)
 {
   SignedIntT ret{l_op.numerator() + r_op.numerator()};
-  return *reinterpret_cast<Rational<SignedIntT, kDenominator>*>(&ret);
+  return *reinterpret_cast<FixedRational<SignedIntT, kDenominator>*>(&ret);
 }
 
 //     Subtraction
 //    -------------
 
 template <typename SignedIntT_l, typename IntT_r, SignedIntT_l kDenominator>
-auto operator-(Rational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
+auto operator-(FixedRational<SignedIntT_l, kDenominator> l_op, IntT_r r_op) ->
     typename std::enable_if<std::is_integral<IntT_r>::value,
-        Rational<SignedIntT_l, kDenominator>>::type
+        FixedRational<SignedIntT_l, kDenominator>>::type
 {
   SignedIntT_l ret{l_op.numerator() - r_op * kDenominator};
-  return *reinterpret_cast<Rational<SignedIntT_l, kDenominator>*>(&ret);
+  return *reinterpret_cast<FixedRational<SignedIntT_l, kDenominator>*>(&ret);
 }
 
 template <typename IntT_l, typename SignedIntT_r, SignedIntT_r kDenominator>
-auto operator-(IntT_l l_op, Rational<SignedIntT_r, kDenominator> r_op) ->
+auto operator-(IntT_l l_op, FixedRational<SignedIntT_r, kDenominator> r_op) ->
     typename std::enable_if<std::is_integral<IntT_l>::value,
-        Rational<SignedIntT_r, kDenominator>>::type
+        FixedRational<SignedIntT_r, kDenominator>>::type
 {
   SignedIntT_r ret{l_op * kDenominator - r_op.numerator()};
-  return *reinterpret_cast<Rational<SignedIntT_r, kDenominator>*>(&ret);
+  return *reinterpret_cast<FixedRational<SignedIntT_r, kDenominator>*>(&ret);
 }
 
 template <typename SignedIntT, SignedIntT kDenominator>
-Rational<SignedIntT, kDenominator> operator-(
-    Rational<SignedIntT, kDenominator> l_op,
-    Rational<SignedIntT, kDenominator> r_op)
+FixedRational<SignedIntT, kDenominator> operator-(
+    FixedRational<SignedIntT, kDenominator> l_op,
+    FixedRational<SignedIntT, kDenominator> r_op)
 {
   SignedIntT ret{l_op.numerator() - r_op.numerator()};
-  return *reinterpret_cast<Rational<SignedIntT, kDenominator>*>(&ret);
+  return *reinterpret_cast<FixedRational<SignedIntT, kDenominator>*>(&ret);
 }
 
 //   ostream Output
@@ -761,7 +775,7 @@ Rational<SignedIntT, kDenominator> operator-(
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
 std::ostream& operator<<(std::ostream& the_stream,
-    const Rational<SignedIntT, kDenominator, kDoThrowOnInexact>& value)
+    const FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>& value)
 {
   the_stream << value.numerator() << '/' << kDenominator;
   return the_stream;

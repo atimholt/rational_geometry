@@ -1,5 +1,5 @@
 
-#include "../src/rational_geometry/Rational.hpp"
+#include "../src/rational_geometry/FixedRational.hpp"
 
 #include "doctest.h"
 
@@ -14,7 +14,7 @@ namespace rational_geometry {
 
 using namespace std::string_literals;
 
-TEST_CASE("Testing Rational.hpp")
+TEST_CASE("Testing FixedRational.hpp")
 {
   // log_2 of the constant below, rounded up. add 1 for sign bit
   // (Too late to test this after actually defining the constant!)
@@ -25,31 +25,31 @@ TEST_CASE("Testing Rational.hpp")
   // friendlier base 10) * 3 (for good measure)
   const intmax_t arbitrary_composite = 270'270'000;
 
-  typedef Rational<intmax_t, arbitrary_composite> MyRationalT;
+  typedef FixedRational<intmax_t, arbitrary_composite> MyRationalT;
 
-  using ApproxRat = Rational<intmax_t, 12, false>;
+  using ApproxRat = FixedRational<intmax_t, 12, false>;
 
-  SUBCASE("Rational<> class")
+  SUBCASE("FixedRational<> class")
   {
     SUBCASE("Constructors")
     {
-      SUBCASE("Rational()")
+      SUBCASE("FixedRational()")
       {
         MyRationalT a{};
 
         CHECK(a == 0);
       }
 
-      SUBCASE("Rational(SignedIntT)")
+      SUBCASE("FixedRational(SignedIntT)")
       {
         MyRationalT a{23};
 
         CHECK(a == 23);
       }
 
-      SUBCASE("Rational(SignedIntT, SignedIntT)")
+      SUBCASE("FixedRational(SignedIntT, SignedIntT)")
       {
-        Rational<int, 12> a{2, 3};
+        FixedRational<int, 12> a{2, 3};
 
         CHECK(a.numerator() == 8);
         CHECK(a.denominator() == 12);
@@ -57,7 +57,7 @@ TEST_CASE("Testing Rational.hpp")
         SUBCASE("Exceptional")
         {
           try {
-            Rational<int, 12> a{3, 17};
+            FixedRational<int, 12> a{3, 17};
             CHECK(false);
           }
           catch (unrepresentable_operation_error<int> e) {
@@ -65,7 +65,7 @@ TEST_CASE("Testing Rational.hpp")
             // Because it's vendor dependent:
             auto int_name = typeid(int).name();
             CHECK(std::string(e.what())
-                  == "Inexact construction of a Rational<"s + int_name
+                  == "Inexact construction of a FixedRational<"s + int_name
                          + ", 12>"s);
           }
         }
@@ -78,7 +78,7 @@ TEST_CASE("Testing Rational.hpp")
         }
       }
 
-      SUBCASE("Rational(long double)")
+      SUBCASE("FixedRational(long double)")
       {
         MyRationalT a{23.0L};
         CHECK(a == 23);
@@ -88,7 +88,7 @@ TEST_CASE("Testing Rational.hpp")
         CHECK(expected == b);
       }
 
-      SUBCASE("Rational(double)")
+      SUBCASE("FixedRational(double)")
       {
         MyRationalT a{23.0};
         CHECK(a == 23);
@@ -98,7 +98,7 @@ TEST_CASE("Testing Rational.hpp")
         CHECK(expected == b);
       }
 
-      SUBCASE("Rational(float)")
+      SUBCASE("FixedRational(float)")
       {
         MyRationalT a{23.0f};
         CHECK(a == 23);
@@ -114,15 +114,15 @@ TEST_CASE("Testing Rational.hpp")
           CHECK(expected == b);
         }
 
-        Rational<int, 100> expected_smaller_denom{51, 50};
-        Rational<int, 100> b_smaller_denom{51.0f / 50};
+        FixedRational<int, 100> expected_smaller_denom{51, 50};
+        FixedRational<int, 100> b_smaller_denom{51.0f / 50};
         CHECK(expected_smaller_denom == b_smaller_denom);
       }
     }
 
     SUBCASE("Accessors")
     {
-      Rational<int, 12> a{6};
+      FixedRational<int, 12> a{6};
 
       SUBCASE("numerator()")
       {
@@ -143,13 +143,13 @@ TEST_CASE("Testing Rational.hpp")
 
       SUBCASE("as_simplified()")
       {
-        Rational<int, 12> a{3};
+        FixedRational<int, 12> a{3};
         auto result_a = a.as_simplified();
 
         CHECK(result_a.first == 3);
         CHECK(result_a.second == 1);
 
-        Rational<int, 8> b{2, 4};
+        FixedRational<int, 8> b{2, 4};
         auto result_b = b.as_simplified();
         CHECK(result_b.first == 1);
         CHECK(result_b.second == 2);
@@ -193,21 +193,21 @@ TEST_CASE("Testing Rational.hpp")
     {
       SUBCASE("==")
       {
-        SUBCASE("Rational == int")
+        SUBCASE("FixedRational == int")
         {
           MyRationalT a{23};
 
           CHECK(a == 23);
         }
 
-        SUBCASE("int == Rational")
+        SUBCASE("int == FixedRational")
         {
           MyRationalT a{23};
 
           CHECK(23 == a);
         }
 
-        SUBCASE("Rational<same> == Rational<same>")
+        SUBCASE("FixedRational<same> == FixedRational<same>")
         {
           MyRationalT a{23};
           MyRationalT b{23};
@@ -222,21 +222,21 @@ TEST_CASE("Testing Rational.hpp")
 
       SUBCASE("!=")
       {
-        SUBCASE("Rational != int")
+        SUBCASE("FixedRational != int")
         {
           MyRationalT a{23};
 
           CHECK(a != 24);
         }
 
-        SUBCASE("int == Rational")
+        SUBCASE("int == FixedRational")
         {
           MyRationalT a{23};
 
           CHECK(24 != a);
         }
 
-        SUBCASE("Rational<same> == Rational<same>")
+        SUBCASE("FixedRational<same> == FixedRational<same>")
         {
           MyRationalT a{23};
           MyRationalT b{23};
@@ -250,13 +250,13 @@ TEST_CASE("Testing Rational.hpp")
 
       SUBCASE("<")
       {
-        SUBCASE("Rational < int")
+        SUBCASE("FixedRational < int")
         {
           MyRationalT a{5};
           CHECK(a < 6);
           CHECK_FALSE(a < 4);
 
-          using SmallerRat = Rational<int, 12>;
+          using SmallerRat = FixedRational<int, 12>;
           SmallerRat b{11, 12};
           SmallerRat c{12, 12};
           SmallerRat d{13, 12};
@@ -270,13 +270,13 @@ TEST_CASE("Testing Rational.hpp")
           CHECK(-d < -1);
         }
 
-        SUBCASE("int < Rational")
+        SUBCASE("int < FixedRational")
         {
           MyRationalT a{5};
           CHECK(4 < a);
           CHECK_FALSE(6 < a);
 
-          using SmallerRat = Rational<int, 12>;
+          using SmallerRat = FixedRational<int, 12>;
           SmallerRat b{11, 12};
           SmallerRat c{12, 12};
           SmallerRat d{13, 12};
@@ -290,7 +290,7 @@ TEST_CASE("Testing Rational.hpp")
           CHECK_FALSE(-1 < -d);
         }
 
-        SUBCASE("Rational<same> < Rational<same>")
+        SUBCASE("FixedRational<same> < FixedRational<same>")
         {
           MyRationalT a{5};
           MyRationalT b{5};
@@ -303,21 +303,21 @@ TEST_CASE("Testing Rational.hpp")
 
       SUBCASE(">")
       {
-        SUBCASE("Rational > int")
+        SUBCASE("FixedRational > int")
         {
           MyRationalT a{5};
           CHECK(6 > a);
           CHECK_FALSE(a > 6);
         }
 
-        SUBCASE("int > Rational")
+        SUBCASE("int > FixedRational")
         {
           MyRationalT a{5};
           CHECK(a > 4);
           CHECK_FALSE(4 > a);
         }
 
-        SUBCASE("Rational<same> > Rational<same>")
+        SUBCASE("FixedRational<same> > FixedRational<same>")
         {
           MyRationalT a{5};
           MyRationalT b{5};
@@ -330,7 +330,7 @@ TEST_CASE("Testing Rational.hpp")
 
       SUBCASE("<=")
       {
-        SUBCASE("Rational <= int")
+        SUBCASE("FixedRational <= int")
         {
           MyRationalT a{5};
           CHECK(a <= 6);
@@ -338,7 +338,7 @@ TEST_CASE("Testing Rational.hpp")
           CHECK_FALSE(a <= 4);
         }
 
-        SUBCASE("int <= Rational")
+        SUBCASE("int <= FixedRational")
         {
           MyRationalT a{5};
           CHECK(4 <= a);
@@ -346,7 +346,7 @@ TEST_CASE("Testing Rational.hpp")
           CHECK_FALSE(6 <= a);
         }
 
-        SUBCASE("Rational<same> <= Rational<same>")
+        SUBCASE("FixedRational<same> <= FixedRational<same>")
         {
           MyRationalT a{5};
           MyRationalT b{5};
@@ -359,7 +359,7 @@ TEST_CASE("Testing Rational.hpp")
 
       SUBCASE(">=")
       {
-        SUBCASE("Rational >= int")
+        SUBCASE("FixedRational >= int")
         {
           MyRationalT a{5};
           CHECK(a >= 4);
@@ -367,7 +367,7 @@ TEST_CASE("Testing Rational.hpp")
           CHECK_FALSE(a >= 6);
         }
 
-        SUBCASE("int >= Rational")
+        SUBCASE("int >= FixedRational")
         {
           MyRationalT a{5};
           CHECK(6 >= a);
@@ -375,7 +375,7 @@ TEST_CASE("Testing Rational.hpp")
           CHECK_FALSE(4 >= a);
         }
 
-        SUBCASE("Rational<same> >= Rational<same>")
+        SUBCASE("FixedRational<same> >= FixedRational<same>")
         {
           MyRationalT a{5};
           MyRationalT b{5};
@@ -391,7 +391,7 @@ TEST_CASE("Testing Rational.hpp")
     {
       SUBCASE("binary *")
       {
-        SUBCASE("Rational * int")
+        SUBCASE("FixedRational * int")
         {
           MyRationalT a{2};
 
@@ -406,7 +406,7 @@ TEST_CASE("Testing Rational.hpp")
           CHECK(2 == b * 3);
         }
 
-        SUBCASE("int * Rational")
+        SUBCASE("int * FixedRational")
         {
           MyRationalT a{2};
 
@@ -421,7 +421,7 @@ TEST_CASE("Testing Rational.hpp")
           CHECK(2 == 3 * b);
         }
 
-        SUBCASE("Rational<same> * Rational<same>")
+        SUBCASE("FixedRational<same> * FixedRational<same>")
         {
           MyRationalT a{2};
           MyRationalT b{3};
@@ -437,7 +437,7 @@ TEST_CASE("Testing Rational.hpp")
 
           SUBCASE("Exceptional")
           {
-            using SmallerRat = Rational<int, 12>;
+            using SmallerRat = FixedRational<int, 12>;
 
             SmallerRat a{1, 3};
             SmallerRat b{2, 3};
@@ -475,7 +475,7 @@ TEST_CASE("Testing Rational.hpp")
 
       SUBCASE("/")
       {
-        SUBCASE("Rational / int")
+        SUBCASE("FixedRational / int")
         {
           MyRationalT a{18};
 
@@ -492,7 +492,7 @@ TEST_CASE("Testing Rational.hpp")
 
           SUBCASE("Exceptional")
           {
-            using RatI18 = Rational<int, 18>;
+            using RatI18 = FixedRational<int, 18>;
             RatI18 a{1};
             CHECK_THROWS_AS(a / 27, unrepresentable_operation_error<int>);
 
@@ -523,7 +523,7 @@ TEST_CASE("Testing Rational.hpp")
           }
         }
 
-        SUBCASE("int / Rational")
+        SUBCASE("int / FixedRational")
         {
           MyRationalT a{3};
 
@@ -540,7 +540,7 @@ TEST_CASE("Testing Rational.hpp")
 
           SUBCASE("Exceptional")
           {
-            using RatI18 = Rational<int, 18>;
+            using RatI18 = FixedRational<int, 18>;
             RatI18 a{5, 18};
             CHECK_THROWS_AS(1 / a, unrepresentable_operation_error<int>);
 
@@ -569,7 +569,7 @@ TEST_CASE("Testing Rational.hpp")
           }
         }
 
-        SUBCASE("Rational<same> / Rational<same>")
+        SUBCASE("FixedRational<same> / FixedRational<same>")
         {
           MyRationalT a{2};
           MyRationalT b{3};
@@ -587,7 +587,7 @@ TEST_CASE("Testing Rational.hpp")
 
           SUBCASE("Exceptional")
           {
-            using RatI18 = Rational<int, 18>;
+            using RatI18 = FixedRational<int, 18>;
             RatI18 a{5, 18};
             RatI18 b{1};
             CHECK_THROWS_AS(b / a, unrepresentable_operation_error<int>);
@@ -621,7 +621,7 @@ TEST_CASE("Testing Rational.hpp")
 
       SUBCASE("binary +")
       {
-        SUBCASE("Rational + int")
+        SUBCASE("FixedRational + int")
         {
           MyRationalT a{2};
 
@@ -637,7 +637,7 @@ TEST_CASE("Testing Rational.hpp")
           CHECK(expected == b + 1);
         }
 
-        SUBCASE("int + Rational")
+        SUBCASE("int + FixedRational")
         {
           MyRationalT a{2};
 
@@ -653,7 +653,7 @@ TEST_CASE("Testing Rational.hpp")
           CHECK(expected == 1 + b);
         }
 
-        SUBCASE("Rational<same> + Rational<same>")
+        SUBCASE("FixedRational<same> + FixedRational<same>")
         {
           MyRationalT a{2};
           MyRationalT b{3};
@@ -671,21 +671,21 @@ TEST_CASE("Testing Rational.hpp")
 
       SUBCASE("binary -")
       {
-        SUBCASE("Rational - int")
+        SUBCASE("FixedRational - int")
         {
           MyRationalT a{3};
 
           CHECK(a - 2 == 1);
         }
 
-        SUBCASE("int - Rational")
+        SUBCASE("int - FixedRational")
         {
           MyRationalT a{2};
 
           CHECK(3 - a == 1);
         }
 
-        SUBCASE("Rational - Rational")
+        SUBCASE("FixedRational - FixedRational")
         {
           MyRationalT a{3};
           MyRationalT b{2};
@@ -699,11 +699,11 @@ TEST_CASE("Testing Rational.hpp")
     {
       std::stringstream a{};
 
-      a << Rational<int, 4>{1, 4};
+      a << FixedRational<int, 4>{1, 4};
       CHECK(a.str() == "1/4");
 
       a.str("");
-      a << Rational<int, 12>{1, 3};
+      a << FixedRational<int, 12>{1, 3};
       CHECK(a.str() == "4/12");
     }
   }

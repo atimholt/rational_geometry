@@ -29,7 +29,7 @@ def build(bld):
     my_source = ['tests/test.cpp'
             , 'tests/unrepresentable_operation_error.test.cpp'
             , 'tests/common_factor.test.cpp'
-            , 'tests/Rational.test.cpp'
+            , 'tests/FixedRational.test.cpp'
             , 'tests/Point.test.cpp'
             , 'tests/Matrix.test.cpp']
 
