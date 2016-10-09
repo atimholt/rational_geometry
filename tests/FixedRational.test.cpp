@@ -25,8 +25,7 @@ TEST_CASE("Testing FixedRational.hpp")
   // friendlier base 10) * 3 (for good measure)
   const intmax_t arbitrary_composite = 270'270'000;
 
-  typedef FixedRational<intmax_t, arbitrary_composite> MyRationalT;
-
+  using MyRationalT = FixedRational<intmax_t, arbitrary_composite>;
   using ApproxRat = FixedRational<intmax_t, 12, false>;
 
   SUBCASE("FixedRational<> class")
@@ -40,6 +39,18 @@ TEST_CASE("Testing FixedRational.hpp")
         CHECK(a == 0);
       }
 
+      SUBCASE("FixedRational<a>(FixedRational<b>)")
+      {
+        using TinyRat = FixedRational<int8_t, 12>;
+
+        MyRationalT a{2};
+
+        // a would be too big to fit in b if not for deeper templating
+        TinyRat b{a};
+
+        CHECK(b == 2);
+      }
+
       SUBCASE("FixedRational(SignedIntT)")
       {
         MyRationalT a{23};
@@ -47,12 +58,19 @@ TEST_CASE("Testing FixedRational.hpp")
         CHECK(a == 23);
       }
 
-      SUBCASE("FixedRational(SignedIntT, SignedIntT)")
+      SUBCASE("FixedRational(IntT, IntT)")
       {
         FixedRational<int, 12> a{2, 3};
 
         CHECK(a.numerator() == 8);
         CHECK(a.denominator() == 12);
+
+        SUBCASE("Different integer type")
+        {
+          FixedRational<int8_t, 12> a{1024, 512};
+
+          CHECK(a == 2);
+        }
 
         SUBCASE("Exceptional")
         {

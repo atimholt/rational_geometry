@@ -190,8 +190,18 @@ class FixedRational
  public:
   // CONSTRUCTORS
   FixedRational();
+
+  template <typename SignedIntT_other,
+      SignedIntT_other kDenominator_other,
+      bool kDoThrowOnInexact_other>
+  explicit FixedRational(const FixedRational<SignedIntT_other,
+      kDenominator_other,
+      kDoThrowOnInexact_other>& other);
+
   explicit FixedRational(int value);
-  FixedRational(SignedIntT numerator, SignedIntT denominator);
+  template <typename IntT>
+  FixedRational(IntT numerator, IntT denominator);
+
   explicit FixedRational(long double value);
   explicit FixedRational(double value);
   explicit FixedRational(float value);
@@ -224,6 +234,23 @@ FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::FixedRational()
 {
 }
 
+
+/// \brief  Construct a FixedRational from another FixedRational of potentially
+///         different type.
+///
+template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
+template <typename SignedIntT_other,
+    SignedIntT_other kDenominator_other,
+    bool kDoThrowOnInexact_other>
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::FixedRational(
+    const FixedRational<SignedIntT_other,
+        kDenominator_other,
+        kDoThrowOnInexact_other>& other)
+    : FixedRational(other.numerator(), other.denominator())
+{
+}
+
+
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
 FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::FixedRational(
     int value)
@@ -232,9 +259,10 @@ FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::FixedRational(
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
+template <typename IntT>
 FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::FixedRational(
-    SignedIntT numerator, SignedIntT denominator)
-    : numerator_{numerator}
+    IntT numerator, IntT denominator)
+    : numerator_{static_cast<SignedIntT>(numerator)}
 {
   // defaulted value applies
   if (denominator == kDenominator) return;
