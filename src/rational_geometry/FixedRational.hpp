@@ -628,24 +628,22 @@ auto operator/(
     IntT_r r_op) -> typename std::enable_if<std::is_integral<IntT_r>::value,
     FixedRational<SignedIntT_l, kDenominator, kDoThrowOnInexact>>::type
 {
-  if (kDoThrowOnInexact) {
-    auto top_int    = l_op.numerator();
-    auto bottom_int = r_op;
-    if (top_int % bottom_int) {
-      std::stringstream what_error;
-      // clang-format off
-      what_error << "Inexact operation in ("
-                 << typeid(l_op).name() << " " << l_op
-                 << " / "
-                 << typeid(r_op).name() << " " << r_op << "):  "
-                 << top_int << "/" << bottom_int
-                 << " -> " << typeid(SignedIntT_l).name();
-      // clang-format on
-      throw unrepresentable_operation_error<SignedIntT_l>{
-          what_error.str(), top_int, bottom_int};
-    }
+  auto result = partial_division<decltype(l_op.numerator() / r_op)>(
+      l_op.numerator(), r_op);
+  if (kDoThrowOnInexact && result.remaining_divisor_ != 1) {
+    std::stringstream what_error;
+    // clang-format off
+    what_error << "Inexact operation in ("
+               << typeid(l_op).name() << " " << l_op
+               << " / "
+               << typeid(r_op).name() << " " << r_op << "):  "
+               << result
+               << " -> " << typeid(SignedIntT_l).name();
+    // clang-format on
+    throw unrepresentable_operation_error<SignedIntT_l>{
+        what_error.str(), result.partial_result_, result.remaining_divisor_};
   }
-  SignedIntT_l ret{l_op.numerator() / r_op};
+  SignedIntT_l ret{result.full_division()};
   return *reinterpret_cast<FixedRational<SignedIntT_l, kDenominator,
       kDoThrowOnInexact>*>(&ret);
 }

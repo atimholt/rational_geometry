@@ -509,8 +509,8 @@ TEST_CASE("Testing FixedRational.hpp")
               CHECK(e.get_minimum_fix_factor() == 3);
               auto expected = "Inexact operation in ("s + typeid(a).name()
                               + " 18/18 / "s + typeid(int).name()
-                              + " 27):  18/27 -> "s + typeid(int).name();
-              CHECK(e.what() == expected);
+                              + " 27):  2/3 -> "s + typeid(int).name();
+              CHECK(expected == std::string(e.what()));
             }
           }
 
