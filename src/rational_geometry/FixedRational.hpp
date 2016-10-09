@@ -198,7 +198,8 @@ class FixedRational
       kDenominator_other,
       kDoThrowOnInexact_other>& other);
 
-  explicit FixedRational(int value);
+  template <typename IntT>
+  explicit FixedRational(IntT value);
   template <typename IntT>
   FixedRational(IntT numerator, IntT denominator);
 
@@ -252,8 +253,9 @@ FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::FixedRational(
 
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
+template <typename IntT>
 FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::FixedRational(
-    int value)
+    IntT value)
     : numerator_{value * kDenominator}
 {
 }
