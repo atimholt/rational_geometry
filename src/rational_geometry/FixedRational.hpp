@@ -9,6 +9,12 @@
 /// \todo  Implement int <-> FixedRational modulo (harder to do overflow-safe
 ///        than you think).
 ///
+/// \todo  Consider automatic degradation of kDoThrowOnInexact=true to false in
+///        true/false combo operations.
+///
+/// \todo  Consider default of kDoThrowOnInexact=false for construction from
+///        double (don't know about this one, probably too much of a surprise).
+///
 /// This code is under the MIT license, please see LICENSE.txt for more
 /// information
 
@@ -178,8 +184,7 @@ class FixedRational
   // STATIC ASSERTIONS
   static_assert(kDenominator > 0,
       "kDenominator template argument of rational_geometry::FixedRational<> "
-      "class "
-      "must be positive.");
+      "class must be positive.");
 
   static_assert(
       std::is_integral<SignedIntT>::value, "SignedIntT must be integer type");
