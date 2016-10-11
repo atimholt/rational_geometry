@@ -710,6 +710,17 @@ TEST_CASE("Testing FixedRational.hpp")
           CHECK(a - b == 1);
         }
       }
+
+      SUBCASE("%")
+      {
+        SUBCASE("FixedRational<same> % FixedRational<same>")
+        {
+          MyRationalT a{116};
+          MyRationalT b{50};
+
+          CHECK(a % b == 16);
+        }
+      }
     }
 
     SUBCASE("ostream output")

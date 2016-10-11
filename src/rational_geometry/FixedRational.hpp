@@ -6,6 +6,8 @@
 /// \todo  Consider removing absolutely all overhead when not checking for
 ///        overflow (this would require the worst kind of code duplication)
 ///
+/// \todo  Make sure all functions work with kDoThrowOnInexact set to false.
+///
 /// This code is under the MIT license, please see LICENSE.txt for more
 /// information
 
@@ -728,6 +730,19 @@ FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> operator/(
         what_error.str(), result.partial_result_, result.remaining_divisor_};
   }
   SignedIntT ret{result.full_division()};
+  return *reinterpret_cast<FixedRational<SignedIntT, kDenominator,
+      kDoThrowOnInexact>*>(&ret);
+}
+
+//     Modulo
+//    --------
+
+template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> operator%(
+    FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> l_op,
+    FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> r_op)
+{
+  SignedIntT ret{l_op.numerator() % r_op.numerator()};
   return *reinterpret_cast<FixedRational<SignedIntT, kDenominator,
       kDoThrowOnInexact>*>(&ret);
 }
