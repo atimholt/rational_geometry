@@ -61,7 +61,7 @@ class unrepresentable_operation_error : public std::domain_error
 //  --------------
 
 template <typename IntT>
-unrepresentable_operation_error<typename IntT>::unrepresentable_operation_error(
+unrepresentable_operation_error<IntT>::unrepresentable_operation_error(
     const std::string& what_arg,
     IntT operation_numerator,
     IntT operation_divisor)
@@ -72,7 +72,7 @@ unrepresentable_operation_error<typename IntT>::unrepresentable_operation_error(
 }
 
 template <typename IntT>
-unrepresentable_operation_error<typename IntT>::unrepresentable_operation_error(
+unrepresentable_operation_error<IntT>::unrepresentable_operation_error(
     const char* what_arg, IntT operation_numerator, IntT operation_divisor)
     : std::domain_error(what_arg)
     , minimum_fix_factor_{
@@ -84,8 +84,7 @@ unrepresentable_operation_error<typename IntT>::unrepresentable_operation_error(
 //  -----------
 
 template <typename IntT>
-IntT unrepresentable_operation_error<typename IntT>::get_minimum_fix_factor()
-    const
+IntT unrepresentable_operation_error<IntT>::get_minimum_fix_factor() const
 {
   return minimum_fix_factor_;
 }
@@ -94,7 +93,7 @@ IntT unrepresentable_operation_error<typename IntT>::get_minimum_fix_factor()
 //  ---------------
 
 template <typename IntT>
-IntT& unrepresentable_operation_error<typename IntT>::accumulate_fix_factor(
+IntT& unrepresentable_operation_error<IntT>::accumulate_fix_factor(
     IntT& running_accumulation) const
 {
   if (running_accumulation <= 0) {
