@@ -11,7 +11,6 @@ namespace rational_geometry {
 
 TEST_CASE("Testing unrepresentable_operation_error.hpp")
 {
-
   SUBCASE("class unrepresentable_operation_error")
   {
     SUBCASE("Constructors")

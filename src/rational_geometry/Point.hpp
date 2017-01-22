@@ -95,7 +95,7 @@ Point<RatT, kDimension>::Point() : std::array<RatT, kDimension>()
 {
 }
 
-/// Creates a Point with kDimension dimensions, fills with the initializel_list
+/// Creates a Point with kDimension dimensions, fills with the initializer_list
 ///
 template <typename RatT, size_t kDimension>
 Point<RatT, kDimension>::Point(const std::initializer_list<RatT>& values)

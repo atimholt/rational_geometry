@@ -87,7 +87,7 @@ TEST_CASE("Testing common_factor.hpp")
       // Always positive results.
       CHECK(expected == c1);
       CHECK(expected == c2);
-      CHECK(expected == c3); 
+      CHECK(expected == c3);
     }
   }
 }
