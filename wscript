@@ -31,7 +31,8 @@ def build(bld):
             , 'tests/common_factor.test.cpp'
             , 'tests/FixedRational.test.cpp'
             , 'tests/Point.test.cpp'
-            , 'tests/Matrix.test.cpp']
+            , 'tests/Matrix.test.cpp'
+            , 'tests/Direction.test.cpp']
 
     bld.program(
             source   = my_source,

@@ -50,7 +50,7 @@ constexpr auto gcd(T a, T b) ->
   return rational_geometry::abs(0 == b ? a : gcd<T>(b, a % b));
 }
 
-/// Find the least common multiple between to integral numbers.
+/// Find the least common multiple between two integral numbers.
 ///
 template <typename T>
 constexpr auto lcm(T a, T b) ->

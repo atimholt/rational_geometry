@@ -64,6 +64,12 @@ TEST_CASE("Testing common_factor.hpp")
       CHECK(c_type == expected_type);
       // no implicit conversion to signed.
     }
+
+    SUBCASE("a 0 value")
+    {
+      constexpr long a = gcd(3,0);
+      CHECK(a == 3);
+    }
   }
 
   SUBCASE("constexpr lcm<>()")
