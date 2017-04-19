@@ -55,6 +55,9 @@ class Direction : public std::array<SignedIntT, kDimension>
   Direction(const std::initializer_list<SignedIntT>& values);
   explicit Direction(const std::array<SignedIntT, kDimension>& values);
 
+  Direction(
+      const std::initializer_list<std::pair<SignedIntT, SignedIntT>>& values);
+
   // ACCESSORS
   size_t first_present_dimension() const;
 };
@@ -90,6 +93,27 @@ Direction<SignedIntT, kDimension>::Direction(
     const std::array<SignedIntT, kDimension>& values)
     : std::array<SignedIntT, kDimension>(values)
 {
+  normalize();
+}
+
+template <typename SignedIntT, size_t kDimension>
+Direction<SignedIntT, kDimension>::Direction(
+    const std::initializer_list<std::pair<SignedIntT, SignedIntT>>& values)
+{
+  using std::get;
+
+  auto the_lcm = std::accumulate(std::cbegin(values), std::cend(values), 1,
+      [&](SignedIntT running_total,
+          std::pair<SignedIntT, SignedIntT> rational_coord) {
+        return lcm(running_total, get<1>(rational_coord));
+      });
+
+  auto i = 0;
+  for (auto const& coord : values) {
+    (*this)[i] = get<0>(coord) * (the_lcm / get<1>(coord));
+    ++i;
+  }
+
   normalize();
 }
 
