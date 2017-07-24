@@ -15,7 +15,6 @@ def options(opt):
     opt.load('compiler_cxx')
 
 def configure(conf):
-    conf.env.MSVC_VERSIONS = ['msvc 14.0']
     conf.env.MSVC_TARGETS = ['x64']
     conf.env.CXXFLAGS = ['/nologo', '/EHsc', '/MD']
     conf.load('compiler_cxx msvc')
