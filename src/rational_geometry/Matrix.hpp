@@ -25,6 +25,7 @@
 // Includes
 //----------
 
+#include "Operations.hpp"
 #include "Point.hpp"
 
 #include <array>
