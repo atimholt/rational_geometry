@@ -63,7 +63,7 @@ auto dot(const TContainer_l<RatT_l, kDimension>& l_op,
 ///          possible directions (when not magnitude 0), the actual value is
 ///          given by the right-hand rule.
 ///
-/// \note  This does not take two arbitrary container types, since the output
+/// \note  This does not take two different container types, since the output
 ///        type needs to be known, and favoring one as the default output type
 ///        is silly, and allowing templatized output type specification is
 ///        dubious.
