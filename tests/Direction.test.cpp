@@ -108,6 +108,9 @@ TEST_CASE("Testing Direction.hpp")
 
           CHECK(an_array == equivalent_direction.get());
         }
+
+        // Doesn’t compile (as it shouldn't):
+        // a_direction.get()[1] = 13;
       }
 
       SUBCASE("get(size_t)")

@@ -158,6 +158,8 @@ void Direction<SignedIntT, kDimension>::normalize()
 //   Accessors
 //  -----------
 
+/// Get a const reference to the array of data of the Direction.
+///
 template <typename SignedIntT, std::size_t kDimension>
 const std::array<SignedIntT, kDimension>&
 Direction<SignedIntT, kDimension>::get() const
