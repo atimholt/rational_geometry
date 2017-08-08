@@ -12,6 +12,7 @@
 // Includes
 //----------
 
+#include "Operations.hpp"
 #include "common_factor.hpp"
 
 #include <array>
@@ -200,8 +201,25 @@ size_t Direction<SignedIntT, kDimension>::first_present_dimension() const
          - std::begin(dimension_proportions_);
 }
 
-//----------------------------
-// Class Template Definitions
+// Related Functions
+//-------------------
+
+template <typename SignedIntT>
+Direction<SignedIntT, 3> mutual_orthogonal(Direction<SignedIntT, 3> l_op,
+    Direction<SignedIntT, 3> r_op,
+    bool opposite_value = false)
+{
+  auto ret = cross(l_op.get(), r_op.get());
+  if (opposite_value) {
+    for (auto& i : ret) {
+      i *= -1;
+    }
+  }
+  return Direction<SignedIntT, 3>{ret};
+}
+
+//-------------------
+// Related Functions
 
 } // namespace rational_geometry
 

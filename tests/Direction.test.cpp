@@ -137,6 +137,25 @@ TEST_CASE("Testing Direction.hpp")
         CHECK(val_d.first_present_dimension() == 3); // 1 past the end!
       }
     }
+
+    SUBCASE("related functions")
+    {
+      SUBCASE("mutual_orthogonal(Direction, Direction, bool)")
+      {
+        Direction3D a{1, 0, 0};
+        Direction3D b{0, 1, 0};
+        Direction3D c{0, 0, 1};
+
+        CHECK(mutual_orthogonal(a, b).get() == c.get());
+
+        Direction3D c_minus{0, 0, -1};
+
+        CHECK(mutual_orthogonal(a, b, true).get() == c_minus.get());
+
+        Direction3D c_equivalent{0, 0, 1000};
+        CHECK(mutual_orthogonal(a, b).get() == c_equivalent.get());
+      }
+    }
   }
 }
 
