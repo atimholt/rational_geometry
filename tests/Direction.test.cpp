@@ -97,10 +97,17 @@ TEST_CASE("Testing Direction.hpp")
     {
       SUBCASE("get()")
       {
-        std::array<int, 3> a{10, 11, 12};
-        Direction3D b{10, 11, 12};
+        std::array<int, 3> an_array{3, 4, 5};
+        Direction3D a_direction{3, 4, 5};
 
-        CHECK(a == b.get());
+        CHECK(an_array == a_direction.get());
+
+        SUBCASE("Invariants in effect")
+        {
+          Direction3D equivalent_direction{6, 8, 10};
+
+          CHECK(an_array == equivalent_direction.get());
+        }
       }
 
       SUBCASE("get(size_t)")
