@@ -33,40 +33,40 @@ TEST_CASE("Testing Direction.hpp")
       {
         Direction2D a{};
 
-        CHECK(a[0] == 0);
-        CHECK(a[1] == 0);
+        CHECK(a.get(0) == 0);
+        CHECK(a.get(1) == 0);
       }
 
       SUBCASE("Direction(std::initializer_list<SignedIntT>)")
       {
         Direction3D val_a{1, 2, 3};
-        CHECK(val_a.size() == 3);
+        CHECK(val_a.get_dimensionality() == 3);
 
         Direction3D val_b{2, 5};
-        CHECK(val_b[1] == 5);
-        CHECK(val_b[2] == 0);
+        CHECK(val_b.get(1) == 5);
+        CHECK(val_b.get(2) == 0);
 
         SUBCASE("normalization")
         {
           Direction3D val_c{2, 4, 6};
-          CHECK(val_c[0] == 1);
-          CHECK(val_c[1] == 2);
-          CHECK(val_c[2] == 3);
+          CHECK(val_c.get(0) == 1);
+          CHECK(val_c.get(1) == 2);
+          CHECK(val_c.get(2) == 3);
 
           Direction3D val_d{-2, 4, 6};
-          CHECK(val_d[0] == -1);
-          CHECK(val_d[1] == 2);
-          CHECK(val_d[2] == 3);
+          CHECK(val_d.get(0) == -1);
+          CHECK(val_d.get(1) == 2);
+          CHECK(val_d.get(2) == 3);
 
           Direction3D val_e{-2, 0, 6};
-          CHECK(val_e[0] == -1);
-          CHECK(val_e[1] == 0);
-          CHECK(val_e[2] == 3);
+          CHECK(val_e.get(0) == -1);
+          CHECK(val_e.get(1) == 0);
+          CHECK(val_e.get(2) == 3);
 
           Direction3D val_f{-2, -4, -6};
-          CHECK(val_f[0] == -1);
-          CHECK(val_f[1] == -2);
-          CHECK(val_f[2] == -3);
+          CHECK(val_f.get(0) == -1);
+          CHECK(val_f.get(1) == -2);
+          CHECK(val_f.get(2) == -3);
         }
       }
 
@@ -76,25 +76,42 @@ TEST_CASE("Testing Direction.hpp")
 
         Direction3D val_a{argument};
 
-        CHECK(val_a.size() == 3);
+        CHECK(val_a.get_dimensionality() == 3);
       }
 
       SUBCASE("Direction(std::initializer_list<std::pair>)")
       {
         Direction3D a{{1, 6}, {1, 4}, {-1, 3}};
-        CHECK(a[0] == 2);
-        CHECK(a[1] == 3);
-        CHECK(a[2] == -4);
+        CHECK(a.get(0) == 2);
+        CHECK(a.get(1) == 3);
+        CHECK(a.get(2) == -4);
 
         Direction3D b{{0, 1}, {1, 4}, {1, 6}};
-        CHECK(b[0] == 0);
-        CHECK(b[1] == 3);
-        CHECK(b[2] == 2);
+        CHECK(b.get(0) == 0);
+        CHECK(b.get(1) == 3);
+        CHECK(b.get(2) == 2);
       }
     }
 
     SUBCASE("accessors")
     {
+      SUBCASE("get()")
+      {
+        std::array<int, 3> a{10, 11, 12};
+        Direction3D b{10, 11, 12};
+
+        CHECK(a == b.get());
+      }
+
+      SUBCASE("get(size_t)")
+      {
+        Direction3D a_value{4, 5, 6};
+
+        CHECK(a_value.get(0) == 4);
+        CHECK(a_value.get(1) == 5);
+        CHECK(a_value.get(2) == 6);
+      }
+
       SUBCASE("first_present_dimension()")
       {
         Direction3D val_a{1, 1, 0};

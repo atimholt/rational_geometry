@@ -36,7 +36,7 @@ namespace rational_geometry {
 /// this class.
 ///
 template <typename SignedIntT, std::size_t kDimension = 3>
-class Direction : public std::array<SignedIntT, kDimension>
+class Direction
 {
  protected:
   // STATIC ASSERTIONS
@@ -45,6 +45,9 @@ class Direction : public std::array<SignedIntT, kDimension>
 
   static_assert(
       std::is_signed<SignedIntT>::value, "SignedIntT must be a signed type");
+
+  // INTERNAL STATE
+  std::array<SignedIntT, kDimension> dimension_proportions_;
 
   // HELPER FUNCTIONS
   void normalize();
@@ -59,6 +62,11 @@ class Direction : public std::array<SignedIntT, kDimension>
       const std::initializer_list<std::pair<SignedIntT, SignedIntT>>& values);
 
   // ACCESSORS
+  const std::array<SignedIntT, kDimension>& get() const;
+
+  SignedIntT get(size_t index) const;
+  SignedIntT get_dimensionality() const;
+
   size_t first_present_dimension() const;
 };
 
@@ -70,8 +78,7 @@ class Direction : public std::array<SignedIntT, kDimension>
 /// Creates a Point with kDimension dimensions, with all values at 0.
 ///
 template <typename SignedIntT, size_t kDimension>
-Direction<SignedIntT, kDimension>::Direction()
-    : std::array<SignedIntT, kDimension>()
+Direction<SignedIntT, kDimension>::Direction() : dimension_proportions_()
 {
 }
 
@@ -84,14 +91,15 @@ Direction<SignedIntT, kDimension>::Direction(
     : Direction<SignedIntT, kDimension>()
 {
   std::copy(std::cbegin(values),
-      std::cbegin(values) + std::min(values.size(), kDimension), begin());
+      std::cbegin(values) + std::min(values.size(), kDimension),
+      begin(dimension_proportions_));
   normalize();
 }
 
 template <typename SignedIntT, size_t kDimension>
 Direction<SignedIntT, kDimension>::Direction(
     const std::array<SignedIntT, kDimension>& values)
-    : std::array<SignedIntT, kDimension>(values)
+    : dimension_proportions_(values)
 {
   normalize();
 }
@@ -110,7 +118,7 @@ Direction<SignedIntT, kDimension>::Direction(
 
   auto i = 0;
   for (auto const& coord : values) {
-    (*this)[i] = get<0>(coord) * (the_lcm / get<1>(coord));
+    dimension_proportions_[i] = get<0>(coord) * (the_lcm / get<1>(coord));
     ++i;
   }
 
@@ -129,26 +137,53 @@ void Direction<SignedIntT, kDimension>::normalize()
 {
   if (kDimension == 0) return;
   if (kDimension == 1) {
-    if ((*this)[0] > 0)
-      (*this)[0] = 1;
-    else if ((*this)[0] < 0)
-      (*this)[0] = -1;
+    if (dimension_proportions_[0] > 0)
+      dimension_proportions_[0] = 1;
+    else if (dimension_proportions_[0] < 0)
+      dimension_proportions_[0] = -1;
     // left alone if == 0 !
     return;
   }
 
   // general case
-  SignedIntT the_gcd =
-      std::accumulate(std::begin(*this), std::end(*this), (*this)[0],
-          [&](SignedIntT l_op, SignedIntT r_op) { return gcd(l_op, r_op); });
+  SignedIntT the_gcd = std::accumulate(std::begin(dimension_proportions_),
+      std::end(dimension_proportions_), (dimension_proportions_)[0],
+      [&](SignedIntT l_op, SignedIntT r_op) { return gcd(l_op, r_op); });
   if (the_gcd == 0) return;
-  for (auto& val : *this) {
+  for (auto& val : dimension_proportions_) {
     val /= the_gcd;
   }
 }
 
 //   Accessors
 //  -----------
+
+template <typename SignedIntT, std::size_t kDimension>
+const std::array<SignedIntT, kDimension>&
+Direction<SignedIntT, kDimension>::get() const
+{
+  return dimension_proportions_;
+}
+
+
+/// Get the number representing the specified dimension.
+///
+/// \todo consider range checking
+///
+template <typename SignedIntT, std::size_t kDimension>
+SignedIntT Direction<SignedIntT, kDimension>::get(size_t index) const
+{
+  return dimension_proportions_[index];
+}
+
+/// Get the dimensionality of the direction.
+///
+template <typename SignedIntT, std::size_t kDimension>
+SignedIntT Direction<SignedIntT, kDimension>::get_dimensionality() const
+{
+  return kDimension;
+}
+
 
 /// Finds the index of the first non-zero component of a direction.
 ///
@@ -157,9 +192,10 @@ void Direction<SignedIntT, kDimension>::normalize()
 template <typename SignedIntT, std::size_t kDimension>
 size_t Direction<SignedIntT, kDimension>::first_present_dimension() const
 {
-  return std::find_if(std::begin(*this), std::end(*this),
+  return std::find_if(std::begin(dimension_proportions_),
+             std::end(dimension_proportions_),
              [&](SignedIntT component) { return component != 0; })
-         - std::begin(*this);
+         - std::begin(dimension_proportions_);
 }
 
 //----------------------------
