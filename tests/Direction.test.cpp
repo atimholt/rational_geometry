@@ -156,14 +156,14 @@ TEST_CASE("Testing Direction.hpp")
         Direction3D b{0, 1, 0};
         Direction3D c{0, 0, 1};
 
-        CHECK(mutual_orthogonal(a, b).get() == c.get());
+        CHECK(mutual_orthogonal(a, b) == c);
 
         Direction3D c_minus{0, 0, -1};
 
-        CHECK(mutual_orthogonal(a, b, true).get() == c_minus.get());
+        CHECK(mutual_orthogonal(a, b, true) == c_minus);
 
         Direction3D c_equivalent{0, 0, 1000};
-        CHECK(mutual_orthogonal(a, b).get() == c_equivalent.get());
+        CHECK(mutual_orthogonal(a, b) == c_equivalent);
       }
     }
   }
