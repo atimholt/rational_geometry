@@ -71,7 +71,8 @@ class Direction
   size_t first_present_dimension() const;
 
   // OPERATORS
-  bool operator==(Direction<SignedIntT, kDimension> l_op) const;
+  bool operator==(Direction<SignedIntT, kDimension> r_op) const;
+  bool operator<(Direction<SignedIntT, kDimension> r_op) const;
 };
 
 // Class Template Definitions
@@ -206,11 +207,26 @@ size_t Direction<SignedIntT, kDimension>::first_present_dimension() const
 
 //   Operators
 //  -----------
+
+/// Tests whether two directions are equivalent.
+///
 template <typename SignedIntT, std::size_t kDimension>
 bool Direction<SignedIntT, kDimension>::operator==(
     Direction<SignedIntT, kDimension> r_op) const
 {
   return dimension_proportions_ == r_op.dimension_proportions_;
+}
+
+/// Tests order of two directions
+///
+/// \note  This is NOT useful for anything except in places requiring ordering
+///        of objects, like some standard library containers.
+///
+template <typename SignedIntT, std::size_t kDimension>
+bool Direction<SignedIntT, kDimension>::operator<(
+    Direction<SignedIntT, kDimension> r_op) const
+{
+  return dimension_proportions_ < r_op.dimension_proportions_;
 }
 
 // Related Functions
