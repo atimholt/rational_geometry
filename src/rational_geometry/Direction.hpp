@@ -69,6 +69,9 @@ class Direction
   SignedIntT get_dimensionality() const;
 
   size_t first_present_dimension() const;
+
+  // OPERATORS
+  bool operator==(Direction<SignedIntT, kDimension> l_op) const;
 };
 
 // Class Template Definitions
@@ -199,6 +202,15 @@ size_t Direction<SignedIntT, kDimension>::first_present_dimension() const
              std::end(dimension_proportions_),
              [&](SignedIntT component) { return component != 0; })
          - std::begin(dimension_proportions_);
+}
+
+//   Operators
+//  -----------
+template <typename SignedIntT, std::size_t kDimension>
+bool Direction<SignedIntT, kDimension>::operator==(
+    Direction<SignedIntT, kDimension> r_op) const
+{
+  return dimension_proportions_ == r_op.dimension_proportions_;
 }
 
 // Related Functions

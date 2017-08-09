@@ -138,6 +138,16 @@ TEST_CASE("Testing Direction.hpp")
       }
     }
 
+    SUBCASE("operators")
+    {
+      Direction3D a{2, 3, 4};
+      Direction3D b{2, 3, 4};
+      Direction3D c{4, 6, 8};
+
+      CHECK(a == b);
+      CHECK(a == c);
+    }
+
     SUBCASE("related functions")
     {
       SUBCASE("mutual_orthogonal(Direction, Direction, bool)")
