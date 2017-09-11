@@ -32,7 +32,7 @@ def build(bld):
             , 'tests/Point.test.cpp'
             , 'tests/Matrix.test.cpp'
             , 'tests/Direction.test.cpp'
-            , 'tests/Operations.test.cpp']
+            , 'tests/operations.test.cpp']
 
     bld.program(
             source   = my_source,
