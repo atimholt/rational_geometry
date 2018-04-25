@@ -248,8 +248,8 @@ bool Direction<SignedIntT, kDimension>::operator<(
 /// \sa  https://en.wikipedia.org/wiki/Cross_product
 ///
 template <typename SignedIntT>
-Direction<SignedIntT, 3> mutual_orthogonal(Direction<SignedIntT, 3> l_op,
-    Direction<SignedIntT, 3> r_op,
+Direction<SignedIntT, 3> mutual_orthogonal(const Direction<SignedIntT, 3> l_op,
+    const Direction<SignedIntT, 3> r_op,
     bool opposite_value = false)
 {
   auto ret = cross(l_op.get(), r_op.get());
