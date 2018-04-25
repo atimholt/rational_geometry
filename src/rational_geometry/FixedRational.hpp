@@ -364,7 +364,7 @@ FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::as_simplified()
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
 FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>&
-    FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator++()
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator++()
 {
   numerator_ += kDenominator;
   return *this;
@@ -372,7 +372,7 @@ FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>&
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
 FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>
-    FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator++(int)
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator++(int)
 {
   auto ret = *this;
   ++(*this);
@@ -382,7 +382,7 @@ FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
 FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>&
-    FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator--()
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator--()
 {
   numerator_ -= kDenominator;
   return *this;
@@ -390,7 +390,7 @@ FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>&
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
 FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>
-    FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator--(int)
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator--(int)
 {
   auto ret = *this;
   --(*this);
@@ -403,8 +403,8 @@ FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>
 FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::operator-() const
 {
   SignedIntT ret{-numerator_};
-  return *reinterpret_cast<FixedRational<SignedIntT, kDenominator,
-      kDoThrowOnInexact>*>(&ret);
+  return *reinterpret_cast<
+      FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>*>(&ret);
 }
 
 // Related Operators
@@ -658,8 +658,8 @@ auto operator*(
     FixedRational<SignedIntT_l, kDenominator, kDoThrowOnInexact>>::type
 {
   SignedIntT_l ret{l_op.numerator() * r_op};
-  return *reinterpret_cast<FixedRational<SignedIntT_l, kDenominator,
-      kDoThrowOnInexact>*>(&ret);
+  return *reinterpret_cast<
+      FixedRational<SignedIntT_l, kDenominator, kDoThrowOnInexact>*>(&ret);
 }
 
 template <typename IntT_l,
@@ -672,8 +672,8 @@ auto operator*(IntT_l l_op,
         FixedRational<SignedIntT_r, kDenominator, kDoThrowOnInexact>>::type
 {
   SignedIntT_r ret{l_op * r_op.numerator()};
-  return *reinterpret_cast<FixedRational<SignedIntT_r, kDenominator,
-      kDoThrowOnInexact>*>(&ret);
+  return *reinterpret_cast<
+      FixedRational<SignedIntT_r, kDenominator, kDoThrowOnInexact>*>(&ret);
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
@@ -698,8 +698,8 @@ FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> operator*(
         what_error.str(), result.partial_result_, result.remaining_divisor_};
   }
   SignedIntT ret{result.full_division()};
-  return *reinterpret_cast<FixedRational<SignedIntT, kDenominator,
-      kDoThrowOnInexact>*>(&ret);
+  return *reinterpret_cast<
+      FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>*>(&ret);
 }
 
 //     Division
@@ -730,8 +730,8 @@ auto operator/(
         what_error.str(), result.partial_result_, result.remaining_divisor_};
   }
   SignedIntT_l ret{result.full_division()};
-  return *reinterpret_cast<FixedRational<SignedIntT_l, kDenominator,
-      kDoThrowOnInexact>*>(&ret);
+  return *reinterpret_cast<
+      FixedRational<SignedIntT_l, kDenominator, kDoThrowOnInexact>*>(&ret);
 }
 
 template <typename IntT_l,
@@ -759,8 +759,8 @@ auto operator/(IntT_l l_op,
         what_error.str(), result.partial_result_, result.remaining_divisor_};
   }
   SignedIntT_r ret{result.full_division()};
-  return *reinterpret_cast<FixedRational<SignedIntT_r, kDenominator,
-      kDoThrowOnInexact>*>(&ret);
+  return *reinterpret_cast<
+      FixedRational<SignedIntT_r, kDenominator, kDoThrowOnInexact>*>(&ret);
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
@@ -784,8 +784,8 @@ FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> operator/(
         what_error.str(), result.partial_result_, result.remaining_divisor_};
   }
   SignedIntT ret{result.full_division()};
-  return *reinterpret_cast<FixedRational<SignedIntT, kDenominator,
-      kDoThrowOnInexact>*>(&ret);
+  return *reinterpret_cast<
+      FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>*>(&ret);
 }
 
 //     Modulo
@@ -797,8 +797,8 @@ FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> operator%(
     FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> r_op)
 {
   SignedIntT ret{l_op.numerator() % r_op.numerator()};
-  return *reinterpret_cast<FixedRational<SignedIntT, kDenominator,
-      kDoThrowOnInexact>*>(&ret);
+  return *reinterpret_cast<
+      FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>*>(&ret);
 }
 
 //     Addition
@@ -814,8 +814,8 @@ auto operator+(
     FixedRational<SignedIntT_l, kDenominator, kDoThrowOnInexact>>::type
 {
   SignedIntT_l ret{l_op.numerator() + r_op * kDenominator};
-  return *reinterpret_cast<FixedRational<SignedIntT_l, kDenominator,
-      kDoThrowOnInexact>*>(&ret);
+  return *reinterpret_cast<
+      FixedRational<SignedIntT_l, kDenominator, kDoThrowOnInexact>*>(&ret);
 }
 
 template <typename IntT_l,
@@ -828,8 +828,8 @@ auto operator+(IntT_l l_op,
         FixedRational<SignedIntT_r, kDenominator, kDoThrowOnInexact>>::type
 {
   SignedIntT_r ret{l_op * kDenominator + r_op.numerator()};
-  return *reinterpret_cast<FixedRational<SignedIntT_r, kDenominator,
-      kDoThrowOnInexact>*>(&ret);
+  return *reinterpret_cast<
+      FixedRational<SignedIntT_r, kDenominator, kDoThrowOnInexact>*>(&ret);
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
@@ -838,8 +838,8 @@ FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> operator+(
     FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> r_op)
 {
   SignedIntT ret{l_op.numerator() + r_op.numerator()};
-  return *reinterpret_cast<FixedRational<SignedIntT, kDenominator,
-      kDoThrowOnInexact>*>(&ret);
+  return *reinterpret_cast<
+      FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>*>(&ret);
 }
 
 //     Subtraction
@@ -855,8 +855,8 @@ auto operator-(
     FixedRational<SignedIntT_l, kDenominator, kDoThrowOnInexact>>::type
 {
   SignedIntT_l ret{l_op.numerator() - r_op * kDenominator};
-  return *reinterpret_cast<FixedRational<SignedIntT_l, kDenominator,
-      kDoThrowOnInexact>*>(&ret);
+  return *reinterpret_cast<
+      FixedRational<SignedIntT_l, kDenominator, kDoThrowOnInexact>*>(&ret);
 }
 
 template <typename IntT_l,
@@ -869,8 +869,8 @@ auto operator-(IntT_l l_op,
         FixedRational<SignedIntT_r, kDenominator, kDoThrowOnInexact>>::type
 {
   SignedIntT_r ret{l_op * kDenominator - r_op.numerator()};
-  return *reinterpret_cast<FixedRational<SignedIntT_r, kDenominator,
-      kDoThrowOnInexact>*>(&ret);
+  return *reinterpret_cast<
+      FixedRational<SignedIntT_r, kDenominator, kDoThrowOnInexact>*>(&ret);
 }
 
 template <typename SignedIntT, SignedIntT kDenominator, bool kDoThrowOnInexact>
@@ -878,8 +878,8 @@ auto operator-(FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> l_op,
     FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> r_op)
 {
   SignedIntT ret{l_op.numerator() - r_op.numerator()};
-  return *reinterpret_cast<FixedRational<SignedIntT, kDenominator,
-      kDoThrowOnInexact>*>(&ret);
+  return *reinterpret_cast<
+      FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>*>(&ret);
 }
 
 //   ostream Output

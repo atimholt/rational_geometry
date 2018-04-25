@@ -67,7 +67,7 @@ TEST_CASE("Testing common_factor.hpp")
 
     SUBCASE("a 0 value")
     {
-      constexpr long a = gcd(3,0);
+      constexpr long a = gcd(3, 0);
       CHECK(a == 3);
     }
   }
