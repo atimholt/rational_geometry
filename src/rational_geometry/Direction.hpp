@@ -87,8 +87,8 @@ Direction<SignedIntT, kDimension>::Direction() : dimension_proportions_()
 {
 }
 
-/// Creates a Direction with kDimension dimensions, fills with the
-/// initializer_list
+/// \brief  Creates a Direction with kDimension dimensions, fills with the
+///         initializer_list
 ///
 template <typename SignedIntT, size_t kDimension>
 Direction<SignedIntT, kDimension>::Direction(
@@ -109,6 +109,11 @@ Direction<SignedIntT, kDimension>::Direction(
   normalize();
 }
 
+/// Creates a Direction from an ordered collection of rational numbers.
+///
+/// Each dimension's portion will be proportional to the respective rational
+/// number input.
+///
 template <typename SignedIntT, size_t kDimension>
 Direction<SignedIntT, kDimension>::Direction(
     const std::initializer_list<std::pair<SignedIntT, SignedIntT>>& values)
@@ -165,6 +170,8 @@ void Direction<SignedIntT, kDimension>::normalize()
 
 /// Get a const reference to the array of data of the Direction.
 ///
+/// As usual, always be wary of const references changing on you!
+///
 template <typename SignedIntT, std::size_t kDimension>
 const std::array<SignedIntT, kDimension>&
 Direction<SignedIntT, kDimension>::get() const
@@ -175,7 +182,7 @@ Direction<SignedIntT, kDimension>::get() const
 
 /// Get the number representing the specified dimension.
 ///
-/// \todo consider range checking
+/// \todo  Consider range checking.
 ///
 template <typename SignedIntT, std::size_t kDimension>
 SignedIntT Direction<SignedIntT, kDimension>::get(size_t index) const
@@ -214,6 +221,7 @@ template <typename SignedIntT, std::size_t kDimension>
 bool Direction<SignedIntT, kDimension>::operator==(
     Direction<SignedIntT, kDimension> r_op) const
 {
+  // invariant: internal representation is always simplified and unique.
   return dimension_proportions_ == r_op.dimension_proportions_;
 }
 
@@ -232,6 +240,13 @@ bool Direction<SignedIntT, kDimension>::operator<(
 // Related Functions
 //-------------------
 
+/// Finds one of 2 unique mutually orthogonal directions to the inputs.
+///
+/// \note  Some edge cases return edge-case results. All results are based on
+///        the cross product. This also means this only works in 3 dimensions.
+///
+/// \sa  https://en.wikipedia.org/wiki/Cross_product
+///
 template <typename SignedIntT>
 Direction<SignedIntT, 3> mutual_orthogonal(Direction<SignedIntT, 3> l_op,
     Direction<SignedIntT, 3> r_op,
