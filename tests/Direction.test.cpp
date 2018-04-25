@@ -173,6 +173,16 @@ TEST_CASE("Testing Direction.hpp")
         Direction3D c_equivalent{0, 0, 1000};
         CHECK(mutual_orthogonal(a, b) == c_equivalent);
       }
+
+      SUBCASE("are_parallel")
+      {
+        Direction3D a{2, 3, 5};
+        Direction3D b{2, 3, 5};
+        Direction3D c{-2, -3, -5};
+
+        CHECK(are_parallel(a, b));
+        CHECK(are_parallel(a, c));
+      }
     }
   }
 }

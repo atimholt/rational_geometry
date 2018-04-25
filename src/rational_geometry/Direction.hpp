@@ -73,6 +73,11 @@ class Direction
   // OPERATORS
   bool operator==(Direction<SignedIntT, kDimension> r_op) const;
   bool operator<(Direction<SignedIntT, kDimension> r_op) const;
+
+  // FRIEND FUNCTIONS
+  template <typename SignedIntT, std::size_t kDimension = 3>
+  friend bool are_parallel(const Direction<SignedIntT, kDimension>& l_op,
+      const Direction<SignedIntT, kDimension>& r_op);
 };
 
 // Class Template Definitions
@@ -259,6 +264,28 @@ Direction<SignedIntT, 3> mutual_orthogonal(const Direction<SignedIntT, 3> l_op,
     }
   }
   return Direction<SignedIntT, 3>{ret};
+}
+
+/// Detects if two directions are parallel.
+///
+/// Essentially, this just checks if they’re equal or opposite.
+///
+template <typename SignedIntT, std::size_t kDimension = 3>
+bool are_parallel(const Direction<SignedIntT, kDimension>& l_op,
+    const Direction<SignedIntT, kDimension>& r_op)
+{
+  if (l_op == r_op) return true;
+
+  // The way I figure, std::equal ought to be called std::compare, since it lets
+  // you use whatever binary predicate you want.
+  //
+  // Opposite is a kind of equivalency in the case of parallelism, though.
+  return std::equal(cbegin(l_op.dimension_proportions_),
+      cend(l_op.dimension_proportions_), cbegin(r_op.dimension_proportions_),
+      cend(r_op.dimension_proportions_),
+      [](const SignedIntT& l_op_proportion, const SignedIntT& r_op_proportion) {
+        return l_op_proportion == -1 * r_op_proportion;
+      });
 }
 
 //-------------------
