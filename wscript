@@ -25,14 +25,16 @@ def post(ctx):
     print("\n -- End Unit tests --\n")
 
 def build(bld):
-    my_source = ['tests/test.cpp'
-            , 'tests/unrepresentable_operation_error.test.cpp'
-            , 'tests/common_factor.test.cpp'
-            , 'tests/FixedRational.test.cpp'
-            , 'tests/Point.test.cpp'
-            , 'tests/Matrix.test.cpp'
-            , 'tests/Direction.test.cpp'
-            , 'tests/operations.test.cpp']
+    my_source = [
+            'tests/Direction.test.cpp',
+            'tests/FixedRational.test.cpp',
+            'tests/Matrix.test.cpp',
+            'tests/Point.test.cpp',
+            'tests/common_factor.test.cpp',
+            'tests/operations.test.cpp',
+            'tests/test.cpp',
+            'tests/unrepresentable_operation_error.test.cpp',
+            ]
 
     bld.program(
             source   = my_source,
