@@ -222,6 +222,13 @@ class FixedRational
   long double as_long_double() const;
   std::pair<SignedIntT, SignedIntT> as_simplified() const;
 
+  // FUNCTIONS
+  template <typename SignedIntT,
+      SignedIntT kDenominator,
+      bool kDoThrowOnInexact = true>
+  friend FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> abs(
+      const FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>& value);
+
   // OPERATORS
   FixedRational& operator++();
   FixedRational operator++(int);
@@ -357,6 +364,20 @@ FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>::as_simplified()
 {
   auto ret = partial_division(numerator(), denominator());
   return *reinterpret_cast<std::pair<SignedIntT, SignedIntT>*>(&ret);
+}
+
+//   Functions
+//  -----------
+
+template <typename SignedIntT,
+    SignedIntT kDenominator,
+    bool kDoThrowOnInexact = true>
+FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> abs(
+    const FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact>& value)
+{
+  FixedRational<SignedIntT, kDenominator, kDoThrowOnInexact> result(
+      std::abs(value.numerator_), kDenominator);
+  return result;
 }
 
 //   Operators

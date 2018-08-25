@@ -200,6 +200,19 @@ TEST_CASE("Testing FixedRational.hpp")
       }
     }
 
+    SUBCASE("Functions")
+    {
+      MyRationalT a(5, 7);
+      MyRationalT b(5, 7);
+      MyRationalT c(-5, 7);
+      CHECK(abs(a) == a);
+      CHECK(abs(a) == b);
+      CHECK(a == abs(c));
+
+      // sanity check, lol
+      CHECK(abs(c) != c);
+    }
+
     SUBCASE("Operators")
     {
       SUBCASE("operator++")
