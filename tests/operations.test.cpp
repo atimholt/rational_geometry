@@ -3,6 +3,7 @@
 #include "doctest.h"
 
 #include <array>
+#include <ostream>
 #include <string>
 #include <typeinfo>
 #include <vector>
